@@ -17,6 +17,7 @@ const NavBar = () => {
     { name: 'About', to: '/about' },
     { name: 'Departments', isDropdown: true },
     { name: 'Admission', to: '/admission' },
+    { name: 'Gallery', to: '/gallery' },
     { name: 'Notice', to: '/notice' },
     { name: 'Contact', to: '/contact' },
   ];
