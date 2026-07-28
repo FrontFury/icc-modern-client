@@ -3,6 +3,7 @@ import DeptNnotice from "../DeptNnotice/DeptNnotice";
 import EsteemedLeaders from "../EsteemedLeaders/EsteemedLeaders";
 import Gallery from "../Gallery/Gallery";
 import JoinCommunity from "../JoinCommunity/JoinCommunity";
+import NewsNEvents from "../NewsNEvents/NewsNEvents";
 
 const Home = () => {
     return (
@@ -12,6 +13,7 @@ const Home = () => {
             <EsteemedLeaders></EsteemedLeaders>
             <Gallery></Gallery>
             <JoinCommunity></JoinCommunity>
+            <NewsNEvents></NewsNEvents>
         </div>
     );
 };

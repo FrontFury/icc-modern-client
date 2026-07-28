@@ -23,7 +23,7 @@ const NavBar = () => {
   ];
 
   return (
-    <nav className="w-full bg-[#f8f9fa] border-b border-gray-200">
+    <nav className="w-full bg-[#f8f9fa] z-10 border-b border-gray-200">
       <div className="w-5/6 mx-auto px-6 h-20 flex items-center justify-between">
         
         {/* College Logo */}
