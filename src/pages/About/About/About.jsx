@@ -1,4 +1,5 @@
 import AboutBanner from '../AboutBanner/AboutBanner';
+import CoreValue from '../CoreValue/CoreValue';
 import HistorySection from '../HistorySection/HistorySection';
 
 const About = () => {
@@ -6,6 +7,7 @@ const About = () => {
         <div>
             <AboutBanner></AboutBanner>
             <HistorySection></HistorySection>
+            <CoreValue></CoreValue>
         </div>
     );
 };
