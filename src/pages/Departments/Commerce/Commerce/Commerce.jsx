@@ -1,9 +1,10 @@
+import CommerceBanner from "../CommerceBanner/CommerceBanner";
 
 
 const Commerce = () => {
     return (
         <div>
-            <h2>This Is Commerce Page</h2>
+            <CommerceBanner></CommerceBanner>
         </div>
     );
 };
