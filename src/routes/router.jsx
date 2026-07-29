@@ -11,6 +11,7 @@ import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
 import Faculty from "../pages/FacultyDirectory/Faculty/Faculty";
 import NoticeBoard from "../pages/NoticeBoard/NoticeBoard";
+import Admission from "../pages/Admission/Admission/Admission";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
       {
         path: "notices", 
         element: <NoticeBoard></NoticeBoard>
+      },
+      {
+        path: "admission", 
+        element: <Admission></Admission>
       },
     ],
   },
