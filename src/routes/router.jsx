@@ -6,6 +6,7 @@ import Science from "../pages/Departments/Science/Science/Science";
 import Commerce from "../pages/Departments/Commerce/Commerce/Commerce";
 import Arts from "../pages/Departments/Arts/Arts/Arts";
 import Alumni from "../pages/Alumni/Alumni/Alumni";
+import ContactPage from "../pages/ContactPage/ContactPage/ContactPage";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "alumni", 
         element: <Alumni></Alumni>
+      },
+      {
+        path: "contact", 
+        element: <ContactPage></ContactPage>
       },
     ],
   },
