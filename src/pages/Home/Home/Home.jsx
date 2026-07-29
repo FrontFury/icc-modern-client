@@ -1,6 +1,7 @@
 import Banner from "../Banner/Banner";
 import DeptNnotice from "../DeptNnotice/DeptNnotice";
 import EsteemedLeaders from "../EsteemedLeaders/EsteemedLeaders";
+import FAQ from "../FAQ/FAQ";
 import Gallery from "../Gallery/Gallery";
 import JoinCommunity from "../JoinCommunity/JoinCommunity";
 import NewsNEvents from "../NewsNEvents/NewsNEvents";
@@ -14,6 +15,7 @@ const Home = () => {
             <Gallery></Gallery>
             <JoinCommunity></JoinCommunity>
             <NewsNEvents></NewsNEvents>
+            <FAQ></FAQ>
         </div>
     );
 };
