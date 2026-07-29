@@ -1,4 +1,5 @@
 import AcademicCommunityEligibility from "../AcademicCommunityEligibility/AcademicCommunityEligibility";
+import CallToActionBanner from "../CallToActionBanner/CallToActionBanner";
 import OnlineApplication from "../OnlineApplication/OnlineApplication";
 
 
@@ -7,6 +8,7 @@ const Admission = () => {
         <div>
             <AcademicCommunityEligibility></AcademicCommunityEligibility>
             <OnlineApplication></OnlineApplication>
+            <CallToActionBanner></CallToActionBanner>
         </div>
     );
 };
