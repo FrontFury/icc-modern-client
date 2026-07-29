@@ -21,9 +21,9 @@ export default function SignIn() {
       <div className="relative md:w-7/12 bg-slate-900 text-white flex flex-col justify-between p-8 md:p-16 overflow-hidden">
         {/* Background Image with Dark Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
+          className="absolute inset-0 bg-cover bg-center "
           style={{ 
-            backgroundImage: `url('https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1600&auto=format&fit=crop')` 
+            backgroundImage: `url('https://i.ibb.co.com/G48W1pSR/Sign-In.jpg')` 
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/30" />

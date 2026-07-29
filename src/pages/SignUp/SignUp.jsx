@@ -22,13 +22,13 @@ export default function SignUp() {
     <div className="min-h-screen flex flex-col md:flex-row bg-white font-sans text-slate-800">
       
       {/* Left Column - Hero Visual Section (Ideal Commerce College) */}
-      <div className="relative md:w-7/12 bg-slate-950 text-white flex flex-col justify-between p-8 md:p-14 lg:p-16 overflow-hidden">
+      <div className="relative md:w-7/12 bg-slate-100 text-white flex flex-col justify-between p-8 md:p-14 lg:p-16 overflow-hidden">
         
         {/* Background Image with Dark Gradient Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ 
-            backgroundImage: `url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1600&auto=format&fit=crop')` 
+            backgroundImage: `url('https://i.ibb.co.com/WpcNNKKJ/Sign-Up.jpg')` 
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-950/40" />
@@ -79,7 +79,7 @@ export default function SignUp() {
         </div>
       </div>
 
-      {/* Right Column - Registration Form (Normal User Only) */}
+      {/* Right Column - Registration Form */}
       <div className="md:w-5/12 flex flex-col justify-between p-8 md:p-12 lg:p-14 bg-white overflow-y-auto">
         <div className="w-full max-w-md mx-auto my-auto">
           
@@ -89,7 +89,7 @@ export default function SignUp() {
               Create Account
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
-              Please enter your institutional details to register as a student.
+              Please enter your institutional details to register.
             </p>
           </div>
 
