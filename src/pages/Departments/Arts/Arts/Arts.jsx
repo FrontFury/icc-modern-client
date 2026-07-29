@@ -2,6 +2,7 @@ import ArtsBanner from "../ArtsBanner/ArtsBanner";
 import ArtsCoreDisciplines from "../ArtsCoreDisciplines/ArtsCoreDisciplines";
 import ArtsDepartmentOverview from "../ArtsDepartmentOverview/ArtsDepartmentOverview";
 import ArtsDistinguishedFaculty from "../ArtsDistinguishedFaculty/ArtsDistinguishedFaculty";
+import ArtsFacilitiesAndCTA from "../ArtsFacilitiesAndCTA/ArtsFacilitiesAndCTA";
 
 
 const Arts = () => {
@@ -11,6 +12,7 @@ const Arts = () => {
             <ArtsDepartmentOverview></ArtsDepartmentOverview>
             <ArtsCoreDisciplines></ArtsCoreDisciplines>
             <ArtsDistinguishedFaculty></ArtsDistinguishedFaculty>
+            <ArtsFacilitiesAndCTA></ArtsFacilitiesAndCTA>
         </div>
     );
 };
