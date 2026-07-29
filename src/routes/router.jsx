@@ -9,6 +9,7 @@ import Alumni from "../pages/Alumni/Alumni/Alumni";
 import ContactPage from "../pages/ContactPage/ContactPage/ContactPage";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
+import Faculty from "../pages/FacultyDirectory/Faculty/Faculty";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: "signUp", 
         element: <SignUp></SignUp>
+      },
+      {
+        path: "faculty", 
+        element: <Faculty></Faculty>
       },
     ],
   },

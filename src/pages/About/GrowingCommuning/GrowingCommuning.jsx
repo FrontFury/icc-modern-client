@@ -28,7 +28,7 @@ const GrowingCommuning = () => {
 
           {/* Secondary Outlined Button */}
           <a
-            href="/prospectus.pdf"
+            href="../../../../public/ICC-Prospectus.pdf"
             download
             className="w-full sm:w-auto bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 text-xs font-semibold px-8 py-3.5 rounded-lg shadow-sm transition-colors duration-200 inline-block text-center"
           >
