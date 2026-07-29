@@ -1,10 +1,14 @@
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeptOpen, setIsDeptOpen] = useState(false);
+  const location = useLocation();
+
+  // Check if current path matches any department route
+  const isDeptActive = location.pathname.startsWith('/departments');
 
   const departments = [
     { name: 'Science', to: '/departments/science' },
@@ -16,8 +20,8 @@ const NavBar = () => {
     { name: 'Home', to: '/' },
     { name: 'About', to: '/about' },
     { name: 'Departments', isDropdown: true },
-    { name: 'Faculty', to: '/admission' },
-    { name: 'Admission', to: '/faculty' },
+    { name: 'Faculty', to: '/faculty' },
+    { name: 'Admission', to: '/admission' },
     { name: 'Gallery', to: '/gallery' },
     { name: 'Notice', to: '/notice' },
     { name: 'Contact', to: '/contact' },
@@ -51,10 +55,19 @@ const NavBar = () => {
                 >
                   <button
                     onClick={() => setIsDeptOpen(!isDeptOpen)}
-                    className="relative py-2 text-sm font-medium transition-colors flex items-center gap-1 text-gray-600 hover:text-gray-900 focus:outline-none"
+                    className={`relative py-2 text-sm font-medium transition-colors flex items-center gap-1 focus:outline-none ${
+                      isDeptActive
+                        ? 'text-blue-600 font-semibold'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
                   >
                     {item.name}
                     <ChevronDown className={`w-4 h-4 transition-transform ${isDeptOpen ? 'rotate-180' : ''}`} />
+                    
+                    {/* Active Underline Indicator */}
+                    {isDeptActive && (
+                      <span className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-600 rounded-full" />
+                    )}
                   </button>
 
                   {/* Desktop Dropdown Submenu */}
@@ -140,7 +153,9 @@ const NavBar = () => {
                   <li key={item.name} className="space-y-1">
                     <button
                       onClick={() => setIsDeptOpen(!isDeptOpen)}
-                      className="w-full flex items-center justify-between py-2 text-base font-medium text-gray-600 focus:outline-none"
+                      className={`w-full flex items-center justify-between py-2 text-base font-medium focus:outline-none ${
+                        isDeptActive ? 'text-blue-600 font-semibold' : 'text-gray-600'
+                      }`}
                     >
                       <span>{item.name}</span>
                       <ChevronDown className={`w-4 h-4 transition-transform ${isDeptOpen ? 'rotate-180' : ''}`} />
