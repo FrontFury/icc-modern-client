@@ -19,7 +19,7 @@ const NavBar = () => {
   const navItems = [
     { name: 'Home', to: '/' },
     { name: 'About', to: '/about' },
-    { name: 'Notice', to: '/notice' },
+    { name: 'Notice', to: '/notices' },
     { name: 'Departments', isDropdown: true },
     { name: 'Faculty', to: '/faculty' },
     { name: 'Admission', to: '/admission' },

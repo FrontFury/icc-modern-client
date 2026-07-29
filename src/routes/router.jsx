@@ -10,6 +10,7 @@ import ContactPage from "../pages/ContactPage/ContactPage/ContactPage";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
 import Faculty from "../pages/FacultyDirectory/Faculty/Faculty";
+import NoticeBoard from "../pages/NoticeBoard/NoticeBoard";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "faculty", 
         element: <Faculty></Faculty>
+      },
+      {
+        path: "notices", 
+        element: <NoticeBoard></NoticeBoard>
       },
     ],
   },

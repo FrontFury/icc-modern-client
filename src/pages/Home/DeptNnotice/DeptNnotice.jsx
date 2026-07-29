@@ -1,5 +1,5 @@
 import { FlaskConical, Palette, Banknote, Megaphone, ArrowRight } from "lucide-react";
-import noticesData from "../../../../public/notices.json";
+import noticesData from "../../../../public/notice.json";
 
 const DeptNnotice = () => {
     const departments = [
@@ -121,7 +121,7 @@ const DeptNnotice = () => {
 
             {/* View All Notices Button */}
             <a
-              href="/notice"
+              href="/notices"
               className="mt-8 block text-center w-full py-2.5 px-4 rounded-md border border-gray-700 hover:border-gray-500 text-xs font-medium text-gray-200 hover:text-white transition-all bg-[#172033]"
             >
               View All Notices
