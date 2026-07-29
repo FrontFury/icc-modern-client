@@ -124,7 +124,7 @@ const NavBar = () => {
         {/* Login Button */}
         <div className="hidden md:flex items-center">
           <NavLink
-            to="/login"
+            to="/signIn"
             className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
           >
             Login
@@ -209,7 +209,7 @@ const NavBar = () => {
             })}
           </ul>
           <NavLink
-            to="/login"
+            to="/signIn"
             onClick={() => setIsOpen(false)}
             className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
           >

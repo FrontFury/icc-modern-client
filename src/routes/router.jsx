@@ -7,6 +7,8 @@ import Commerce from "../pages/Departments/Commerce/Commerce/Commerce";
 import Arts from "../pages/Departments/Arts/Arts/Arts";
 import Alumni from "../pages/Alumni/Alumni/Alumni";
 import ContactPage from "../pages/ContactPage/ContactPage/ContactPage";
+import SignIn from "../pages/SignIn/SignIn";
+import SignUp from "../pages/SignUp/SignUp";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
       {
         path: "contact", 
         element: <ContactPage></ContactPage>
+      },
+      {
+        path: "signIn", 
+        element: <SignIn></SignIn>
+      },
+      {
+        path: "signUp", 
+        element: <SignUp></SignUp>
       },
     ],
   },
