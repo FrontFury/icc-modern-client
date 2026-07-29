@@ -1,4 +1,5 @@
 import ArtsBanner from "../ArtsBanner/ArtsBanner";
+import ArtsCoreDisciplines from "../ArtsCoreDisciplines/ArtsCoreDisciplines";
 import ArtsDepartmentOverview from "../ArtsDepartmentOverview/ArtsDepartmentOverview";
 
 
@@ -7,6 +8,7 @@ const Arts = () => {
         <div>
             <ArtsBanner></ArtsBanner>
             <ArtsDepartmentOverview></ArtsDepartmentOverview>
+            <ArtsCoreDisciplines></ArtsCoreDisciplines>
         </div>
     );
 };
