@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
+import SocialLogin from '../../SocialLogin/SocialLogin';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -289,6 +290,7 @@ export default function SignUp() {
             >
               {isSubmitting ? 'Signing Up...' : 'Sign Up'}
             </button>
+            <SocialLogin></SocialLogin>
           </form>
 
           {/* Login Link */}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { IdCard, Lock, Eye, EyeOff, ShieldCheck, GraduationCap } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
+import SocialLogin from '../../SocialLogin/SocialLogin';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -201,11 +202,13 @@ export default function SignIn() {
           <button
             type="button"
             onClick={() => navigate('/signup')}
-            className="w-full py-3.5 px-4 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-sm rounded-lg transition"
+            className="w-full py-3.5 px-4 mb-4 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-sm rounded-lg transition"
           >
             Create an Account
           </button>
+          <SocialLogin></SocialLogin>
         </div>
+        
 
       </div>
     </div>
