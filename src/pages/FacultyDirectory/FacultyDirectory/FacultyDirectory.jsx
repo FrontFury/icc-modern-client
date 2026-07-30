@@ -1,6 +1,16 @@
-
-import { Search, Mail, ChevronLeft, ChevronRight, X, Clock, MapPin, GraduationCap, BookOpen, Activity } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  Search,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Clock,
+  MapPin,
+  GraduationCap,
+  BookOpen,
+  Activity,
+} from 'lucide-react';
 
 export default function FacultyDirectory() {
   const [facultyList, setFacultyList] = useState([]);
@@ -12,14 +22,17 @@ export default function FacultyDirectory() {
   // Modal State
   const [selectedFaculty, setSelectedFaculty] = useState(null);
 
-  // --- PAGINATION STATE ---
+  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // Set how many faculty cards to show per page
+  const itemsPerPage = 6;
 
   // Fetch JSON data from public directory
   useEffect(() => {
     fetch('/faculty.json')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch data');
+        return res.json();
+      })
       .then((data) => {
         setFacultyList(data);
         setLoading(false);
@@ -37,22 +50,24 @@ export default function FacultyDirectory() {
 
   // Filtering Logic
   const filteredFaculty = facultyList.filter((member) => {
+    const query = searchQuery.toLowerCase();
     const matchesSearch =
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.designation.toLowerCase().includes(searchQuery.toLowerCase());
+      (member.name && member.name.toLowerCase().includes(query)) ||
+      (member.specialization && member.specialization.toLowerCase().includes(query)) ||
+      (member.designation && member.designation.toLowerCase().includes(query));
 
     const matchesDept =
-      selectedDept === 'All' || member.department.toLowerCase() === selectedDept.toLowerCase();
+      selectedDept === 'All' ||
+      (member.department && member.department.toLowerCase() === selectedDept.toLowerCase());
 
     const matchesDesignation =
       selectedDesignation === 'All' ||
-      member.designation.toLowerCase().includes(selectedDesignation.toLowerCase());
+      (member.designation && member.designation.toLowerCase().includes(selectedDesignation.toLowerCase()));
 
     return matchesSearch && matchesDept && matchesDesignation;
   });
 
-  // --- PAGINATION LOGIC ---
+  // Pagination Logic
   const totalPages = Math.ceil(filteredFaculty.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -61,7 +76,7 @@ export default function FacultyDirectory() {
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll back to top on page change
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -100,7 +115,7 @@ export default function FacultyDirectory() {
                   placeholder="Search by name, research, or title..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:ring-0 transition placeholder-slate-400"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:outline-none transition placeholder-slate-400"
                 />
               </div>
             </div>
@@ -113,7 +128,7 @@ export default function FacultyDirectory() {
               <select
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:ring-0 transition cursor-pointer"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:outline-none transition cursor-pointer"
               >
                 <option value="All">All Departments</option>
                 <option value="Commerce">Commerce</option>
@@ -130,7 +145,7 @@ export default function FacultyDirectory() {
               <select
                 value={selectedDesignation}
                 onChange={(e) => setSelectedDesignation(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:ring-0 transition cursor-pointer"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-slate-800 focus:outline-none transition cursor-pointer"
               >
                 <option value="All">All Designations</option>
                 <option value="Professor">Professor</option>
@@ -142,9 +157,11 @@ export default function FacultyDirectory() {
           </div>
         </div>
 
-        {/* Faculty Grid Cards */}
+        {/* Faculty Cards Grid */}
         {loading ? (
-          <div className="text-center py-20 text-slate-400 text-sm">Loading faculty members...</div>
+          <div className="text-center py-20 text-slate-400 text-sm font-medium">
+            Loading faculty members...
+          </div>
         ) : currentFacultyList.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 text-slate-500">
             No faculty members found matching your search criteria.
@@ -158,7 +175,7 @@ export default function FacultyDirectory() {
                 className="group relative bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  {/* Card Image Wrapper with Hover Zoom */}
+                  {/* Card Image */}
                   <div className="relative h-60 w-full overflow-hidden bg-slate-100">
                     <img
                       src={faculty.image}
@@ -166,14 +183,14 @@ export default function FacultyDirectory() {
                       className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                     />
                     
-                    {/* Head of Dept Badge */}
+                    {/* Head of Department Badge */}
                     {faculty.isHeadOfDept && (
                       <span className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm z-10">
                         Head of Department
                       </span>
                     )}
 
-                    {/* HOVER ACTIVITY BAR */}
+                    {/* Hover Activity Bar */}
                     <div className="absolute inset-x-0 bottom-0 bg-slate-950/80 backdrop-blur-md p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between text-white border-t border-white/10">
                       <div className="flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
@@ -190,7 +207,7 @@ export default function FacultyDirectory() {
                     </div>
                   </div>
 
-                  {/* Card Content Body */}
+                  {/* Body Info */}
                   <div className="p-5">
                     <h3 className="text-lg font-extrabold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
                       {faculty.name}
@@ -210,7 +227,7 @@ export default function FacultyDirectory() {
                   </div>
                 </div>
 
-                {/* Card Footer Actions */}
+                {/* Card Actions */}
                 <div className="px-5 pb-5 pt-2 flex items-center gap-2">
                   <button
                     type="button"
@@ -236,10 +253,9 @@ export default function FacultyDirectory() {
           </div>
         )}
 
-        {/* --- DYNAMIC WORKING PAGINATION SECTION --- */}
+        {/* Pagination Section */}
         {totalPages > 1 && (
           <div className="mt-12 flex items-center justify-center gap-1.5 text-xs font-semibold">
-            {/* Previous Button */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -252,9 +268,7 @@ export default function FacultyDirectory() {
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            {/* Render Page Numbers */}
             {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => {
-              // Show active, first, last, and neighboring pages to handle large total pages neatly
               if (
                 page === 1 ||
                 page === totalPages ||
@@ -286,7 +300,6 @@ export default function FacultyDirectory() {
               return null;
             })}
 
-            {/* Next Button */}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
@@ -303,7 +316,7 @@ export default function FacultyDirectory() {
 
       </div>
 
-      {/* FACULTY DETAILS MODAL */}
+      {/* Details Modal */}
       {selectedFaculty && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 relative text-slate-800">
@@ -387,7 +400,7 @@ export default function FacultyDirectory() {
                 </div>
               </div>
 
-              {selectedFaculty.publications && (
+              {selectedFaculty.publications && selectedFaculty.publications.length > 0 && (
                 <div className="pt-2">
                   <div className="flex items-center gap-2 text-slate-900 font-bold text-xs uppercase tracking-wider mb-2">
                     <BookOpen className="w-4 h-4 text-slate-500" />

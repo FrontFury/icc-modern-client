@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLoaderData } from 'react-router-dom';
 import {
   Search,
   X,
@@ -11,14 +12,12 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Heart
 } from 'lucide-react';
 
 const Alumni = () => {
-    const [alumniData, setAlumniData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Consume data pre-loaded by React Router loader
+  const alumniData = useLoaderData() || [];
 
   // Filter & Search states
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,26 +31,6 @@ const Alumni = () => {
 
   // Selected Alumni for Modal
   const [selectedAlumni, setSelectedAlumni] = useState(null);
-
-  // Fetch JSON from the public folder
-  useEffect(() => {
-    fetch('/alumniData.json')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to load alumni data');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setAlumniData(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching alumni json:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
 
   // Extract unique filter options dynamically
   const passingYears = useMemo(() => {
@@ -75,7 +54,7 @@ const Alumni = () => {
         item.father_name?.toLowerCase().includes(q) ||
         item.mother_name?.toLowerCase().includes(q);
 
-      const matchesYear = !selectedYear || item.passing_year === selectedYear;
+      const matchesYear = !selectedYear || String(item.passing_year) === String(selectedYear);
       const matchesDept = !selectedDept || item.dept === selectedDept;
       const matchesGender = !selectedGender || item.gender === selectedGender;
 
@@ -112,29 +91,6 @@ const Alumni = () => {
       day: 'numeric'
     });
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="flex items-center gap-3 bg-white/70 backdrop-blur-md px-6 py-4 rounded-2xl shadow-xl border border-white/60">
-          <Sparkles className="w-6 h-6 text-blue-600 animate-spin" />
-          <span className="font-semibold text-slate-700">Loading Alumni Directory...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-red-100 text-center max-w-md">
-          <p className="text-red-500 font-bold mb-2">Error Loading Data</p>
-          <p className="text-slate-600 text-sm">{error}</p>
-          <p className="text-xs text-slate-400 mt-4">Make sure <code className="bg-slate-100 px-1 py-0.5 rounded">alumniData.json</code> exists inside your <code className="bg-slate-100 px-1 py-0.5 rounded">public/</code> directory.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-indigo-50/30 to-blue-50/50 text-slate-800 pb-16 font-sans relative overflow-x-hidden">

@@ -40,7 +40,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "alumni", 
-        element: <Alumni></Alumni>
+        element: <Alumni></Alumni>,
+        loader: () => fetch("/alumniData.json").then((res) => res.json()),
       },
       {
         path: "contact", 
@@ -60,7 +61,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "notices", 
-        element: <NoticeBoard></NoticeBoard>
+        element: <NoticeBoard></NoticeBoard>,
+        loader: () => fetch("/notices.json").then((res) => res.json())
       },
       {
         path: "admission", 
