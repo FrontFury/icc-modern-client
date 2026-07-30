@@ -12,11 +12,13 @@ import SignUp from "../pages/SignUp/SignUp";
 import Faculty from "../pages/FacultyDirectory/Faculty/Faculty";
 import NoticeBoard from "../pages/NoticeBoard/NoticeBoard";
 import Admission from "../pages/Admission/Admission/Admission";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         index: true,
