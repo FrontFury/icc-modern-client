@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
+import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2, Camera, UploadCloud, X } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
+import axios from 'axios';
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  // Initialize React Hook Form with mode: 'onChange' for real-time validation
   const {
     register,
     handleSubmit,
+    setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
     mode: 'onChange',
@@ -22,21 +25,77 @@ export default function SignUp() {
       studentId: '',
       department: '',
       password: '',
+      profileImage: null,
       agreedToTerms: false,
     },
   });
 
-  const {registerUser} = useAuth()
+  const { registerUser,updateUserProfile } = useAuth();
 
-  // Submit Handler
-  const onSubmit = (data) => {
-    registerUser(data.email, data.password)
-    .then(result => {
-      console.log(result.user)
-    })
-    .catch(error =>{
-      console.log(error)
-    })
+  // Register profileImage manually for validation
+  React.useEffect(() => {
+    register('profileImage', { required: 'Profile picture is required' });
+  }, [register]);
+
+  // Handle Image Selection & Preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size should be less than 5MB");
+        return;
+      }
+      // Store raw File directly in RHF state
+      setValue('profileImage', file, { shouldValidate: true });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setValue('profileImage', null, { shouldValidate: true });
+  };
+
+  // Fixed Async Submit Handler
+  const onSubmit = async (data) => {
+    try {
+      console.log('Submitted Data:', data);
+
+      // 1. Create Firebase / App User
+      const result = await registerUser(data.email, data.password);
+      console.log('Registered User:', result.user);
+
+      // 2. Upload image to ImgBB
+      if (data.profileImage) {
+        const formData = new FormData();
+        formData.append('image', data.profileImage); // Direct File object passed here
+
+        const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
+        const res = await axios.post(image_API_URL, formData);
+        
+        const imageUrl = res.data.data.display_url;
+
+        const userProfile = {
+          displayName : data.name ,
+          photoURL : imageUrl
+        }
+        updateUserProfile(userProfile)
+        .then(() => {
+          console.log("User Profile Updated Done")
+        })
+        .catch(error => console.log(error))
+      }
+
+      // Navigate after successful sign-up
+      navigate('/');
+    } catch (error) {
+      console.error('Sign Up Error:', error);
+    }
   };
 
   return (
@@ -44,17 +103,12 @@ export default function SignUp() {
       
       {/* Left Column - Hero Visual Section */}
       <div className="relative md:w-7/12 bg-slate-100 text-white flex flex-col justify-between p-8 md:p-14 lg:p-16 overflow-hidden">
-        
-        {/* Background Image with Dark Gradient Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ 
-            backgroundImage: `url('https://i.ibb.co.com/WpcNNKKJ/Sign-Up.jpg')` 
-          }}
+          style={{ backgroundImage: `url('https://i.ibb.co.com/WpcNNKKJ/Sign-Up.jpg')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-950/40" />
 
-        {/* Top Header / Branding */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600/90 text-white flex items-center justify-center font-black text-lg border border-blue-400/30 shadow-lg">
@@ -71,7 +125,6 @@ export default function SignUp() {
           </div>
         </div>
 
-        {/* Middle Hero Text */}
         <div className="relative z-10 my-auto py-10 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/30 text-blue-300 text-xs font-semibold mb-6 backdrop-blur-sm">
             <Building2 className="w-3.5 h-3.5" />
@@ -86,7 +139,6 @@ export default function SignUp() {
           </p>
         </div>
 
-        {/* Bottom Statistics / Badges */}
         <div className="relative z-10 flex items-center gap-10 pt-6 border-t border-slate-800/80">
           <div>
             <div className="text-2xl md:text-3xl font-black text-amber-400">20+</div>
@@ -104,7 +156,6 @@ export default function SignUp() {
       <div className="md:w-5/12 flex flex-col justify-between p-8 md:p-12 lg:p-14 bg-white overflow-y-auto">
         <div className="w-full max-w-md mx-auto my-auto">
           
-          {/* Header */}
           <div className="mb-6">
             <h2 className="text-3xl font-extrabold text-slate-900 mb-1 tracking-tight">
               Create Account
@@ -116,6 +167,66 @@ export default function SignUp() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             
+            {/* Profile Image Upload */}
+            <div className="flex flex-col items-center justify-center pb-2">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 self-start">
+                Profile Photo
+              </label>
+
+              <div className="relative group w-full">
+                {imagePreview ? (
+                  <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden ring-4 ring-blue-500/20 shadow-md group">
+                    <img
+                      src={imagePreview}
+                      alt="Profile Preview"
+                      className="w-full h-full object-cover transition transform duration-300 group-hover:scale-105"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition shadow-lg"
+                      title="Remove image"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="profileImageInput"
+                    className={`flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-200 bg-slate-50/70 hover:bg-blue-50/50 ${
+                      errors.profileImage ? 'border-red-400 bg-red-50/30' : 'border-slate-300 hover:border-blue-400'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center justify-center pt-3 pb-3">
+                      <div className="w-9 h-9 mb-1.5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                        <UploadCloud className="w-5 h-5" />
+                      </div>
+                      <p className="text-xs font-semibold text-slate-700 mb-0.5">
+                        Click to upload photo
+                      </p>
+                      <p className="text-[10px] text-slate-400">
+                        PNG, JPG or WEBP (Max. 5MB)
+                      </p>
+                    </div>
+                  </label>
+                )}
+
+                <input
+                  id="profileImageInput"
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </div>
+
+              {errors.profileImage && (
+                <p className="text-[11px] text-red-500 font-medium mt-1.5 self-start">
+                  {errors.profileImage.message}
+                </p>
+              )}
+            </div>
+
             {/* Full Name */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -128,9 +239,7 @@ export default function SignUp() {
                 <input
                   type="text"
                   placeholder="e.g. Tanvir Hossain"
-                  {...register('fullName', {
-                    required: 'Full name is required',
-                  })}
+                  {...register('fullName', { required: 'Full name is required' })}
                   className={`w-full pl-10 pr-4 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
                     errors.fullName ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
                   }`}
@@ -143,7 +252,6 @@ export default function SignUp() {
 
             {/* Email & Student ID Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Institutional Email */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Email Address
@@ -172,7 +280,6 @@ export default function SignUp() {
                 )}
               </div>
 
-              {/* Student ID */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Student Roll / ID
@@ -184,9 +291,7 @@ export default function SignUp() {
                   <input
                     type="text"
                     placeholder="ICC-2025-1042"
-                    {...register('studentId', {
-                      required: 'Student ID is required',
-                    })}
+                    {...register('studentId', { required: 'Student ID is required' })}
                     className={`w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
                       errors.studentId ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
                     }`}
@@ -204,9 +309,7 @@ export default function SignUp() {
                 Department / Program
               </label>
               <select
-                {...register('department', {
-                  required: 'Please select a department',
-                })}
+                {...register('department', { required: 'Please select a department' })}
                 className={`w-full px-3.5 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 transition focus:bg-white focus:outline-none ${
                   errors.department ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
                 }`}
@@ -239,8 +342,7 @@ export default function SignUp() {
                     required: 'Password is required',
                     pattern: {
                       value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message:
-                        'Password must be 8+ characters with at least one uppercase letter, one lowercase letter, one number, and one special character',
+                      message: 'Password must be 8+ characters with at least one uppercase, lowercase, number, and special character',
                     },
                   })}
                   className={`w-full pl-10 pr-10 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
@@ -290,7 +392,7 @@ export default function SignUp() {
             >
               {isSubmitting ? 'Signing Up...' : 'Sign Up'}
             </button>
-            <SocialLogin></SocialLogin>
+            <SocialLogin />
           </form>
 
           {/* Login Link */}
@@ -305,9 +407,7 @@ export default function SignUp() {
             </button>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 }

@@ -1,11 +1,23 @@
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeptOpen, setIsDeptOpen] = useState(false);
   const location = useLocation();
+  const {user,logOut} = useAuth()
+
+  const handleLogout = () =>{
+    logOut()
+    .then(result => {
+      console.log(result.user)
+    })
+    .catch(error =>{
+      console.log(error)
+    })
+  }
 
   // Check if current path matches any department route
   const isDeptActive = location.pathname.startsWith('/departments');
@@ -124,12 +136,17 @@ const NavBar = () => {
 
         {/* Login Button */}
         <div className="hidden md:flex items-center">
-          <NavLink
+          {user ? <p
+            onClick={handleLogout}
+            className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
+          >
+            Log Out
+          </p> : <NavLink
             to="/signIn"
             className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
           >
             Login
-          </NavLink>
+          </NavLink>}
         </div>
 
         {/* Mobile Menu Toggle */}
