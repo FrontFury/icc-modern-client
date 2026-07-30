@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
 
 export default function SignUp() {
   const navigate = useNavigate();
-
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [department, setDepartment] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ fullName, email, studentId, department, password, agreedToTerms });
+  // Initialize React Hook Form with mode: 'onChange' for real-time validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      fullName: '',
+      email: '',
+      studentId: '',
+      department: '',
+      password: '',
+      agreedToTerms: false,
+    },
+  });
+
+  const {registerUser} = useAuth()
+
+  // Submit Handler
+  const onSubmit = (data) => {
+    registerUser(data.email, data.password)
+    .then(result => {
+      console.log(result.user)
+    })
+    .catch(error =>{
+      console.log(error)
+    })
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white font-sans text-slate-800">
       
-      {/* Left Column - Hero Visual Section (Ideal Commerce College) */}
+      {/* Left Column - Hero Visual Section */}
       <div className="relative md:w-7/12 bg-slate-100 text-white flex flex-col justify-between p-8 md:p-14 lg:p-16 overflow-hidden">
         
         {/* Background Image with Dark Gradient Overlay */}
@@ -93,7 +113,7 @@ export default function SignUp() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             
             {/* Full Name */}
             <div>
@@ -106,13 +126,18 @@ export default function SignUp() {
                 </div>
                 <input
                   type="text"
-                  required
                   placeholder="e.g. Tanvir Hossain"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-100/70 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition"
+                  {...register('fullName', {
+                    required: 'Full name is required',
+                  })}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                    errors.fullName ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  }`}
                 />
               </div>
+              {errors.fullName && (
+                <p className="text-[11px] text-red-500 font-medium mt-1">{errors.fullName.message}</p>
+              )}
             </div>
 
             {/* Email & Student ID Grid */}
@@ -128,13 +153,22 @@ export default function SignUp() {
                   </div>
                   <input
                     type="email"
-                    required
                     placeholder="student@icc.edu.bd"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition"
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address',
+                      },
+                    })}
+                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                    }`}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-[11px] text-red-500 font-medium mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               {/* Student ID */}
@@ -148,13 +182,18 @@ export default function SignUp() {
                   </div>
                   <input
                     type="text"
-                    required
                     placeholder="ICC-2025-1042"
-                    value={studentId}
-                    onChange={(e) => setStudentId(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition"
+                    {...register('studentId', {
+                      required: 'Student ID is required',
+                    })}
+                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                      errors.studentId ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                    }`}
                   />
                 </div>
+                {errors.studentId && (
+                  <p className="text-[11px] text-red-500 font-medium mt-1">{errors.studentId.message}</p>
+                )}
               </div>
             </div>
 
@@ -164,10 +203,12 @@ export default function SignUp() {
                 Department / Program
               </label>
               <select
-                required
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-100/70 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-xl text-xs sm:text-sm text-slate-800 transition"
+                {...register('department', {
+                  required: 'Please select a department',
+                })}
+                className={`w-full px-3.5 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 transition focus:bg-white focus:outline-none ${
+                  errors.department ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                }`}
               >
                 <option value="" disabled>Select your department</option>
                 <optgroup label="HSC Programs (Class XI & XII)">
@@ -176,6 +217,9 @@ export default function SignUp() {
                   <option value="hsc-arts">HSC - Humanities / Arts</option>
                 </optgroup>
               </select>
+              {errors.department && (
+                <p className="text-[11px] text-red-500 font-medium mt-1">{errors.department.message}</p>
+              )}
             </div>
 
             {/* Create Password */}
@@ -189,11 +233,18 @@ export default function SignUp() {
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="Min. 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-100/70 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition"
+                  placeholder="Min. 8 chars (A-z, 0-9, !@#)"
+                  {...register('password', {
+                    required: 'Password is required',
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        'Password must be 8+ characters with at least one uppercase letter, one lowercase letter, one number, and one special character',
+                    },
+                  })}
+                  className={`w-full pl-10 pr-10 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  }`}
                 />
                 <button
                   type="button"
@@ -203,31 +254,40 @@ export default function SignUp() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-[11px] text-red-500 font-medium mt-1">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Terms Verification */}
-            <div className="flex items-start gap-2.5 pt-1">
-              <input
-                id="terms"
-                type="checkbox"
-                required
-                checked={agreedToTerms}
-                onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer"
-              />
-              <label htmlFor="terms" className="text-[11px] font-medium text-slate-600 leading-snug cursor-pointer select-none">
-                I verify that I am an active student of Ideal Commerce College and agree to the{' '}
-                <a href="#terms" className="text-blue-600 font-semibold hover:underline">Institutional Terms</a> and{' '}
-                <a href="#privacy" className="text-blue-600 font-semibold hover:underline">Privacy Policy</a>.
-              </label>
+            <div>
+              <div className="flex items-start gap-2.5 pt-1">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  {...register('agreedToTerms', {
+                    required: 'You must agree to the institutional terms',
+                  })}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer"
+                />
+                <label htmlFor="terms" className="text-[11px] font-medium text-slate-600 leading-snug cursor-pointer select-none">
+                  I verify that I am an active student of Ideal Commerce College and agree to the{' '}
+                  <a href="#terms" className="text-blue-600 font-semibold hover:underline">Institutional Terms</a> and{' '}
+                  <a href="#privacy" className="text-blue-600 font-semibold hover:underline">Privacy Policy</a>.
+                </label>
+              </div>
+              {errors.agreedToTerms && (
+                <p className="text-[11px] text-red-500 font-medium mt-1">{errors.agreedToTerms.message}</p>
+              )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.99] mt-2"
+              disabled={isSubmitting}
+              className="w-full py-3 px-4 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.99] mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign Up
+              {isSubmitting ? 'Signing Up...' : 'Sign Up'}
             </button>
           </form>
 

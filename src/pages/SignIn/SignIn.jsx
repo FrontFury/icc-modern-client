@@ -1,18 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { IdCard, Lock, Eye, EyeOff, ShieldCheck, GraduationCap } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
 
 export default function SignIn() {
-  const [studentId, setStudentId] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-
   const navigate = useNavigate();
+  // Password visibility state stays as UI state
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ studentId, password, rememberMe });
+  // Initialize React Hook Form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      studentId: '',
+      password: '',
+      rememberMe: false,
+    },
+  });
+
+  const {signInUser} = useAuth()
+
+  // Submission handler
+  const onSubmit = (data) => {
+    signInUser(data.email,data.password)
+    .then(result => {
+      console.log(result.user)
+    })
+    .catch(error =>{
+      console.log(error)
+    })
   };
 
   return (
@@ -21,7 +42,7 @@ export default function SignIn() {
       <div className="relative md:w-7/12 bg-slate-900 text-white flex flex-col justify-between p-8 md:p-16 overflow-hidden">
         {/* Background Image with Dark Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center "
+          className="absolute inset-0 bg-cover bg-center"
           style={{ 
             backgroundImage: `url('https://i.ibb.co.com/G48W1pSR/Sign-In.jpg')` 
           }}
@@ -74,7 +95,8 @@ export default function SignIn() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+            
             {/* Student / Staff ID Field */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
@@ -86,13 +108,18 @@ export default function SignIn() {
                 </div>
                 <input
                   type="text"
-                  required
                   placeholder="Enter your unique ID"
-                  value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-slate-100/80 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-lg text-sm text-slate-800 placeholder-slate-400 transition"
+                  {...register('email', {
+                    required: 'Student/Staff ID is required',
+                  })}
+                  className={`w-full pl-11 pr-4 py-3 bg-slate-100/80 border rounded-lg text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                    errors.studentId ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  }`}
                 />
               </div>
+              {errors.studentId && (
+                <p className="text-xs text-red-500 font-medium mt-1">{errors.studentId.message}</p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -111,11 +138,18 @@ export default function SignIn() {
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-11 py-3 bg-slate-100/80 border border-slate-200 focus:bg-white focus:border-slate-800 focus:ring-0 rounded-lg text-sm text-slate-800 placeholder-slate-400 transition"
+                  {...register('password', {
+                    required: 'Password is required',
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        'Password must be 8+ characters with at least one uppercase letter, one lowercase letter, one number, and one special character',
+                    },
+                  })}
+                  className={`w-full pl-11 pr-11 py-3 bg-slate-100/80 border rounded-lg text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
+                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  }`}
                 />
                 <button
                   type="button"
@@ -125,6 +159,9 @@ export default function SignIn() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-xs text-red-500 font-medium mt-1">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Remember Me Checkbox */}
@@ -132,11 +169,10 @@ export default function SignIn() {
               <input
                 id="remember-me"
                 type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
+                {...register('rememberMe')}
                 className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer"
               />
-              <label htmlFor="remember-me" className="ml-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+              <label htmlFor="remember-me" className="ml-2.5 text-xs font-medium text-slate-700 cursor-pointer select-none">
                 Remember Me
               </label>
             </div>
@@ -144,9 +180,10 @@ export default function SignIn() {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full py-3.5 px-4 bg-black hover:bg-slate-800 text-white font-bold text-sm rounded-lg transition shadow-md hover:shadow-lg active:scale-[0.99]"
+              disabled={isSubmitting}
+              className="w-full py-3.5 px-4 bg-black hover:bg-slate-800 text-white font-bold text-sm rounded-lg transition shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {isSubmitting ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
