@@ -29,7 +29,8 @@ const NavBar = () => {
 
   return (
     <nav className="w-full bg-[#f8f9fa] z-10 border-b border-gray-200">
-      <div className="w-5/6 mx-auto px-6 h-20 flex items-center justify-between">
+      {/* Reduced padding on mobile from px-6 to px-3 */}
+      <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6 h-20 flex items-center justify-between">
         
         {/* College Logo */}
         <div className="flex items-center">
@@ -145,7 +146,8 @@ const NavBar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#f8f9fa] border-t border-gray-200 px-6 pt-2 pb-6 space-y-3">
+        /* Decreased horizontal padding from px-6 to px-3 for mobile menu */
+        <div className="md:hidden bg-[#f8f9fa] border-t border-gray-200 px-3 pt-2 pb-6 space-y-3">
           <ul className="space-y-3">
             {navItems.map((item) => {
               if (item.isDropdown) {
@@ -163,7 +165,7 @@ const NavBar = () => {
 
                     {/* Mobile Submenu Options */}
                     {isDeptOpen && (
-                      <div className="pl-4 space-y-2 border-l-2 border-gray-200 my-1">
+                      <div className="pl-3 space-y-2 border-l-2 border-gray-200 my-1">
                         {departments.map((dept) => (
                           <NavLink
                             key={dept.name}

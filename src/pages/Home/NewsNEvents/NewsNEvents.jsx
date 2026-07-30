@@ -1,8 +1,9 @@
+import React from "react";
 import { Newspaper, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const NewsNEvents = () => {
-    const newsItems = [
+  const newsItems = [
     {
       id: 1,
       date: "OCT 30, 2024",
@@ -38,7 +39,7 @@ const NewsNEvents = () => {
       month: "DEC",
       title: "Victory Day 2026",
       location: "Campus Grounds",
-      time: "10:00 AM  - 4:00 PM ",
+      time: "10:00 AM - 4:00 PM",
     },
     {
       id: 3,
@@ -67,23 +68,21 @@ const NewsNEvents = () => {
   ];
 
   return (
-    <section className="w-full bg-[#f8f9fa] py-16 px-4 md:px-8 lg:px-16">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+    <section className="w-full bg-[#f8f9fa] py-12 sm:py-16 px-4 sm:px-6 md:px-8 lg:px-16">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
         
         {/* Left Column: Latest News */}
         <div className="space-y-6">
-          {/* Column Header */}
           <div className="flex items-center gap-3">
             <Newspaper className="w-5 h-5 text-[#1d4ed8]" />
             <h2 className="text-base font-bold text-[#1f2937]">Latest News</h2>
           </div>
 
-          {/* News List */}
           <div className="space-y-4">
             {newsItems.map((news) => (
               <div
                 key={news.id}
-                className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
               >
                 <span className="text-xs font-semibold tracking-wider text-[#2563eb] block mb-1">
                   {news.date}
@@ -102,33 +101,29 @@ const NewsNEvents = () => {
         {/* Right Column: Upcoming Events */}
         <div className="flex flex-col justify-between space-y-6">
           <div>
-            {/* Column Header */}
             <div className="flex items-center gap-3 mb-6">
               <Calendar className="w-5 h-5 text-[#f97316]" />
               <h2 className="text-base font-bold text-[#1f2937]">Upcoming Events</h2>
             </div>
 
-            {/* Events List */}
             <div className="space-y-4">
               {eventItems.map((event) => (
                 <div
                   key={event.id}
-                  className="flex items-center gap-4 group cursor-pointer"
+                  className="flex items-center gap-3 sm:gap-4 group cursor-pointer"
                 >
-                  {/* Date Box */}
-                  <div className="bg-[#111827] text-white rounded-lg w-14 h-14 flex flex-col items-center justify-center shrink-0">
-                    <span className="text-lg font-bold leading-none">{event.day}</span>
-                    <span className="text-[10px] font-semibold tracking-wider text-gray-300 mt-0.5">
+                  <div className="bg-[#111827] text-white rounded-lg w-12 h-12 sm:w-14 sm:h-14 flex flex-col items-center justify-center shrink-0">
+                    <span className="text-base sm:text-lg font-bold leading-none">{event.day}</span>
+                    <span className="text-[9px] sm:text-[10px] font-semibold tracking-wider text-gray-300 mt-0.5">
                       {event.month}
                     </span>
                   </div>
 
-                  {/* Event Details */}
                   <div>
-                    <h3 className="text-sm font-bold text-[#111827] group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#111827] group-hover:text-blue-600 transition-colors">
                       {event.title}
                     </h3>
-                    <p className="text-xs text-[#6b7280] mt-0.5">
+                    <p className="text-[11px] sm:text-xs text-[#6b7280] mt-0.5">
                       {event.location} • {event.time}
                     </p>
                   </div>
@@ -137,7 +132,6 @@ const NewsNEvents = () => {
             </div>
           </div>
 
-          {/* View Full Calendar Button */}
           <div className="pt-2">
             <Link
               to="/calendar"

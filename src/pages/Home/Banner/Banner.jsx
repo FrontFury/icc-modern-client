@@ -41,7 +41,8 @@ const Banner = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-5/6 mx-auto px-6 pt-20 pb-16 flex-1 flex flex-col justify-center">
+      {/* Reduced padding on mobile from px-6 to px-3 */}
+      <div className="relative z-10 w-11/12 md:w-5/6 mx-auto px-3 md:px-6 pt-16 md:pt-20 pb-16 flex-1 flex flex-col justify-center">
         <div className="max-w-2xl">
           {/* Badge */}
           <span className="inline-block bg-[#f3a638] text-black font-bold text-xs uppercase px-3 py-1.5 rounded-full tracking-wider mb-6">
@@ -49,22 +50,22 @@ const Banner = () => {
           </span>
 
           {/* Heading */}
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
             Welcome to Ideal Commerce College
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-300 text-base md:text-lg mb-8 leading-relaxed">
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8 leading-relaxed">
             Empowering Students for a Better Future through rigorous academic tradition,
             cutting-edge research, and a community built on integrity.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-4">
-            <button className="bg-[#0b63e5] hover:bg-blue-700 text-white font-medium px-7 py-3 rounded-md transition-colors shadow-md">
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            <button className="bg-[#0b63e5] hover:bg-blue-700 text-white font-medium text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-md transition-colors shadow-md">
               Apply Now
             </button>
-            <button className="border border-white/80 text-white hover:bg-white/10 font-medium px-7 py-3 rounded-md transition-colors">
+            <button className="border border-white/80 text-white hover:bg-white/10 font-medium text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-md transition-colors">
               Explore Departments
             </button>
           </div>
@@ -72,15 +73,16 @@ const Banner = () => {
       </div>
 
       {/* Overlapping Bottom Stat Cards */}
-      <div className="relative z-20 w-5/6 mx-auto px-6 -mb-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Reduced padding on mobile from px-6 to px-3 */}
+      <div className="relative z-20 w-11/12 md:w-5/6 mx-auto px-3 md:px-6 -mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`bg-white/95 backdrop-blur-md p-6 rounded-lg shadow-lg text-center flex flex-col items-center justify-center border-b-4 ${stat.borderColor}`}
+              className={`bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded-lg shadow-lg text-center flex flex-col items-center justify-center border-b-4 ${stat.borderColor}`}
             >
               <div className="mb-2">{stat.icon}</div>
-              <h3 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
                 {stat.value}
               </h3>
               <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mt-1">

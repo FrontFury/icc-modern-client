@@ -2,7 +2,7 @@ import { FlaskConical, Palette, Banknote, Megaphone, ArrowRight } from "lucide-r
 import noticesData from "../../../../public/notice.json";
 
 const DeptNnotice = () => {
-    const departments = [
+  const departments = [
     {
       id: 1,
       title: "Science",
@@ -33,8 +33,9 @@ const DeptNnotice = () => {
   ];
 
   return (
-    <section className="w-full bg-[#f8f9fa] py-16">
-      <div className="w-5/6 mx-auto px-6">
+    <section className="w-full bg-[#f8f9fa] py-12 md:py-16">
+      {/* Reduced padding on mobile from px-6 to px-3 */}
+      <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6">
         {/* Main Grid: Left for Departments, Right for Notices */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
@@ -43,7 +44,7 @@ const DeptNnotice = () => {
             {/* Header */}
             <div>
               <div className="w-10 h-1 bg-amber-500 rounded-full mb-3" />
-              <h2 className="text-3xl font-extrabold text-[#111827] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
                 Academic Departments
               </h2>
               <p className="text-gray-500 mt-2 text-sm md:text-base">
@@ -88,7 +89,7 @@ const DeptNnotice = () => {
           </div>
 
           {/* Right Column (Latest Notices Sidebar) */}
-          <div className="bg-[#111726] text-white rounded-xl p-7 shadow-xl flex flex-col justify-between min-h-[460px]">
+          <div className="bg-[#111726] text-white rounded-xl p-5 sm:p-7 shadow-xl flex flex-col justify-between min-h-[460px]">
             <div>
               {/* Sidebar Header */}
               <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">

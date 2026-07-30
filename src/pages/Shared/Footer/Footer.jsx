@@ -3,7 +3,8 @@ import { Globe, Mail, MapPin, Phone, Share2 } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="bg-secondary text-gray-400 font-sans border-t border-gray-900">
-      <div className="w-5/6 mx-auto px-6 py-12 md:py-16">
+      {/* Reduced padding and set responsive container width for mobile */}
+      <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6 py-12 md:py-16">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           
@@ -83,17 +84,17 @@ const Footer = () => {
 
         {/* Bottom Bar Divider & Copyright */}
         <div className="pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
-<p>
-  © {new Date().getFullYear()} Ideal Commerce College (EIIN: 134207). All rights reserved. Developed by{' '}
-  <a 
-    href="https://tasin07.vercel.app/" // Replace with your actual portfolio, GitHub, or LinkedIn URL
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="hover:text-amber-500 font-medium transition-colors"
-  >
-    Estiak Ahamed Tasin
-  </a>
-</p>
+          <p className="text-center md:text-left">
+            © {new Date().getFullYear()} Ideal Commerce College (EIIN: 134207). All rights reserved. Developed by{' '}
+            <a 
+              href="https://tasin07.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-amber-500 font-medium transition-colors"
+            >
+              Estiak Ahamed Tasin
+            </a>
+          </p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-gray-400 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-gray-400 transition-colors">Campus Map</a>
