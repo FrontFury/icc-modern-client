@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   Pin,
   ChevronLeft,
@@ -108,6 +108,9 @@ export default function NoticeBoard() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
             Notice Board
+          </h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+            <Link to='/addNotice'>Add Notice</Link>
           </h1>
           <p className="text-slate-500 text-sm sm:text-base leading-relaxed max-w-2xl">
             Stay informed with the latest official announcements, academic schedules, and campus events from Ideal Commerce College.

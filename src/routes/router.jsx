@@ -14,6 +14,7 @@ import NoticeBoard from "../pages/NoticeBoard/NoticeBoard";
 import Admission from "../pages/Admission/Admission/Admission";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import PrivateRoute from "./PrivateRoute";
+import AddNotice from "../pages/Shared/AdminPage/AddNotice";
 
 export const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ export const router = createBrowserRouter([
         path: "notices",
         element: <NoticeBoard />,
         loader: () => fetch("/notices.json").then((res) => res.json()),
+      },
+      {
+        path: "/addNotice",
+        element: <AddNotice />,
       },
       {
         path: "admission",
