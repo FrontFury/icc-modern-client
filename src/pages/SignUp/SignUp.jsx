@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2, Camera, UploadCloud, X } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
@@ -8,6 +8,7 @@ import axios from 'axios';
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -64,7 +65,6 @@ export default function SignUp() {
   // Fixed Async Submit Handler
   const onSubmit = async (data) => {
     try {
-      console.log('Submitted Data:', data);
 
       // 1. Create Firebase / App User
       const result = await registerUser(data.email, data.password);
@@ -87,6 +87,8 @@ export default function SignUp() {
         updateUserProfile(userProfile)
         .then(() => {
           console.log("User Profile Updated Done")
+          navigate(location.state || '/')
+
         })
         .catch(error => console.log(error))
       }
@@ -400,6 +402,7 @@ export default function SignUp() {
             Already have an account?{' '}
             <button
               type="button"
+              state={location.state}
               onClick={() => navigate('/signIn')}
               className="font-bold text-blue-600 hover:underline inline-block"
             >

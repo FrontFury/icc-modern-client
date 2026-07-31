@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useLoaderData } from 'react-router-dom';
 import {
   Search,
   X,
@@ -14,10 +13,33 @@ import {
   ChevronRight,
   Heart
 } from 'lucide-react';
+import CustomLoader from '../../Shared/CustomLoader/CustomLoader';
 
 const Alumni = () => {
-  // Consume data pre-loaded by React Router loader
-  const alumniData = useLoaderData() || [];
+  // Data, loading, and error states (Replaces useLoaderData)
+  const [alumniData, setAlumniData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch alumni data inside useEffect after authentication check completes
+  useEffect(() => {
+    fetch('/alumniData.json')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch alumni data.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setAlumniData(data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error loading alumni data:', err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   // Filter & Search states
   const [searchQuery, setSearchQuery] = useState('');
@@ -91,6 +113,29 @@ const Alumni = () => {
       day: 'numeric'
     });
   };
+
+  // Display Loader while fetching data
+  if (loading) {
+    return <CustomLoader />;
+  }
+
+  // Display Error message if fetch fails
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="bg-white p-8 rounded-2xl shadow-md text-center max-w-md">
+          <p className="text-red-500 font-bold text-lg mb-2">Unable to Load Alumni Data</p>
+          <p className="text-slate-500 text-sm mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg hover:bg-slate-800 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-indigo-50/30 to-blue-50/50 text-slate-800 pb-16 font-sans relative overflow-x-hidden">

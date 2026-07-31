@@ -3,54 +3,52 @@ import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 
+
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeptOpen, setIsDeptOpen] = useState(false);
   const location = useLocation();
-  const {user,logOut} = useAuth()
+  const { user, logOut } = useAuth();
 
-  const handleLogout = () =>{
+  const handleLogout = () => {
     logOut()
-    .then(result => {
-      console.log(result.user)
-    })
-    .catch(error =>{
-      console.log(error)
-    })
-  }
+      .then((result) => {
+        console.log(result?.user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  // Check if current path matches any department route
-  const isDeptActive = location.pathname.startsWith('/departments');
+  const isDeptActive = location.pathname.startsWith("/departments");
 
   const departments = [
-    { name: 'Science', to: '/departments/science' },
-    { name: 'Commerce', to: '/departments/commerce' },
-    { name: 'Arts', to: '/departments/arts' },
+    { name: "Science", to: "/departments/science" },
+    { name: "Commerce", to: "/departments/commerce" },
+    { name: "Arts", to: "/departments/arts" },
   ];
 
   const navItems = [
-    { name: 'Home', to: '/' },
-    { name: 'About', to: '/about' },
-    { name: 'Notice', to: '/notices' },
-    { name: 'Departments', isDropdown: true },
-    { name: 'Faculty', to: '/faculty' },
-    { name: 'Admission', to: '/admission' },
-    { name: 'Alumni', to: '/alumni' },
-    { name: 'Contact', to: '/contact' },
+    { name: "Home", to: "/" },
+    { name: "About", to: "/about" },
+    { name: "Notice", to: "/notices" },
+    { name: "Departments", isDropdown: true },
+    { name: "Faculty", to: "/faculty" },
+    { name: "Admission", to: "/admission" },
+    { name: "Alumni", to: "/alumni" },
+    { name: "Contact", to: "/contact" },
   ];
 
   return (
     <nav className="w-full bg-[#f8f9fa] z-10 border-b border-gray-200">
-      {/* Reduced padding on mobile from px-6 to px-3 */}
       <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6 h-20 flex items-center justify-between">
-        
         {/* College Logo */}
         <div className="flex items-center">
           <NavLink to="/" className="flex items-center">
-            <img 
-              src="/src/assets/icc-logo.png" 
-              alt="College Logo" 
-              className="h-12 w-auto object-contain" 
+            <img
+              src="/src/assets/icc-logo.png"
+              alt="College Logo"
+              className="h-12 w-auto object-contain"
             />
           </NavLink>
         </div>
@@ -60,8 +58,8 @@ const NavBar = () => {
           {navItems.map((item) => {
             if (item.isDropdown) {
               return (
-                <li 
-                  key={item.name} 
+                <li
+                  key={item.name}
                   className="relative group"
                   onMouseEnter={() => setIsDeptOpen(true)}
                   onMouseLeave={() => setIsDeptOpen(false)}
@@ -70,14 +68,16 @@ const NavBar = () => {
                     onClick={() => setIsDeptOpen(!isDeptOpen)}
                     className={`relative py-2 text-sm font-medium transition-colors flex items-center gap-1 focus:outline-none ${
                       isDeptActive
-                        ? 'text-blue-600 font-semibold'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? "text-blue-600 font-semibold"
+                        : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {item.name}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isDeptOpen ? 'rotate-180' : ''}`} />
-                    
-                    {/* Active Underline Indicator */}
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        isDeptOpen ? "rotate-180" : ""
+                      }`}
+                    />
                     {isDeptActive && (
                       <span className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-600 rounded-full" />
                     )}
@@ -93,9 +93,9 @@ const NavBar = () => {
                           onClick={() => setIsDeptOpen(false)}
                           className={({ isActive }) =>
                             `block px-4 py-2 text-sm ${
-                              isActive 
-                                ? 'text-blue-600 font-semibold bg-blue-50' 
-                                : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
+                              isActive
+                                ? "text-blue-600 font-semibold bg-blue-50"
+                                : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
                             }`
                           }
                         >
@@ -114,9 +114,9 @@ const NavBar = () => {
                   to={item.to}
                   className={({ isActive }) =>
                     `relative py-2 text-sm font-medium transition-colors block ${
-                      isActive 
-                        ? 'text-blue-600 font-semibold' 
-                        : 'text-gray-600 hover:text-gray-900'
+                      isActive
+                        ? "text-blue-600 font-semibold"
+                        : "text-gray-600 hover:text-gray-900"
                     }`
                   }
                 >
@@ -134,19 +134,23 @@ const NavBar = () => {
           })}
         </ul>
 
-        {/* Login Button */}
+        {/* Auth Action Button (Desktop) */}
         <div className="hidden md:flex items-center">
-          {user ? <p
-            onClick={handleLogout}
-            className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
-          >
-            Log Out
-          </p> : <NavLink
-            to="/signIn"
-            className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
-          >
-            Login
-          </NavLink>}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
+            >
+              Log Out
+            </button>
+          ) : (
+            <NavLink
+              to="/signIn"
+              className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
+            >
+              Login
+            </NavLink>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -163,7 +167,6 @@ const NavBar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        /* Decreased horizontal padding from px-6 to px-3 for mobile menu */
         <div className="md:hidden bg-[#f8f9fa] border-t border-gray-200 px-3 pt-2 pb-6 space-y-3">
           <ul className="space-y-3">
             {navItems.map((item) => {
@@ -173,11 +176,17 @@ const NavBar = () => {
                     <button
                       onClick={() => setIsDeptOpen(!isDeptOpen)}
                       className={`w-full flex items-center justify-between py-2 text-base font-medium focus:outline-none ${
-                        isDeptActive ? 'text-blue-600 font-semibold' : 'text-gray-600'
+                        isDeptActive
+                          ? "text-blue-600 font-semibold"
+                          : "text-gray-600"
                       }`}
                     >
                       <span>{item.name}</span>
-                      <ChevronDown className={`w-4 h-4 transition-transform ${isDeptOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          isDeptOpen ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
 
                     {/* Mobile Submenu Options */}
@@ -193,9 +202,9 @@ const NavBar = () => {
                             }}
                             className={({ isActive }) =>
                               `block py-1 text-sm ${
-                                isActive 
-                                  ? 'text-blue-600 font-semibold' 
-                                  : 'text-gray-600 hover:text-gray-900'
+                                isActive
+                                  ? "text-blue-600 font-semibold"
+                                  : "text-gray-600 hover:text-gray-900"
                               }`
                             }
                           >
@@ -215,9 +224,9 @@ const NavBar = () => {
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
                       `block py-2 text-base font-medium ${
-                        isActive 
-                          ? 'text-blue-600 font-semibold' 
-                          : 'text-gray-600'
+                        isActive
+                          ? "text-blue-600 font-semibold"
+                          : "text-gray-600"
                       }`
                     }
                   >
@@ -227,13 +236,27 @@ const NavBar = () => {
               );
             })}
           </ul>
-          <NavLink
-            to="/signIn"
-            onClick={() => setIsOpen(false)}
-            className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
-          >
-            Login
-          </NavLink>
+
+          {/* Auth Action Button (Mobile) */}
+          {user ? (
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
+              className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
+            >
+              Log Out
+            </button>
+          ) : (
+            <NavLink
+              to="/signIn"
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       )}
     </nav>

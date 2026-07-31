@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useForm } from 'react-hook-form';
 import { IdCard, Lock, Eye, EyeOff, ShieldCheck, GraduationCap } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -25,12 +26,15 @@ export default function SignIn() {
   });
 
   const {signInUser} = useAuth()
+  const location = useLocation()
+  console.log('in the login page',location)
 
   // Submission handler
   const onSubmit = (data) => {
     signInUser(data.email,data.password)
     .then(result => {
       console.log(result.user)
+      navigate(location?.state || '/')
     })
     .catch(error =>{
       console.log(error)
@@ -201,6 +205,7 @@ export default function SignIn() {
           {/* Create Account Button linked to /signup */}
           <button
             type="button"
+            state={location.state}
             onClick={() => navigate('/signup')}
             className="w-full py-3.5 px-4 mb-4 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-sm rounded-lg transition"
           >
