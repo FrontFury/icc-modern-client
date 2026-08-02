@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Search,
   BellRing,
+  Sparkles,
 } from "lucide-react";
 
 export default function NoticeBoard() {
@@ -98,31 +99,35 @@ export default function NoticeBoard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900/5 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] text-slate-800 font-sans pb-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+    <div className="min-h-screen bg-[#030712] text-slate-100 font-sans pb-24 relative overflow-hidden">
+      {/* Background Glow Accents matching design theme */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[500px] h-[250px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 relative z-10">
         {/* Main Header Banner */}
-        <div className="mb-8">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100/80 backdrop-blur-md text-blue-700 text-xs font-extrabold uppercase tracking-widest rounded-full border border-blue-200/60 mb-3 shadow-xs">
-            <BellRing className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+        <div className="mb-10 text-center md:text-left">
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-cyan-500/10 backdrop-blur-md text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest rounded-full mb-4 shadow-inner">
+            <BellRing className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             INSTITUTIONAL UPDATES
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
-            Notice Board
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-3">
+            Notice{" "}
+            <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent">
+              Board
+            </span>
           </h1>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
-            <Link to='/addNotice'>Add Notice</Link>
-          </h1>
-          <p className="text-slate-500 text-sm sm:text-base leading-relaxed max-w-2xl">
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl">
             Stay informed with the latest official announcements, academic schedules, and campus events from Ideal Commerce College.
           </p>
         </div>
 
         {/* PINNED ANNOUNCEMENTS */}
         {pinnedNotices.length > 0 && (
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-4">
-              <Pin className="w-4 h-4 text-blue-600 fill-blue-600 rotate-45" />
-              <h2 className="text-xs font-extrabold text-slate-900 uppercase tracking-widest">
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-5">
+              <Pin className="w-4 h-4 text-amber-400 fill-amber-400 rotate-45" />
+              <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">
                 PINNED ANNOUNCEMENTS
               </h2>
             </div>
@@ -132,39 +137,40 @@ export default function NoticeBoard() {
                 <div
                   key={notice.id}
                   onClick={() => setSelectedNotice(notice)}
-                  className="group relative rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden border border-blue-200/80 bg-white/90 backdrop-blur-md text-slate-800 shadow-sm hover:bg-[#0f172a] hover:border-[#1e293b] hover:shadow-2xl flex flex-col justify-between min-h-[220px]"
+                  className="group relative rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden border border-amber-500/30 bg-gradient-to-b from-slate-900/90 via-[#0a192f]/80 to-slate-950/90 backdrop-blur-md text-slate-100 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 hover:border-amber-400/60 hover:-translate-y-1 flex flex-col justify-between min-h-[220px]"
                 >
+                  {/* Subtle inner card glow on hover */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase bg-blue-600 text-white group-hover:bg-amber-500/20 group-hover:text-amber-400 group-hover:border group-hover:border-amber-500/30 transition-colors">
+                      <span className="text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
                         {notice.priority || "IMPORTANT"}
                       </span>
-                      <span className="text-xs font-medium text-slate-400 group-hover:text-slate-400 transition-colors">
+                      <span className="text-xs font-medium text-slate-400">
                         Published: {notice.publishedDate}
                       </span>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl font-extrabold mb-3 text-slate-900 group-hover:text-white transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-lg sm:text-xl font-extrabold mb-3 text-white group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
                       {notice.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm leading-relaxed mb-6 text-slate-600 group-hover:text-slate-300 transition-colors line-clamp-3">
+                    <p className="text-xs sm:text-sm leading-relaxed mb-6 text-slate-300 line-clamp-3">
                       {notice.summary}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 group-hover:border-slate-800 transition-colors flex items-center justify-between">
-                    <span className="text-xs font-bold inline-flex items-center gap-1.5 text-blue-600 group-hover:text-white transition-colors">
-                      <span className="hidden group-hover:inline">Read More</span>
-                      <span className="group-hover:hidden">View PDF</span>
-                      <ArrowRight className="w-3.5 h-3.5 hidden group-hover:inline" />
-                      <ExternalLink className="w-3.5 h-3.5 group-hover:hidden" />
+                  <div className="pt-4 border-t border-slate-800 group-hover:border-slate-700 transition-colors flex items-center justify-between">
+                    <span className="text-xs font-bold inline-flex items-center gap-1.5 text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                      <span>View Notice Details</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </span>
 
                     <button
                       type="button"
                       onClick={(e) => handleDownload(e, notice.pdfUrl)}
-                      className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 group-hover:bg-slate-800 group-hover:text-white group-hover:hover:bg-slate-700 transition"
+                      className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 hover:border-cyan-500/40 transition"
                       title="Open PDF in New Tab"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -184,25 +190,25 @@ export default function NoticeBoard() {
               <span className="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-3">
                 Categories
               </span>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {categories.map((cat) => {
                   const isActive = activeCategory === cat;
                   return (
                     <button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all border ${
                         isActive
-                          ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                          : "bg-white/70 hover:bg-white text-slate-600 hover:text-slate-900 border border-slate-200/60 backdrop-blur-sm"
+                          ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-lg shadow-cyan-500/10"
+                          : "bg-slate-900/60 hover:bg-slate-800/80 text-slate-400 hover:text-slate-100 border-slate-800/80 backdrop-blur-md"
                       }`}
                     >
                       <span>{cat === "All" ? "All Notices" : cat}</span>
                       <span
                         className={`px-2 py-0.5 rounded-md text-[10px] font-black ${
                           isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-slate-100 text-slate-500"
+                            ? "bg-cyan-400/20 text-cyan-300 border border-cyan-400/30"
+                            : "bg-slate-800 text-slate-400"
                         }`}
                       >
                         {getCategoryCount(cat)}
@@ -213,17 +219,18 @@ export default function NoticeBoard() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-white/90 to-blue-50/50 backdrop-blur-xl rounded-2xl p-5 border border-white/80 shadow-sm relative overflow-hidden">
+            {/* Support Box */}
+            <div className="bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md rounded-2xl p-5 border border-slate-800/80 shadow-xl relative overflow-hidden">
               <div className="relative z-10">
-                <h3 className="text-sm font-black text-slate-900 mb-1">
-                  Support Center
+                <h3 className="text-sm font-black text-white mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-cyan-400" /> Support Center
                 </h3>
-                <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
                   Have questions regarding a specific notice or examination routine?
                 </p>
                 <a
                   href="mailto:info@idealcommercecollege.edu.bd"
-                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold rounded-xl transition shadow-lg shadow-cyan-500/20"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   Contact Admin
@@ -235,7 +242,7 @@ export default function NoticeBoard() {
           {/* Recent Notices List */}
           <div className="lg:col-span-9">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-xl font-extrabold text-white tracking-tight">
                 Recent Notices
               </h2>
 
@@ -247,28 +254,32 @@ export default function NoticeBoard() {
                     placeholder="Search notice..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:border-slate-800 focus:ring-0 transition placeholder-slate-400"
+                    className="w-full pl-8 pr-3 py-2 bg-slate-900/80 backdrop-blur-md border border-slate-800/90 rounded-xl text-xs font-medium text-slate-200 focus:outline-none focus:border-cyan-500/50 transition placeholder-slate-500"
                   />
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs font-bold text-slate-400">Sort:</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                    className="bg-slate-900/80 backdrop-blur-md border border-slate-800/90 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-200 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
                   >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
+                    <option value="newest" className="bg-slate-900 text-slate-200">
+                      Newest First
+                    </option>
+                    <option value="oldest" className="bg-slate-900 text-slate-200">
+                      Oldest First
+                    </option>
                   </select>
                 </div>
               </div>
             </div>
 
             {currentRecentNotices.length === 0 ? (
-              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-12 text-center border border-slate-200/80 text-slate-500">
-                <FileText className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm font-bold text-slate-700">No notices found</p>
+              <div className="bg-slate-900/60 backdrop-blur-md rounded-2xl p-12 text-center border border-slate-800/80 text-slate-400">
+                <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                <p className="text-sm font-bold text-slate-200">No notices found</p>
                 <p className="text-xs text-slate-400 mt-1">
                   Try resetting your search filter or category selection.
                 </p>
@@ -279,11 +290,11 @@ export default function NoticeBoard() {
                   <div
                     key={notice.id}
                     onClick={() => setSelectedNotice(notice)}
-                    className="group bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 shadow-2xs hover:shadow-xl hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between cursor-pointer"
+                    className="group bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md rounded-2xl p-5 border border-slate-800/80 hover:border-cyan-500/50 shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200/60">
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                           {notice.category}
                         </span>
                         <span className="text-[11px] font-semibold text-slate-400">
@@ -291,17 +302,17 @@ export default function NoticeBoard() {
                         </span>
                       </div>
 
-                      <h3 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-2 leading-snug">
+                      <h3 className="text-base font-bold text-slate-100 group-hover:text-cyan-300 transition-colors mb-2 line-clamp-2 leading-snug">
                         {notice.title}
                       </h3>
 
-                      <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-4">
+                      <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
                         {notice.summary}
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
-                      <span className="inline-flex items-center gap-1 group-hover:underline">
+                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
+                      <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         View Details
                         <ChevronRight className="w-3.5 h-3.5" />
                       </span>
@@ -309,7 +320,7 @@ export default function NoticeBoard() {
                       <button
                         type="button"
                         onClick={(e) => handleDownload(e, notice.pdfUrl)}
-                        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
                         title="Open PDF in New Tab"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -322,14 +333,14 @@ export default function NoticeBoard() {
 
             {/* Pagination Control */}
             {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-1.5 text-xs font-semibold">
+              <div className="mt-8 flex items-center justify-center gap-2 text-xs font-semibold">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`w-8 h-8 rounded-xl border flex items-center justify-center transition ${
+                  className={`w-9 h-9 rounded-xl border flex items-center justify-center transition ${
                     currentPage === 1
-                      ? "border-slate-200 bg-slate-100 text-slate-300 cursor-not-allowed"
-                      : "border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer"
+                      ? "border-slate-800/50 bg-slate-900/40 text-slate-600 cursor-not-allowed"
+                      : "border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:border-slate-700 cursor-pointer"
                   }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -340,10 +351,10 @@ export default function NoticeBoard() {
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`w-8 h-8 rounded-xl font-bold transition flex items-center justify-center ${
+                      className={`w-9 h-9 rounded-xl font-bold transition flex items-center justify-center ${
                         currentPage === page
-                          ? "bg-blue-600 text-white shadow-xs"
-                          : "border border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer"
+                          ? "bg-cyan-500 text-slate-950 font-black shadow-lg shadow-cyan-500/20"
+                          : "border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 cursor-pointer"
                       }`}
                     >
                       {page}
@@ -354,10 +365,10 @@ export default function NoticeBoard() {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`w-8 h-8 rounded-xl border flex items-center justify-center transition ${
+                  className={`w-9 h-9 rounded-xl border flex items-center justify-center transition ${
                     currentPage === totalPages
-                      ? "border-slate-200 bg-slate-100 text-slate-300 cursor-not-allowed"
-                      : "border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer"
+                      ? "border-slate-800/50 bg-slate-900/40 text-slate-600 cursor-not-allowed"
+                      : "border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:border-slate-700 cursor-pointer"
                   }`}
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -370,34 +381,34 @@ export default function NoticeBoard() {
 
       {/* FULL NOTICE DETAIL MODAL */}
       {selectedNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 relative text-slate-800 p-6 sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-slate-200 p-6 sm:p-8">
             <button
               onClick={() => setSelectedNotice(null)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition"
+              className="absolute top-5 right-5 w-8 h-8 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700/50 flex items-center justify-center transition"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 border border-blue-100">
+                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                   {selectedNotice.category}
                 </span>
                 {selectedNotice.priority && (
-                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-amber-50 text-amber-600 border border-amber-100">
+                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
                     {selectedNotice.priority}
                   </span>
                 )}
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight mb-3">
+              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight mb-3">
                 {selectedNotice.title}
               </h2>
 
               <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <span className="inline-flex items-center gap-1 text-slate-400">
+                  <Calendar className="w-3.5 h-3.5 text-cyan-400" />
                   Published: {selectedNotice.publishedDate}
                 </span>
                 <span>•</span>
@@ -405,18 +416,20 @@ export default function NoticeBoard() {
               </div>
             </div>
 
-            <div className="space-y-4 text-sm text-slate-600 leading-relaxed mb-8 pt-4 border-t border-slate-100">
-              <p className="font-semibold text-slate-800">
+            <div className="space-y-4 text-sm text-slate-300 leading-relaxed mb-8 pt-4 border-t border-slate-800">
+              <p className="font-semibold text-white">
                 {selectedNotice.summary}
               </p>
-              <p>{selectedNotice.description || selectedNotice.summary}</p>
+              <p className="text-slate-400">
+                {selectedNotice.description || selectedNotice.summary}
+              </p>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
               <button
                 type="button"
                 onClick={() => setSelectedNotice(null)}
-                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition"
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
               >
                 Close
               </button>
@@ -424,7 +437,7 @@ export default function NoticeBoard() {
               <button
                 type="button"
                 onClick={(e) => handleDownload(e, selectedNotice.pdfUrl)}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition inline-flex items-center gap-2 shadow-md shadow-blue-500/20"
+                className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold rounded-xl transition inline-flex items-center gap-2 shadow-lg shadow-cyan-500/20"
               >
                 <ExternalLink className="w-4 h-4" />
                 <span>Open PDF in New Tab</span>

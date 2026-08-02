@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import RootLayout from "../layouts/RootLayout";
 import Home from "../pages/Home/Home/Home";
 import About from "../pages/About/About/About";
@@ -15,8 +15,17 @@ import Admission from "../pages/Admission/Admission/Admission";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import PrivateRoute from "./PrivateRoute";
 import AddNotice from "../pages/Shared/AdminPage/AddNotice";
+import OperatorLayout from "../layouts/OperatorLayout";
+import Dashboard from "../pages/Operator/Dashboard/Dashboard";
+import Academic from "../pages/Operator/Academic/Academic";
+import UsersPage from "../pages/Operator/UsersPage/UsersPage";
+import SystemPage from "../pages/Operator/SystemPage/SystemPage";
+
+// Operator Sub-Page Imports
+
 
 export const router = createBrowserRouter([
+  // Main Public/Student Portal Routes
   {
     path: "/",
     Component: RootLayout,
@@ -72,7 +81,7 @@ export const router = createBrowserRouter([
         loader: () => fetch("/notices.json").then((res) => res.json()),
       },
       {
-        path: "/addNotice",
+        path: "addNotice",
         element: <AddNotice />,
       },
       {
@@ -82,6 +91,39 @@ export const router = createBrowserRouter([
             <Admission />
           </PrivateRoute>
         ),
+      },
+    ],
+  },
+
+  // Operator / Admin Portal Nested Routes
+  {
+    path: "/operator",
+    element: <OperatorLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="dashboard" replace />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "notices",
+        element: <AddNotice />,
+      },
+      {
+        path: "academic",
+        element: <Academic />,
+      },
+      {
+        path: "users",
+        element: <UsersPage />,
+      },
+      {
+        path: "system",
+        element: <SystemPage />,
       },
     ],
   },

@@ -3,8 +3,8 @@ import DeptNnotice from "../DeptNnotice/DeptNnotice";
 import EsteemedLeaders from "../EsteemedLeaders/EsteemedLeaders";
 import FAQ from "../FAQ/FAQ";
 import Gallery from "../Gallery/Gallery";
-import JoinCommunity from "../JoinCommunity/JoinCommunity";
 import NewsNEvents from "../NewsNEvents/NewsNEvents";
+import AlumniStories from "../AlumniSuccess/AlumniSuccess";
 
 const Home = () => {
     return (
@@ -13,7 +13,7 @@ const Home = () => {
             <DeptNnotice></DeptNnotice>
             <EsteemedLeaders></EsteemedLeaders>
             <Gallery></Gallery>
-            <JoinCommunity></JoinCommunity>
+            <AlumniStories></AlumniStories>
             <NewsNEvents></NewsNEvents>
             <FAQ></FAQ>
         </div>
