@@ -1,7 +1,8 @@
+import React from "react";
 import { Landmark, TrendingUp, Users, Rocket } from "lucide-react";
 
 const CommerceAcademicDisciplines = () => {
-    const disciplines = [
+  const disciplines = [
     {
       id: 1,
       title: "Accounting",
@@ -33,15 +34,28 @@ const CommerceAcademicDisciplines = () => {
   ];
 
   return (
-    <section className="w-full bg-[#f4f6f8] py-20 px-6 md:px-12 lg:px-16">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <section className="relative w-full bg-[#030712] py-20 px-6 md:px-12 lg:px-16 overflow-hidden font-sans">
+      
+      {/* Background Decorative Ambient Glows */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/5 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="relative z-10 max-w-6xl mx-auto space-y-12">
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+          <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase block">
+            BUSINESS CURRICULUM
+          </span>
+
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
             Core Academic Disciplines
           </h2>
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+
+          {/* Cyan Neon Accent Line */}
+          <div className="w-12 h-1 bg-cyan-400 rounded-full mx-auto shadow-[0_0_10px_#22d3ee]" />
+
+          <p className="text-slate-400 text-sm md:text-base leading-relaxed font-medium pt-1">
             A comprehensive curriculum structured to provide mastery over the essential pillars of the global economy.
           </p>
         </div>
@@ -53,20 +67,20 @@ const CommerceAcademicDisciplines = () => {
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-r-lg p-7 shadow-sm border border-gray-200/80 border-l-[3.5px] border-l-[#2563eb] flex flex-col justify-start space-y-4 hover:shadow-md transition-shadow duration-300"
+                className="group bg-[#0a1120]/60 backdrop-blur-md hover:bg-[#0f172a]/90 rounded-3xl p-7 shadow-2xl border border-slate-800/80 hover:border-cyan-500/50 border-l-[3.5px] border-l-cyan-400 flex flex-col justify-start space-y-4 transition-all duration-300 hover:-translate-y-1.5"
               >
-                {/* Blue Icon */}
-                <div className="text-[#2563eb]">
-                  <IconComponent className="w-7 h-7 stroke-[2]" />
+                {/* Cyan Glowing Icon Wrapper */}
+                <div className="w-12 h-12 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center group-hover:border-cyan-500/40 transition-colors">
+                  <IconComponent className="w-6 h-6 text-cyan-400 stroke-[2]" />
                 </div>
 
                 {/* Card Title */}
-                <h3 className="text-xl font-extrabold text-[#111827]">
+                <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
                   {item.title}
                 </h3>
 
                 {/* Card Description */}
-                <p className="text-xs text-gray-500 leading-relaxed font-normal">
+                <p className="text-xs text-slate-400 leading-relaxed font-medium">
                   {item.description}
                 </p>
               </div>

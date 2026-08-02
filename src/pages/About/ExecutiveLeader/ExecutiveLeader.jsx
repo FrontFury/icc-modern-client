@@ -7,7 +7,7 @@ import leader1 from "../../../assets/Esteemed Leaders/Principle.png";
 import leader2 from "../../../assets/Esteemed Leaders/vice-principal.png";
 
 const ExecutiveLeader = () => {
-    const leaders = [
+  const leaders = [
     {
       id: 1,
       name: "MD. AMJAD HOSSAIN",
@@ -31,25 +31,30 @@ const ExecutiveLeader = () => {
   ];
 
   return (
-    <section className="w-full bg-[#f8f9fa] py-20 px-6 md:px-12 lg:px-20">
-      <div className="max-w-6xl mx-auto">
+    <section className="relative w-full bg-[#030712] py-20 px-6 md:px-12 lg:px-20 overflow-hidden font-sans">
+      
+      {/* Background Decorative Ambient Glows */}
+      <div className="absolute top-1/3 left-10 w-96 h-96 bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-10 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="relative z-10 max-w-6xl mx-auto">
         
         {/* Top Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl space-y-2">
             {/* Subtitle Badge */}
-            <span className="text-xs font-bold tracking-widest text-[#2563eb] uppercase block">
+            <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase block">
               OUR PEOPLE
             </span>
 
-            {/* Title with Gold Accent Line */}
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+            {/* Title with Cyan Accent Line */}
+            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
               Executive Leadership
             </h2>
-            <div className="w-10 h-1 bg-amber-400 rounded-full !mt-2 mb-4" />
+            <div className="w-10 h-1 bg-cyan-400 rounded-full !mt-2 mb-4 shadow-[0_0_10px_#22d3ee]" />
 
             {/* Subtext */}
-            <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-1">
+            <p className="text-slate-400 text-sm md:text-base leading-relaxed pt-1 font-medium">
               Led by visionary educators and administrators dedicated to the mission of institutional growth and student success.
             </p>
           </div>
@@ -58,9 +63,9 @@ const ExecutiveLeader = () => {
           <div className="shrink-0">
             <Link
               to="/faculty"
-              className="inline-block bg-transparent border border-gray-400 hover:border-gray-900 text-[#111827] hover:bg-[#111827] hover:text-white text-xs font-semibold px-6 py-3 rounded-lg transition-colors duration-200"
+              className="inline-block bg-[#0a1120]/80 hover:bg-cyan-500 hover:text-slate-950 border border-slate-800 hover:border-cyan-400 text-slate-200 text-xs font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/20"
             >
-              View All Faculty
+              View All Faculty &rarr;
             </Link>
           </div>
         </div>
@@ -70,48 +75,48 @@ const ExecutiveLeader = () => {
           {leaders.map((leader) => (
             <div
               key={leader.id}
-              className="bg-white rounded-2xl border border-gray-200/80 p-6 md:p-8 shadow-sm flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-shadow hover:shadow-md"
+              className="group bg-[#0a1120]/60 hover:bg-[#0a1120]/90 backdrop-blur-md rounded-2xl border border-slate-800/80 hover:border-slate-700 p-6 md:p-8 shadow-xl flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-all duration-300 hover:-translate-y-1.5"
             >
               {/* Leader Image */}
-              <div className="w-40 h-44 sm:w-44 sm:h-48 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-100">
+              <div className="w-40 h-44 sm:w-44 sm:h-48 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-800 shadow-md">
                 <img
                   src={leader.image}
                   alt={leader.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
 
               {/* Leader Content */}
-              <div className="flex flex-col justify-between h-full space-y-3 text-center sm:text-left">
+              <div className="flex flex-col justify-between h-full space-y-3 text-center sm:text-left flex-1">
                 <div>
                   {/* Name */}
-                  <h3 className="text-xl font-extrabold text-[#111827]">
+                  <h3 className="text-xl font-extrabold text-white group-hover:text-cyan-400 transition-colors">
                     {leader.name}
                   </h3>
 
                   {/* Role Badge */}
-                  <span className="text-xs font-bold tracking-wider text-[#2563eb] uppercase block mt-1">
+                  <span className="inline-block text-[10px] font-bold tracking-wider text-cyan-400 uppercase bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full mt-2">
                     {leader.role}
                   </span>
 
                   {/* Bio Paragraph */}
-                  <p className="text-gray-500 text-xs md:text-sm leading-relaxed mt-3">
+                  <p className="text-slate-400 text-xs md:text-sm leading-relaxed mt-3 font-medium">
                     {leader.description}
                   </p>
                 </div>
 
                 {/* Bottom Icon Links */}
-                <div className="flex items-center justify-center sm:justify-start gap-4 pt-2 text-gray-500">
+                <div className="flex items-center justify-center sm:justify-start gap-3 pt-3 text-slate-400 border-t border-slate-800/80">
                   <a
                     href={`mailto:${leader.email}`}
-                    className="p-1 hover:text-[#2563eb] transition-colors"
+                    className="p-2 bg-slate-900/80 hover:bg-cyan-500/10 hover:text-cyan-400 border border-slate-800 rounded-lg transition-colors"
                     title="Send Email"
                   >
                     <Mail className="w-4 h-4" />
                   </a>
                   <a
                     href={leader.bioLink}
-                    className="p-1 hover:text-[#2563eb] transition-colors"
+                    className="p-2 bg-slate-900/80 hover:bg-cyan-500/10 hover:text-cyan-400 border border-slate-800 rounded-lg transition-colors"
                     title="View Bio/Document"
                   >
                     <FileText className="w-4 h-4" />

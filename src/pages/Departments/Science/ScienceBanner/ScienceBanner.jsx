@@ -3,7 +3,7 @@ import labBg from "../../../../assets/Dept/ScienceBanner.jpg";
 const ScienceBanner = () => {
     return (
     <section
-      className="relative w-full min-h-[500px] md:min-h-[550px] flex items-center bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="relative w-full min-h-[500px] md:min-h-screen flex items-center bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: `url(${labBg})` }}
     >
       {/* Dark Slate Blue Tint Overlay */}

@@ -2,7 +2,7 @@ import studioImg from '../../../../assets/Dept/ArtsBanner.jpg';
 
 const ArtsBanner = () => {
     return (
-    <section className="relative w-full h-screen min-h-[600px] flex items-center justify-start overflow-hidden">
+    <section className="relative w-full h-screen min-h-screen flex items-center justify-start overflow-hidden">
       {/* Use the imported variable inside src */}
       <img
         src={studioImg}

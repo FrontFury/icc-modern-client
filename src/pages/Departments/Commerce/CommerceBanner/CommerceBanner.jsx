@@ -4,7 +4,7 @@ import campusBg from "../../../../assets/Dept/CommerceBanner.jpg";
 const CommerceBanner = () => {
     return (
     <section
-      className="relative w-full min-h-[500px] md:min-h-[580px] flex items-center bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="relative w-full min-h-[580px] md:min-h-screen flex items-center bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: `url(${campusBg})` }}
     >
       {/* Dark Gradient / Tint Overlay */}

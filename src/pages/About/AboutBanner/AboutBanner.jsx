@@ -4,7 +4,7 @@ import heroBg from "../../../assets/About/2.png";
 const AboutBanner = () => {
   return (
     <section 
-      className="relative w-full min-h-[85vh] h-full flex items-center bg-cover bg-center bg-no-repeat"
+      className="relative w-full min-h-screen h-full flex items-center bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${heroBg})` }}
     >
       {/* Dark Overlay to ensure high contrast and readability */}

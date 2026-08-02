@@ -1,8 +1,7 @@
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, LogIn } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
-
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,21 +39,22 @@ const NavBar = () => {
   ];
 
   return (
-    <nav className="w-full bg-[#f8f9fa] z-10 border-b border-gray-200">
+    <nav className="w-full bg-[#030712]/80 -mb-32 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/80">
       <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6 h-20 flex items-center justify-between">
+        
         {/* College Logo */}
         <div className="flex items-center">
-          <NavLink to="/" className="flex items-center">
+          <NavLink to="/" className="flex items-center gap-2 group">
             <img
               src="/src/assets/icc-logo.png"
               alt="College Logo"
-              className="h-12 w-auto object-contain"
+              className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:brightness-0 group-hover:invert"
             />
           </NavLink>
         </div>
 
         {/* Desktop Navigation Links */}
-        <ul className="hidden md:flex items-center space-x-8">
+        <ul className="hidden lg:flex items-center space-x-7">
           {navItems.map((item) => {
             if (item.isDropdown) {
               return (
@@ -66,36 +66,36 @@ const NavBar = () => {
                 >
                   <button
                     onClick={() => setIsDeptOpen(!isDeptOpen)}
-                    className={`relative py-2 text-sm font-medium transition-colors flex items-center gap-1 focus:outline-none ${
+                    className={`relative py-2 text-xs xl:text-sm font-semibold tracking-wide uppercase transition-colors flex items-center gap-1.5 focus:outline-none ${
                       isDeptActive
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
                     }`}
                   >
                     {item.name}
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        isDeptOpen ? "rotate-180" : ""
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isDeptOpen ? "rotate-180 text-cyan-400" : "text-slate-400"
                       }`}
                     />
                     {isDeptActive && (
-                      <span className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-600 rounded-full" />
+                      <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
                     )}
                   </button>
 
                   {/* Desktop Dropdown Submenu */}
                   {isDeptOpen && (
-                    <div className="absolute top-full left-0 w-44 bg-white border border-gray-100 shadow-lg rounded-md py-2 z-50">
+                    <div className="absolute top-full left-0 w-48 bg-[#0b1120] border border-slate-800 shadow-2xl rounded-xl py-2 z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
                       {departments.map((dept) => (
                         <NavLink
                           key={dept.name}
                           to={dept.to}
                           onClick={() => setIsDeptOpen(false)}
                           className={({ isActive }) =>
-                            `block px-4 py-2 text-sm ${
+                            `block px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all ${
                               isActive
-                                ? "text-blue-600 font-semibold bg-blue-50"
-                                : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                                ? "text-cyan-400 bg-cyan-500/10 border-l-2 border-cyan-400"
+                                : "text-slate-300 hover:bg-slate-800/60 hover:text-cyan-400"
                             }`
                           }
                         >
@@ -113,10 +113,10 @@ const NavBar = () => {
                 <NavLink
                   to={item.to}
                   className={({ isActive }) =>
-                    `relative py-2 text-sm font-medium transition-colors block ${
+                    `relative py-2 text-xs xl:text-sm font-semibold tracking-wide uppercase transition-colors block ${
                       isActive
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
                     }`
                   }
                 >
@@ -124,7 +124,7 @@ const NavBar = () => {
                     <>
                       {item.name}
                       {isActive && (
-                        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-600 rounded-full" />
+                        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
                       )}
                     </>
                   )}
@@ -135,29 +135,31 @@ const NavBar = () => {
         </ul>
 
         {/* Auth Action Button (Desktop) */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden lg:flex items-center">
           {user ? (
             <button
               onClick={handleLogout}
-              className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
+              className="inline-flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-cyan-500/40 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]"
             >
-              Log Out
+              <LogOut className="w-4 h-4 text-cyan-400" />
+              <span>Log Out</span>
             </button>
           ) : (
             <NavLink
               to="/signIn"
-              className="bg-[#192231] hover:bg-[#111722] text-white text-sm font-medium px-6 py-2.5 rounded-md transition-colors"
+              className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-wider px-6 py-2.5 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:-translate-y-0.5"
             >
-              Login
+              <LogIn className="w-4 h-4" />
+              <span>Login</span>
             </NavLink>
           )}
         </div>
 
         {/* Mobile Menu Toggle */}
-        <div className="md:hidden flex items-center">
+        <div className="lg:hidden flex items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-700 hover:text-black focus:outline-none"
+            className="p-2 text-slate-300 hover:text-cyan-400 bg-slate-900/60 border border-slate-800 rounded-lg focus:outline-none transition-colors"
             aria-label="Toggle Menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -167,31 +169,31 @@ const NavBar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#f8f9fa] border-t border-gray-200 px-3 pt-2 pb-6 space-y-3">
+        <div className="lg:hidden bg-[#030712]/95 border-b border-slate-800 px-6 pt-4 pb-6 space-y-4 backdrop-blur-xl">
           <ul className="space-y-3">
             {navItems.map((item) => {
               if (item.isDropdown) {
                 return (
-                  <li key={item.name} className="space-y-1">
+                  <li key={item.name} className="space-y-2">
                     <button
                       onClick={() => setIsDeptOpen(!isDeptOpen)}
-                      className={`w-full flex items-center justify-between py-2 text-base font-medium focus:outline-none ${
+                      className={`w-full flex items-center justify-between py-2 text-sm font-bold tracking-wider uppercase focus:outline-none ${
                         isDeptActive
-                          ? "text-blue-600 font-semibold"
-                          : "text-gray-600"
+                          ? "text-cyan-400"
+                          : "text-slate-300 hover:text-cyan-400"
                       }`}
                     >
                       <span>{item.name}</span>
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          isDeptOpen ? "rotate-180" : ""
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isDeptOpen ? "rotate-180 text-cyan-400" : "text-slate-400"
                         }`}
                       />
                     </button>
 
                     {/* Mobile Submenu Options */}
                     {isDeptOpen && (
-                      <div className="pl-3 space-y-2 border-l-2 border-gray-200 my-1">
+                      <div className="pl-4 space-y-2 border-l-2 border-slate-800 my-1">
                         {departments.map((dept) => (
                           <NavLink
                             key={dept.name}
@@ -201,10 +203,10 @@ const NavBar = () => {
                               setIsDeptOpen(false);
                             }}
                             className={({ isActive }) =>
-                              `block py-1 text-sm ${
+                              `block py-1.5 text-xs font-semibold tracking-wider uppercase transition-colors ${
                                 isActive
-                                  ? "text-blue-600 font-semibold"
-                                  : "text-gray-600 hover:text-gray-900"
+                                  ? "text-cyan-400"
+                                  : "text-slate-400 hover:text-slate-200"
                               }`
                             }
                           >
@@ -223,10 +225,10 @@ const NavBar = () => {
                     to={item.to}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `block py-2 text-base font-medium ${
+                      `block py-2 text-sm font-bold tracking-wider uppercase transition-colors ${
                         isActive
-                          ? "text-blue-600 font-semibold"
-                          : "text-gray-600"
+                          ? "text-cyan-400"
+                          : "text-slate-300 hover:text-cyan-400"
                       }`
                     }
                   >
@@ -238,25 +240,29 @@ const NavBar = () => {
           </ul>
 
           {/* Auth Action Button (Mobile) */}
-          {user ? (
-            <button
-              onClick={() => {
-                handleLogout();
-                setIsOpen(false);
-              }}
-              className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
-            >
-              Log Out
-            </button>
-          ) : (
-            <NavLink
-              to="/signIn"
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center mt-4 bg-[#192231] text-white text-sm font-medium py-2.5 rounded-md"
-            >
-              Login
-            </NavLink>
-          )}
+          <div className="pt-2 border-t border-slate-800/80">
+            {user ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold uppercase tracking-wider py-3 rounded-xl transition-all"
+              >
+                <LogOut className="w-4 h-4 text-cyan-400" />
+                <span>Log Out</span>
+              </button>
+            ) : (
+              <NavLink
+                to="/signIn"
+                onClick={() => setIsOpen(false)}
+                className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-wider py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </NavLink>
+            )}
+          </div>
         </div>
       )}
     </nav>
