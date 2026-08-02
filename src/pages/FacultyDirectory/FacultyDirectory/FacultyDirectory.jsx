@@ -90,7 +90,7 @@ export default function FacultyDirectory() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] font-sans text-white pb-20 relative overflow-hidden">
+    <div className="min-h-screen pt-40 bg-[#030712] font-sans text-white pb-20 relative overflow-hidden">
       {/* Background Ambient Glowing Effects */}
       <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-500/5 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-blue-600/5 blur-[140px] rounded-full pointer-events-none" />

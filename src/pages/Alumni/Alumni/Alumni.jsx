@@ -138,7 +138,7 @@ const Alumni = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-200 pb-16 font-sans relative overflow-x-hidden">
+    <div className="min-h-screen pt-40 bg-[#030712] text-slate-200 pb-16 font-sans relative overflow-x-hidden">
       
       {/* Background Decorative Ambient Glows */}
       <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />

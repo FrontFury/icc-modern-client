@@ -39,7 +39,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] font-sans text-slate-200 pb-20 relative overflow-hidden">
+    <div className="min-h-screen pt-40 bg-[#030712] font-sans text-slate-200 pb-20 relative overflow-hidden">
       
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />

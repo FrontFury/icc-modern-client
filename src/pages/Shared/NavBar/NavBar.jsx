@@ -2,6 +2,7 @@ import { Menu, X, ChevronDown, LogOut, LogIn } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
+import logo from "../../../assets/icc-logo.png";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,12 +42,11 @@ const NavBar = () => {
   return (
     <nav className="w-full bg-[#030712]/80 -mb-32 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/80">
       <div className="w-11/12 md:w-5/6 mx-auto px-3 md:px-6 h-20 flex items-center justify-between">
-        
         {/* College Logo */}
         <div className="flex items-center">
           <NavLink to="/" className="flex items-center gap-2 group">
             <img
-              src="/src/assets/icc-logo.png"
+              src={logo}
               alt="College Logo"
               className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:brightness-0 group-hover:invert"
             />
@@ -75,7 +75,9 @@ const NavBar = () => {
                     {item.name}
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
-                        isDeptOpen ? "rotate-180 text-cyan-400" : "text-slate-400"
+                        isDeptOpen
+                          ? "rotate-180 text-cyan-400"
+                          : "text-slate-400"
                       }`}
                     />
                     {isDeptActive && (
@@ -186,7 +188,9 @@ const NavBar = () => {
                       <span>{item.name}</span>
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-200 ${
-                          isDeptOpen ? "rotate-180 text-cyan-400" : "text-slate-400"
+                          isDeptOpen
+                            ? "rotate-180 text-cyan-400"
+                            : "text-slate-400"
                         }`}
                       />
                     </button>

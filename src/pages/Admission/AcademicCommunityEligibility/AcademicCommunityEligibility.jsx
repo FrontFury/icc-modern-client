@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlaskConical, Briefcase, Palette, ArrowRight, Download, Sparkles } from 'lucide-react';
+import { FlaskConical, Briefcase, Palette, ArrowRight, Download } from 'lucide-react';
 
 export default function AcademicCommunityEligibility() {
   const eligibilityData = [
@@ -7,8 +7,7 @@ export default function AcademicCommunityEligibility() {
       id: 'science',
       title: 'Science',
       icon: FlaskConical,
-      iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-      gpaColor: 'text-cyan-400',
+      iconBg: 'bg-blue-100 text-blue-600',
       description:
         'For students pursuing advanced pathways in technology, medical studies, engineering, and scientific research.',
       gpa: 'GPA 4.00+',
@@ -17,8 +16,7 @@ export default function AcademicCommunityEligibility() {
       id: 'commerce',
       title: 'Commerce',
       icon: Briefcase,
-      iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      gpaColor: 'text-amber-400',
+      iconBg: 'bg-amber-100 text-amber-700',
       description:
         'Ideal for future leaders in finance, business analytics, accounting, management, and entrepreneurship.',
       gpa: 'GPA 3.00+',
@@ -27,8 +25,7 @@ export default function AcademicCommunityEligibility() {
       id: 'arts',
       title: 'Arts',
       icon: Palette,
-      iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      gpaColor: 'text-emerald-400',
+      iconBg: 'bg-indigo-100 text-indigo-600',
       description:
         'Fostering critical thinking, social sciences, media, law, creative expression, and humanities.',
       gpa: 'GPA 2.50+',
@@ -36,62 +33,54 @@ export default function AcademicCommunityEligibility() {
   ];
 
   return (
-    <div className="w-full bg-[#030712] text-slate-100 font-sans antialiased relative overflow-hidden">
-      {/* Background Ambient Lights */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/5 blur-[160px] rounded-full pointer-events-none" />
-
+    <div className="w-full font-sans antialiased text-slate-800">
+      
       {/* Dark Hero Section */}
-      <section className="relative z-10 py-20 px-6 sm:px-12 lg:px-20 border-b border-slate-800/80">
-        <div className="max-w-5xl mx-auto">
+      <section className="bg-secondary  pt-40 text-white py-16 px-6 sm:px-12 lg:px-45 border-b border-slate-800">
+        <div className="max-w-4xl">
           {/* Pill Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-bold tracking-widest uppercase rounded-full mb-6 backdrop-blur-sm">
-            <Sparkles className="w-3.5 h-3.5" />
+          <span className="inline-block px-3 py-1 bg-[#d97706]/20 border border-[#d97706]/30 text-[#fef3c7] text-[11px] font-bold uppercase tracking-wider rounded-full mb-6">
             ENROLLMENT 2026–2027
           </span>
 
           {/* Main Title */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-tight text-white">
-            Join Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Academic Community</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4 leading-tight">
+            Join Our Academic Community
           </h1>
 
           {/* Subtext */}
-          <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mb-10 font-medium">
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mb-8">
             Ideal Commerce College seeks intellectually curious and driven students ready to achieve academic excellence. Our admission process is designed to identify promising individuals across Science, Commerce, and Arts faculties.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <a
               href="#apply"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-extrabold tracking-wider uppercase rounded-xl shadow-[0_0_20px_rgba(34,211,238,0.25)] hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] transition-all duration-300 hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#1d4ed8] hover:bg-blue-600 text-white text-sm font-bold rounded-lg shadow-md transition"
             >
-              <span>Apply Now</span>
-              <ArrowRight className="w-4 h-4" />
+              Apply Now
             </a>
             <a
               href="#brochure"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 hover:border-cyan-500/40 text-xs font-bold tracking-wider uppercase rounded-xl transition-all duration-300"
+              className="inline-flex items-center justify-center px-6 py-3 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-200 text-sm font-semibold rounded-lg transition"
             >
-              <Download className="w-4 h-4 text-cyan-400" />
-              <span>View Prospectus</span>
+              View Prospectus
             </a>
           </div>
         </div>
       </section>
 
-      {/* Minimum Eligibility Criteria Section */}
-      <section className="relative z-10 py-20 px-6 sm:px-12 lg:px-20">
+      {/* Light Minimum Eligibility Criteria Section */}
+      <section className="bg-[#f8fafc] py-16 px-6 sm:px-12 lg:px-20">
         <div className="max-w-6xl mx-auto">
           
           {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-cyan-400 uppercase block">
-              ADMISSION STANDARDS
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
               Minimum Eligibility Criteria
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed font-medium">
+            <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
               Based on standard academic assessment under Dhaka BISE, our admission requirements ensure a high standard of educational excellence across all faculties.
             </p>
           </div>
@@ -103,31 +92,31 @@ export default function AcademicCommunityEligibility() {
               return (
                 <div
                   key={item.id}
-                  className="bg-[#0a1120]/80 backdrop-blur-md rounded-2xl p-7 border border-slate-800/80 hover:border-cyan-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                  className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between"
                 >
                   <div>
                     {/* Icon Badge */}
-                    <div className={`w-12 h-12 rounded-xl border flex items-center justify-center mb-6 transition-transform group-hover:scale-105 ${item.iconBg}`}>
-                      <IconComponent className="w-6 h-6" />
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-6 ${item.iconBg}`}>
+                      <IconComponent className="w-5 h-5" />
                     </div>
 
                     {/* Faculty Title */}
-                    <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">
                       {item.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-8">
+                    <p className="text-xs text-slate-500 leading-relaxed mb-8">
                       {item.description}
                     </p>
                   </div>
 
                   {/* GPA Display Footer */}
-                  <div className="flex items-baseline gap-2.5 pt-5 border-t border-slate-800/80">
-                    <span className={`text-2xl sm:text-3xl font-black tracking-tight ${item.gpaColor}`}>
+                  <div className="flex items-baseline gap-2 pt-4 border-t border-slate-100">
+                    <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                       {item.gpa}
                     </span>
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-slate-400">
                       Minimum
                     </span>
                   </div>

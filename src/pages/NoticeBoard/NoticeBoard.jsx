@@ -99,7 +99,7 @@ export default function NoticeBoard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 font-sans pb-24 relative overflow-hidden">
+    <div className="min-h-screen pt-40 bg-[#030712] text-slate-100 font-sans pb-24 relative overflow-hidden">
       {/* Background Glow Accents matching design theme */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[500px] h-[250px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
