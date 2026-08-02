@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { User, Mail, IdCard, Lock, Eye, EyeOff, Building2, Camera, UploadCloud, X } from 'lucide-react';
+import { 
+  User, Mail, IdCard, Lock, Eye, EyeOff, Building2, 
+  UploadCloud, X, GraduationCap, ShieldCheck, ArrowRight, Sparkles 
+} from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
 import axios from 'axios';
@@ -16,7 +19,6 @@ export default function SignUp() {
     register,
     handleSubmit,
     setValue,
-    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
     mode: 'onChange',
@@ -31,7 +33,7 @@ export default function SignUp() {
     },
   });
 
-  const { registerUser,updateUserProfile } = useAuth();
+  const { registerUser, updateUserProfile } = useAuth();
 
   // Register profileImage manually for validation
   React.useEffect(() => {
@@ -46,18 +48,16 @@ export default function SignUp() {
         alert("File size should be less than 5MB");
         return;
       }
-      // Store raw File directly in RHF state
       setValue('profileImage', file, { shouldValidate: true });
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
     }
   };
 
   const removeImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImagePreview(null);
     setValue('profileImage', null, { shouldValidate: true });
   };
@@ -65,165 +65,183 @@ export default function SignUp() {
   // Fixed Async Submit Handler
   const onSubmit = async (data) => {
     try {
-
-      // 1. Create Firebase / App User
+      // 1. Create Firebase User
       const result = await registerUser(data.email, data.password);
-      console.log('Registered User:', result.user);
+
+      let imageUrl = '';
 
       // 2. Upload image to ImgBB
       if (data.profileImage) {
         const formData = new FormData();
-        formData.append('image', data.profileImage); // Direct File object passed here
+        formData.append('image', data.profileImage);
 
         const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
         const res = await axios.post(image_API_URL, formData);
-        
-        const imageUrl = res.data.data.display_url;
-
-        const userProfile = {
-          displayName : data.name ,
-          photoURL : imageUrl
-        }
-        updateUserProfile(userProfile)
-        .then(() => {
-          console.log("User Profile Updated Done")
-          navigate(location.state || '/')
-
-        })
-        .catch(error => console.log(error))
+        imageUrl = res.data.data.display_url;
       }
 
-      // Navigate after successful sign-up
-      navigate('/');
+      // 3. Update Profile
+      const userProfile = {
+        displayName: data.fullName,
+        photoURL: imageUrl,
+      };
+
+      await updateUserProfile(userProfile);
+      
+      // 4. Safe Navigation
+      navigate(location.state || '/', { replace: true });
     } catch (error) {
       console.error('Sign Up Error:', error);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white font-sans text-slate-800">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 font-sans text-slate-800 selection:bg-blue-500 selection:text-white">
       
       {/* Left Column - Hero Visual Section */}
-      <div className="relative md:w-7/12 bg-slate-100 text-white flex flex-col justify-between p-8 md:p-14 lg:p-16 overflow-hidden">
+      <div className="relative lg:w-5/12 xl:w-1/2 bg-slate-950 text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 overflow-hidden min-h-[380px] lg:min-h-screen">
+        {/* Background Image & Overlays */}
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000 ease-out"
           style={{ backgroundImage: `url('https://i.ibb.co.com/WpcNNKKJ/Sign-Up.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-950/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-900/40" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none" />
 
+        {/* Top Header */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600/90 text-white flex items-center justify-center font-black text-lg border border-blue-400/30 shadow-lg">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-500 text-white flex items-center justify-center font-black text-lg border border-white/20 shadow-xl shadow-blue-900/30">
               ICC
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-black tracking-wide uppercase text-white leading-none">
+              <h2 className="text-base font-black tracking-wide uppercase text-white leading-none">
                 Ideal Commerce College
               </h2>
-              <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase mt-1">
+              <p className="text-[10px] font-semibold text-blue-300/80 tracking-widest uppercase mt-1">
                 Dhaka • EIIN: 134207
               </p>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 my-auto py-10 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/30 text-blue-300 text-xs font-semibold mb-6 backdrop-blur-sm">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>Farmgate Campus • Online Portal</span>
+        {/* Hero Content */}
+        <div className="relative z-10 my-auto py-8 max-w-lg">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-blue-200 text-xs font-medium mb-6 backdrop-blur-md shadow-inner">
+            <Building2 className="w-3.5 h-3.5 text-blue-400" />
+            <span>Farmgate Campus • Digital Portal</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.15] tracking-tight mb-6">
-            Forge your academic future today.
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.15] tracking-tight mb-4 text-white">
+            Forge your academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-200">future today.</span>
           </h1>
-          <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-lg">
-            Join a vibrant community dedicated to educational rigor, leadership, and personal development. Register to access coursework, results, and digital services.
+          <p className="text-slate-300 text-sm leading-relaxed max-w-md font-normal">
+            Join a modern learning platform. Register your institutional account to seamlessly access coursework, examination details, and digital campus features.
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-10 pt-6 border-t border-slate-800/80">
-          <div>
-            <div className="text-2xl md:text-3xl font-black text-amber-400">20+</div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Years of Excellence</div>
+        {/* Hero Footer Stats */}
+        <div className="relative z-10 grid grid-cols-2 gap-6 pt-6 border-t border-white/10 max-w-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-xl font-black text-white">20+ Years</div>
+              <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Academic Excellence</div>
+            </div>
           </div>
-          <div className="h-8 w-px bg-slate-800" />
-          <div>
-            <div className="text-2xl md:text-3xl font-black text-blue-400">15k+</div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Successful Alumni</div>
+
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-xl font-black text-white">15k+</div>
+              <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Verified Alumni</div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Right Column - Registration Form */}
-      <div className="md:w-5/12 flex flex-col justify-between p-8 md:p-12 lg:p-14 bg-white overflow-y-auto">
-        <div className="w-full max-w-md mx-auto my-auto">
+      <div className="lg:w-7/12 xl:w-1/2 flex flex-col justify-center mt-24 p-6 sm:p-10 lg:p-12 xl:p-16 bg-white overflow-y-auto">
+        <div className="w-full max-w-xl mx-auto">
           
           <div className="mb-6">
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-1 tracking-tight">
-              Create Account
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Student Registration</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Create an Account
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Please enter your institutional details to register.
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Please enter your institutional credentials to register on the student portal.
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             
             {/* Profile Image Upload */}
-            <div className="flex flex-col items-center justify-center pb-2">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 self-start">
-                Profile Photo
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Profile Photo <span className="text-red-500">*</span>
               </label>
 
-              <div className="relative group w-full">
+              <div className="flex items-center gap-4">
                 {imagePreview ? (
-                  <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden ring-4 ring-blue-500/20 shadow-md group">
-                    <img
-                      src={imagePreview}
-                      alt="Profile Preview"
-                      className="w-full h-full object-cover transition transform duration-300 group-hover:scale-105"
-                    />
+                  <div className="relative group shrink-0">
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-blue-500/30 shadow-md">
+                      <img
+                        src={imagePreview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition shadow-lg"
+                      className="absolute -top-1.5 -right-1.5 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition shadow-md"
                       title="Remove image"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ) : (
-                  <label
-                    htmlFor="profileImageInput"
-                    className={`flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-200 bg-slate-50/70 hover:bg-blue-50/50 ${
-                      errors.profileImage ? 'border-red-400 bg-red-50/30' : 'border-slate-300 hover:border-blue-400'
-                    }`}
-                  >
-                    <div className="flex flex-col items-center justify-center pt-3 pb-3">
-                      <div className="w-9 h-9 mb-1.5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                        <UploadCloud className="w-5 h-5" />
-                      </div>
-                      <p className="text-xs font-semibold text-slate-700 mb-0.5">
-                        Click to upload photo
-                      </p>
-                      <p className="text-[10px] text-slate-400">
-                        PNG, JPG or WEBP (Max. 5MB)
-                      </p>
-                    </div>
-                  </label>
+                  <div className="w-16 h-16 rounded-2xl bg-slate-200/60 text-slate-400 flex items-center justify-center shrink-0 border border-slate-300/60">
+                    <User className="w-8 h-8" />
+                  </div>
                 )}
 
-                <input
-                  id="profileImageInput"
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
+                <div className="flex-1">
+                  <label
+                    htmlFor="profileImageInput"
+                    className={`flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-dashed rounded-xl cursor-pointer transition-all duration-200 text-xs font-semibold ${
+                      errors.profileImage 
+                        ? 'border-red-300 bg-red-50/50 text-red-600 hover:bg-red-50' 
+                        : 'border-slate-300 bg-white text-slate-700 hover:border-blue-500 hover:text-blue-600 shadow-sm'
+                    }`}
+                  >
+                    <UploadCloud className="w-4 h-4 text-blue-500" />
+                    <span>{imagePreview ? 'Change Photo' : 'Upload Student Photo'}</span>
+                  </label>
+                  <input
+                    id="profileImageInput"
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                  <p className="text-[11px] text-slate-400 mt-1.5">
+                    Supports JPG, PNG or WEBP (Max. 5MB)
+                  </p>
+                </div>
               </div>
 
               {errors.profileImage && (
-                <p className="text-[11px] text-red-500 font-medium mt-1.5 self-start">
+                <p className="text-[11px] text-red-500 font-medium mt-2">
                   {errors.profileImage.message}
                 </p>
               )}
@@ -232,7 +250,7 @@ export default function SignUp() {
             {/* Full Name */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Full Name
+                Full Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -242,8 +260,8 @@ export default function SignUp() {
                   type="text"
                   placeholder="e.g. Tanvir Hossain"
                   {...register('fullName', { required: 'Full name is required' })}
-                  className={`w-full pl-10 pr-4 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
-                    errors.fullName ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  className={`w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 ${
+                    errors.fullName ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:border-blue-600 focus:ring-blue-100'
                   }`}
                 />
               </div>
@@ -256,7 +274,7 @@ export default function SignUp() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Email Address
+                  Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -272,8 +290,8 @@ export default function SignUp() {
                         message: 'Invalid email address',
                       },
                     })}
-                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
-                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-50/50 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 ${
+                      errors.email ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:border-blue-600 focus:ring-blue-100'
                     }`}
                   />
                 </div>
@@ -284,7 +302,7 @@ export default function SignUp() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Student Roll / ID
+                  Student Roll / ID <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -294,8 +312,8 @@ export default function SignUp() {
                     type="text"
                     placeholder="ICC-2025-1042"
                     {...register('studentId', { required: 'Student ID is required' })}
-                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
-                      errors.studentId ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                    className={`w-full pl-10 pr-3 py-2.5 bg-slate-50/50 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 ${
+                      errors.studentId ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:border-blue-600 focus:ring-blue-100'
                     }`}
                   />
                 </div>
@@ -308,12 +326,12 @@ export default function SignUp() {
             {/* Department Selection */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Department / Program
+                Department / Program <span className="text-red-500">*</span>
               </label>
               <select
                 {...register('department', { required: 'Please select a department' })}
-                className={`w-full px-3.5 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 transition focus:bg-white focus:outline-none ${
-                  errors.department ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                className={`w-full px-3.5 py-2.5 bg-slate-50/50 border rounded-xl text-xs sm:text-sm text-slate-800 transition-all focus:bg-white focus:outline-none focus:ring-2 ${
+                  errors.department ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:border-blue-600 focus:ring-blue-100'
                 }`}
               >
                 <option value="" disabled>Select your department</option>
@@ -331,7 +349,7 @@ export default function SignUp() {
             {/* Create Password */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Create Password
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -344,11 +362,11 @@ export default function SignUp() {
                     required: 'Password is required',
                     pattern: {
                       value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message: 'Password must be 8+ characters with at least one uppercase, lowercase, number, and special character',
+                      message: 'Password must contain 8+ chars, uppercase, lowercase, number, and special symbol',
                     },
                   })}
-                  className={`w-full pl-10 pr-10 py-2.5 bg-slate-100/70 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition focus:bg-white focus:outline-none ${
-                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-slate-800'
+                  className={`w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 ${
+                    errors.password ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:border-blue-600 focus:ring-blue-100'
                   }`}
                 />
                 <button
@@ -365,17 +383,17 @@ export default function SignUp() {
             </div>
 
             {/* Terms Verification */}
-            <div>
-              <div className="flex items-start gap-2.5 pt-1">
+            <div className="pt-1">
+              <div className="flex items-start gap-2.5">
                 <input
                   id="terms"
                   type="checkbox"
                   {...register('agreedToTerms', {
                     required: 'You must agree to the institutional terms',
                   })}
-                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer"
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
-                <label htmlFor="terms" className="text-[11px] font-medium text-slate-600 leading-snug cursor-pointer select-none">
+                <label htmlFor="terms" className="text-xs text-slate-600 leading-snug cursor-pointer select-none">
                   I verify that I am an active student of Ideal Commerce College and agree to the{' '}
                   <a href="#terms" className="text-blue-600 font-semibold hover:underline">Institutional Terms</a> and{' '}
                   <a href="#privacy" className="text-blue-600 font-semibold hover:underline">Privacy Policy</a>.
@@ -390,23 +408,33 @@ export default function SignUp() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.99] mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.99] mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+              <span>{isSubmitting ? 'Creating Account...' : 'Complete Sign Up'}</span>
+              {!isSubmitting && <ArrowRight className="w-4 h-4" />}
             </button>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-slate-400 font-medium">Or continue with</span>
+              </div>
+            </div>
+
             <SocialLogin />
           </form>
 
           {/* Login Link */}
-          <div className="mt-6 text-center text-xs text-slate-600">
-            Already have an account?{' '}
+          <div className="mt-6 text-center text-xs text-slate-500">
+            Already registered?{' '}
             <button
               type="button"
-              state={location.state}
-              onClick={() => navigate('/signIn')}
-              className="font-bold text-blue-600 hover:underline inline-block"
+              onClick={() => navigate('/signIn', { state: location.state })}
+              className="font-bold text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
             >
-              Login
+              Sign In to Your Account
             </button>
           </div>
         </div>
