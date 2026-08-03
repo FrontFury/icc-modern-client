@@ -30,7 +30,7 @@ const Banner = () => {
   ];
 
   return (
-    <div className="relative h-full mb-24 min-h-screen flex flex-col justify-between">
+    <div className="relative h-full pt-24 mb-24 min-h-screen flex flex-col justify-between">
       {/* Background Image Container with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

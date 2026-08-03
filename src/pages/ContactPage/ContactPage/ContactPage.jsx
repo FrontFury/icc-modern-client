@@ -257,7 +257,7 @@ export default function ContactPage() {
             <div className="relative rounded-2xl overflow-hidden border border-slate-800/80 shadow-xl bg-slate-900 h-80">
               <iframe
                 title="Ideal Commerce College Location Map"
-                className="w-full h-full border-0 grayscale opacity-75 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                className="w-full h-full border-0"
                 src="https://maps.google.com/maps?q=Ideal%20Commerce%20College%20Indira%20Road%20Farmgate%20Dhaka&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 loading="lazy"
               />
