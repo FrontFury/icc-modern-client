@@ -20,6 +20,7 @@ import Dashboard from "../pages/Operator/Dashboard/Dashboard";
 import Academic from "../pages/Operator/Academic/Academic";
 import UsersPage from "../pages/Operator/UsersPage/UsersPage";
 import SystemPage from "../pages/Operator/SystemPage/SystemPage";
+import AllNotices from "../pages/Operator/AllNotices/AllNotices";
 
 // Operator Sub-Page Imports
 
@@ -78,11 +79,7 @@ export const router = createBrowserRouter([
       {
         path: "notices",
         element: <NoticeBoard />,
-        loader: () => fetch("/notices.json").then((res) => res.json()),
-      },
-      {
-        path: "addNotice",
-        element: <AddNotice />,
+        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()),
       },
       {
         path: "admission",
@@ -110,8 +107,12 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "notices",
+        path: "addNotices",
         element: <AddNotice />,
+      },
+      {
+        path: "allNotices",
+        element: <AllNotices/>
       },
       {
         path: "academic",

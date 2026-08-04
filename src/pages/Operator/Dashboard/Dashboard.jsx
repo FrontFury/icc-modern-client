@@ -42,7 +42,7 @@ export default function Dashboard() {
         </div>
 
         <Link
-          to="/operator/notices"
+          to="/operator/addNotices"
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0a0d12] hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition shadow-sm w-fit"
         >
           <Plus className="w-4 h-4" />

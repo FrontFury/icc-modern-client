@@ -103,7 +103,7 @@ export default function AddNotice() {
       console.log('Final Notice Payload:', payload);
       axiosSecure.post('/notices', payload)
       .then(res => {
-        console.log('after saving parcel',res.data)
+        console.log('after saving notice',res.data)
       })
 
       

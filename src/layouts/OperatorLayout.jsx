@@ -11,7 +11,8 @@ import {
 export default function OperatorLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/operator/dashboard', icon: LayoutDashboard },
-    { name: 'Notices', path: '/operator/notices', icon: Megaphone },
+    { name: 'Add Notices', path: '/operator/addNotices', icon: Megaphone },
+    { name: 'All Notices', path: '/operator/allNotices', icon: Megaphone },
     { name: 'Academic', path: '/operator/academic', icon: GraduationCap },
     { name: 'Users', path: '/operator/users', icon: Users },
     { name: 'System', path: '/operator/system', icon: Settings },

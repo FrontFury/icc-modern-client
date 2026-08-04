@@ -13,6 +13,7 @@ import {
   Search,
   BellRing,
   Sparkles,
+  Image as ImageIcon,
 } from "lucide-react";
 
 export default function NoticeBoard() {
@@ -34,33 +35,37 @@ export default function NoticeBoard() {
     setCurrentPage(1);
   }, [activeCategory, searchQuery, sortBy]);
 
-  // Handle Opening Notice PDF in a New Tab
-  const handleDownload = (e, pdfUrl) => {
+  // Handle Opening URLs in a New Tab
+  const handleOpenLink = (e, url, type = "File") => {
     e.stopPropagation();
-    if (!pdfUrl) {
-      alert("Notice file is not available for download.");
+    if (!url) {
+      alert(`${type} is not available.`);
       return;
     }
-    window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   // Filter and Sort Logic
   const filteredNotices = notices.filter((notice) => {
+    const title = notice?.title ?? "";
+    const summary = notice?.summary ?? "";
+    const category = notice?.category ?? "";
+
     const matchesCategory =
       activeCategory === "All" ||
-      notice.category.toLowerCase() === activeCategory.toLowerCase();
+      category.toLowerCase() === activeCategory.toLowerCase();
 
     const matchesSearch =
-      notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      notice.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      notice.category.toLowerCase().includes(searchQuery.toLowerCase());
+      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesCategory && matchesSearch;
   });
 
   const sortedNotices = [...filteredNotices].sort((a, b) => {
-    const dateA = new Date(a.publishedDate);
-    const dateB = new Date(b.publishedDate);
+    const dateA = new Date(a.publishedDate || a.createdAt || 0);
+    const dateB = new Date(b.publishedDate || b.createdAt || 0);
     return sortBy === "newest" ? dateB - dateA : dateA - dateB;
   });
 
@@ -93,14 +98,15 @@ export default function NoticeBoard() {
   ];
   const getCategoryCount = (cat) => {
     if (cat === "All") return notices.length;
+
     return notices.filter(
-      (n) => n.category.toLowerCase() === cat.toLowerCase()
+      (n) => (n?.category ?? "").toLowerCase() === cat.toLowerCase()
     ).length;
   };
 
   return (
     <div className="min-h-screen pt-40 bg-[#030712] text-slate-100 font-sans pb-24 relative overflow-hidden">
-      {/* Background Glow Accents matching design theme */}
+      {/* Background Glow Accents */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[500px] h-[250px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -133,58 +139,75 @@ export default function NoticeBoard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {pinnedNotices.map((notice) => (
-                <div
-                  key={notice.id}
-                  onClick={() => setSelectedNotice(notice)}
-                  className="group relative rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden border border-amber-500/30 bg-gradient-to-b from-slate-900/90 via-[#0a192f]/80 to-slate-950/90 backdrop-blur-md text-slate-100 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 hover:border-amber-400/60 hover:-translate-y-1 flex flex-col justify-between min-h-[220px]"
-                >
-                  {/* Subtle inner card glow on hover */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              {pinnedNotices.map((notice, index) => {
+                const noticeImage = notice.imageUrl || notice.image;
 
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        {notice.priority || "IMPORTANT"}
-                      </span>
-                      <span className="text-xs font-medium text-slate-400">
-                        Published: {notice.publishedDate}
-                      </span>
+                return (
+                  <div
+                    key={notice.id || notice._id || `pinned-${index}`}
+                    onClick={() => setSelectedNotice(notice)}
+                    className="group relative rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden border border-amber-500/30 bg-gradient-to-b from-slate-900/90 via-[#0a192f]/80 to-slate-950/90 backdrop-blur-md text-slate-100 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 hover:border-amber-400/60 hover:-translate-y-1 flex flex-col justify-between min-h-[220px]"
+                  >
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                          {notice.priority || "IMPORTANT"}
+                        </span>
+                        <span className="text-xs font-medium text-slate-400">
+                          Published: {notice.publishedDate}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg sm:text-xl font-extrabold mb-3 text-white group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
+                        {notice.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm leading-relaxed mb-6 text-slate-300 line-clamp-3">
+                        {notice.summary}
+                      </p>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl font-extrabold mb-3 text-white group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
-                      {notice.title}
-                    </h3>
+                    <div className="pt-4 border-t border-slate-800 group-hover:border-slate-700 transition-colors flex items-center justify-between">
+                      <span className="text-xs font-bold inline-flex items-center gap-1.5 text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                        <span>View Notice Details</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </span>
 
-                    <p className="text-xs sm:text-sm leading-relaxed mb-6 text-slate-300 line-clamp-3">
-                      {notice.summary}
-                    </p>
+                      <div className="flex items-center gap-2">
+                        {noticeImage && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleOpenLink(e, noticeImage, "Image")}
+                            className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 hover:border-cyan-500/40 transition"
+                            title="Open Image"
+                          >
+                            <ImageIcon className="w-4 h-4" />
+                          </button>
+                        )}
+                        {notice.pdfUrl && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleOpenLink(e, notice.pdfUrl, "PDF")}
+                            className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 hover:border-cyan-500/40 transition"
+                            title="Open PDF"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="pt-4 border-t border-slate-800 group-hover:border-slate-700 transition-colors flex items-center justify-between">
-                    <span className="text-xs font-bold inline-flex items-center gap-1.5 text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                      <span>View Notice Details</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={(e) => handleDownload(e, notice.pdfUrl)}
-                      className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 hover:border-cyan-500/40 transition"
-                      title="Open PDF in New Tab"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
         {/* Main Section Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Categories Sidebar & Support Card */}
+          {/* Categories Sidebar */}
           <div className="lg:col-span-3 space-y-6">
             <div>
               <span className="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-3">
@@ -219,7 +242,6 @@ export default function NoticeBoard() {
               </div>
             </div>
 
-            {/* Support Box */}
             <div className="bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md rounded-2xl p-5 border border-slate-800/80 shadow-xl relative overflow-hidden">
               <div className="relative z-10">
                 <h3 className="text-sm font-black text-white mb-1.5 flex items-center gap-1.5">
@@ -286,48 +308,66 @@ export default function NoticeBoard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {currentRecentNotices.map((notice) => (
-                  <div
-                    key={notice.id}
-                    onClick={() => setSelectedNotice(notice)}
-                    className="group bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md rounded-2xl p-5 border border-slate-800/80 hover:border-cyan-500/50 shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                          {notice.category}
-                        </span>
-                        <span className="text-[11px] font-semibold text-slate-400">
-                          {notice.publishedDate}
-                        </span>
+                {currentRecentNotices.map((notice, index) => {
+                  const noticeImage = notice.imageUrl || notice.image;
+
+                  return (
+                    <div
+                      key={notice.id || notice._id || `recent-${index}`}
+                      onClick={() => setSelectedNotice(notice)}
+                      className="group bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md rounded-2xl p-5 border border-slate-800/80 hover:border-cyan-500/50 shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                            {notice.category}
+                          </span>
+                          <span className="text-[11px] font-semibold text-slate-400">
+                            {notice.publishedDate}
+                          </span>
+                        </div>
+
+                        <h3 className="text-base font-bold text-slate-100 group-hover:text-cyan-300 transition-colors mb-2 line-clamp-2 leading-snug">
+                          {notice.title}
+                        </h3>
+
+                        <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
+                          {notice.summary}
+                        </p>
                       </div>
 
-                      <h3 className="text-base font-bold text-slate-100 group-hover:text-cyan-300 transition-colors mb-2 line-clamp-2 leading-snug">
-                        {notice.title}
-                      </h3>
+                      <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
+                        <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                          View Details
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </span>
 
-                      <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
-                        {notice.summary}
-                      </p>
+                        <div className="flex items-center gap-1">
+                          {noticeImage && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleOpenLink(e, noticeImage, "Image")}
+                              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                              title="Open Image"
+                            >
+                              <ImageIcon className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          {notice.pdfUrl && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleOpenLink(e, notice.pdfUrl, "PDF")}
+                              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                              title="Open PDF"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
-
-                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
-                      <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        View Details
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={(e) => handleDownload(e, notice.pdfUrl)}
-                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
-                        title="Open PDF in New Tab"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -349,7 +389,7 @@ export default function NoticeBoard() {
                 {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(
                   (page) => (
                     <button
-                      key={page}
+                      key={`page-${page}`}
                       onClick={() => handlePageChange(page)}
                       className={`w-9 h-9 rounded-xl font-bold transition flex items-center justify-center ${
                         currentPage === page
@@ -380,72 +420,93 @@ export default function NoticeBoard() {
       </div>
 
       {/* FULL NOTICE DETAIL MODAL */}
-      {selectedNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-slate-200 p-6 sm:p-8">
-            <button
-              onClick={() => setSelectedNotice(null)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700/50 flex items-center justify-center transition"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      {selectedNotice && (() => {
+        const modalImage = selectedNotice.imageUrl || selectedNotice.image;
 
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                  {selectedNotice.category}
-                </span>
-                {selectedNotice.priority && (
-                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    {selectedNotice.priority}
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-slate-200 p-6 sm:p-8">
+              <button
+                onClick={() => setSelectedNotice(null)}
+                className="absolute top-5 right-5 w-8 h-8 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700/50 flex items-center justify-center transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    {selectedNotice.category}
                   </span>
+                  {selectedNotice.priority && (
+                    <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      {selectedNotice.priority}
+                    </span>
+                  )}
+                </div>
+
+                <h2 className="text-xl sm:text-2xl font-black text-white leading-tight mb-3">
+                  {selectedNotice.title}
+                </h2>
+
+                <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
+                  <span className="inline-flex items-center gap-1 text-slate-400">
+                    <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                    Published: {selectedNotice.publishedDate}
+                  </span>
+                  <span>•</span>
+                  <span>Ideal Commerce College Admin</span>
+                </div>
+              </div>
+
+              {/* Notice Image Preview in Modal */}
+              
+
+              <div className="space-y-4 text-sm text-slate-300 leading-relaxed mb-8 pt-4 border-t border-slate-800">
+                <p className="font-semibold text-white">
+                  {selectedNotice.summary}
+                </p>
+                <p className="text-slate-400">
+                  {selectedNotice.description || selectedNotice.summary}
+                </p>
+              </div>
+
+              {/* Dynamic Action Buttons */}
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setSelectedNotice(null)}
+                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+                >
+                  Close
+                </button>
+
+                {modalImage && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleOpenLink(e, modalImage, "Image")}
+                    className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition inline-flex items-center gap-2"
+                  >
+                    <ImageIcon className="w-4 h-4 text-cyan-400" />
+                    <span>View Image</span>
+                  </button>
+                )}
+
+                {selectedNotice.pdfUrl && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleOpenLink(e, selectedNotice.pdfUrl, "PDF")}
+                    className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold rounded-xl transition inline-flex items-center gap-2 shadow-lg shadow-cyan-500/20"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Open PDF in New Tab</span>
+                  </button>
                 )}
               </div>
-
-              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight mb-3">
-                {selectedNotice.title}
-              </h2>
-
-              <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-                <span className="inline-flex items-center gap-1 text-slate-400">
-                  <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                  Published: {selectedNotice.publishedDate}
-                </span>
-                <span>•</span>
-                <span>Ideal Commerce College Admin</span>
-              </div>
-            </div>
-
-            <div className="space-y-4 text-sm text-slate-300 leading-relaxed mb-8 pt-4 border-t border-slate-800">
-              <p className="font-semibold text-white">
-                {selectedNotice.summary}
-              </p>
-              <p className="text-slate-400">
-                {selectedNotice.description || selectedNotice.summary}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-              <button
-                type="button"
-                onClick={() => setSelectedNotice(null)}
-                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
-              >
-                Close
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) => handleDownload(e, selectedNotice.pdfUrl)}
-                className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold rounded-xl transition inline-flex items-center gap-2 shadow-lg shadow-cyan-500/20"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span>Open PDF in New Tab</span>
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
