@@ -141,7 +141,6 @@ const AllNotices = () => {
             },
           });
 
-          // PATCH Request execution
           await axiosSecure.patch(`/notices/${notice._id}`, result.value);
           await refetch();
 
@@ -263,8 +262,8 @@ const AllNotices = () => {
   }
 
   return (
-    <div className="p-6 bg-[#030712] text-slate-100 rounded-3xl border border-slate-800/80 shadow-2xl">
-      {/* Table Header Section */}
+    <div className="p-4 sm:p-6 bg-[#030712] text-slate-100 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl">
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-800">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
@@ -284,8 +283,8 @@ const AllNotices = () => {
         </span>
       </div>
 
-      {/* Tabular Notice Board */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md">
+      {/* Desktop & Tablet Table View (Hidden on mobile) */}
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-900/90 text-slate-400 text-[11px] font-extrabold uppercase tracking-wider border-b border-slate-800">
@@ -318,12 +317,10 @@ const AllNotices = () => {
                     key={notice._id || notice.id || index}
                     className="hover:bg-slate-800/40 transition-colors duration-200 group"
                   >
-                    {/* Index */}
                     <td className="py-4 px-4 font-bold text-slate-500">
                       {String(index + 1).padStart(2, "0")}
                     </td>
 
-                    {/* Title & Summary with Image Thumbnail */}
                     <td className="py-4 px-4 max-w-xs sm:max-w-md">
                       <div className="flex items-start gap-3">
                         {noticeImage && (
@@ -351,7 +348,6 @@ const AllNotices = () => {
                       </div>
                     </td>
 
-                    {/* Category */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-extrabold uppercase">
                         <Tag className="w-3 h-3" />
@@ -359,7 +355,6 @@ const AllNotices = () => {
                       </span>
                     </td>
 
-                    {/* Date */}
                     <td className="py-4 px-4 whitespace-nowrap text-slate-400 font-medium">
                       <span className="inline-flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-slate-500" />
@@ -369,7 +364,6 @@ const AllNotices = () => {
                       </span>
                     </td>
 
-                    {/* Status / Priority */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       {notice.priority ? (
                         <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -382,10 +376,8 @@ const AllNotices = () => {
                       )}
                     </td>
 
-                    {/* Action Icons */}
                     <td className="py-4 px-4 whitespace-nowrap text-center">
                       <div className="flex items-center justify-center gap-2">
-                        {/* Image Preview Link */}
                         {noticeImage && (
                           <a
                             href={noticeImage}
@@ -398,7 +390,6 @@ const AllNotices = () => {
                           </a>
                         )}
 
-                        {/* PDF Preview Link */}
                         {notice.pdfUrl && (
                           <a
                             href={notice.pdfUrl}
@@ -411,7 +402,6 @@ const AllNotices = () => {
                           </a>
                         )}
 
-                        {/* Update Button */}
                         <button
                           onClick={() => handleEdit(notice)}
                           className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 transition-all duration-200"
@@ -420,7 +410,6 @@ const AllNotices = () => {
                           <Edit className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Delete Button */}
                         <button
                           onClick={() => handleDelete(notice._id)}
                           className="p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-all duration-200"
@@ -436,6 +425,121 @@ const AllNotices = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card List View (Visible only on small devices) */}
+      <div className="md:hidden space-y-3">
+        {sortedNotices.length === 0 ? (
+          <div className="py-12 text-center text-slate-400 font-medium bg-slate-900/40 rounded-2xl border border-slate-800">
+            <FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+            No notices available.
+          </div>
+        ) : (
+          sortedNotices.map((notice, index) => {
+            const noticeImage = notice.imageUrl || notice.image;
+
+            return (
+              <div
+                key={notice._id || notice.id || index}
+                className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 space-y-3"
+              >
+                {/* Header: Title, Image, Pin */}
+                <div className="flex items-start gap-3">
+                  {noticeImage && (
+                    <img
+                      src={noticeImage}
+                      alt={notice.title}
+                      className="w-12 h-12 rounded-lg object-cover border border-slate-700/80 shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start gap-1">
+                      {notice.isPinned && (
+                        <Pin className="w-3.5 h-3.5 text-amber-400 fill-amber-400 rotate-45 shrink-0 mt-0.5" />
+                      )}
+                      <h3 className="font-bold text-slate-200 text-sm line-clamp-2">
+                        {notice.title}
+                      </h3>
+                    </div>
+                    {notice.summary && (
+                      <p className="text-xs text-slate-400 line-clamp-2 mt-1">
+                        {notice.summary}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Badges Row: Category, Priority, Date */}
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold uppercase">
+                    <Tag className="w-3 h-3" />
+                    {notice.category || "General"}
+                  </span>
+
+                  {notice.priority ? (
+                    <span className="px-2 py-0.5 rounded font-black uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      {notice.priority}
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded font-semibold bg-slate-800 text-slate-400">
+                      Standard
+                    </span>
+                  )}
+
+                  <span className="inline-flex items-center gap-1 text-slate-400 ml-auto">
+                    <Calendar className="w-3 h-3 text-slate-500" />
+                    {notice.createdAt
+                      ? new Date(notice.createdAt).toLocaleDateString()
+                      : notice.publishedDate || "N/A"}
+                  </span>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/60">
+                  {noticeImage && (
+                    <a
+                      href={noticeImage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                      title="View Image"
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                    </a>
+                  )}
+
+                  {notice.pdfUrl && (
+                    <a
+                      href={notice.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                      title="View PDF"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => handleEdit(notice)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(notice._id)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
