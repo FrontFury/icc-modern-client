@@ -79,7 +79,7 @@ export const router = createBrowserRouter([
       {
         path: "notices",
         element: <NoticeBoard />,
-        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()),
+        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()), // 82 no line
       },
       {
         path: "admission",

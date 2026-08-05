@@ -5,15 +5,19 @@ import {
   User, Mail, IdCard, Lock, Eye, EyeOff, Building2, 
   UploadCloud, X, GraduationCap, ShieldCheck, ArrowRight, Sparkles 
 } from 'lucide-react';
+import SuccessModal from '../Shared/SuccessModal/SuccessModal';
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
 import axios from 'axios';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const axiosSecure = useAxiosSecure()
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   const {
     register,
@@ -63,14 +67,10 @@ export default function SignUp() {
   };
 
   // Fixed Async Submit Handler
-  const onSubmit = async (data) => {
+const onSubmit = async (data) => {
     try {
-      // 1. Create Firebase User
-      const result = await registerUser(data.email, data.password);
-
+      // 1. Upload profile image to ImgBB
       let imageUrl = '';
-
-      // 2. Upload image to ImgBB
       if (data.profileImage) {
         const formData = new FormData();
         formData.append('image', data.profileImage);
@@ -80,24 +80,49 @@ export default function SignUp() {
         imageUrl = res.data.data.display_url;
       }
 
-      // 3. Update Profile
+      // 2. Create Firebase User
+      await registerUser(data.email, data.password);
+
+      // 3. Update Firebase Profile
       const userProfile = {
         displayName: data.fullName,
         photoURL: imageUrl,
       };
-
       await updateUserProfile(userProfile);
-      
-      // 4. Safe Navigation
-      navigate(location.state || '/', { replace: true });
+
+      // 4. Save User Info to MongoDB via secure POST request
+      const userInfo = {
+        name: data.fullName,
+        email: data.email,
+        studentId: data.studentId,
+        department: data.department,
+        photoURL: imageUrl
+      };
+
+      const userRes = await axiosSecure.post('/users', userInfo);
+
+      if (userRes.data.insertedId || userRes.data.success) {
+
+        setIsSuccessOpen(true);
+      }
     } catch (error) {
       console.error('Sign Up Error:', error);
     }
   };
+  const handleModalClose = () => {
+    setIsSuccessOpen(false);
+    navigate(location.state || '/', { replace: true });
+  };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 font-sans text-slate-800 selection:bg-blue-500 selection:text-white">
-      
+      <SuccessModal
+        isOpen={isSuccessOpen}
+        onClose={handleModalClose}
+        title="Welcome to Ideal Commerce College"
+        message="Your student profile has been created successfully."
+        buttonText="Go to Portal"
+      />
       {/* Left Column - Hero Visual Section */}
       <div className="relative lg:w-5/12 xl:w-1/2 bg-slate-950 text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 overflow-hidden min-h-[380px] lg:min-h-screen">
         {/* Background Image & Overlays */}

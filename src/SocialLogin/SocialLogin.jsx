@@ -1,9 +1,12 @@
 
 import useAuth from '../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import useAxiosSecure from '../hooks/useAxiosSecure';
+
 
 export default function SocialLogin() {
     const {signInGoogle} = useAuth();
+      const axiosSecure = useAxiosSecure()
 
     const location = useLocation()
     const navigate = useNavigate()
@@ -12,7 +15,20 @@ export default function SocialLogin() {
     signInGoogle()
     .then(result => {
       console.log(result.user)
-      navigate(location.state || '/')
+
+      const userInfo = {
+        name: result.user.displayName,
+        email: result.user.email,
+        studentId: result.user.studentId,
+        department: result.user.department,
+        photoURL: result.user.photoURL
+      };
+      axiosSecure.post('/users', userInfo)
+      .then(res => {
+        console.log(res.data)
+        navigate(location.state || '/')
+      })
+
     })
     .catch(error =>{
       console.log(error)
