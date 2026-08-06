@@ -41,7 +41,7 @@ export default function UsersPage() {
   // Calculate dynamic statistics
   const totalUsers = users.length;
   const activeStudents = users.filter(
-    (u) => u.role === "Student" && u.status === "Active"
+    (u) => u.role === "Student" && u.status === "Active",
   ).length;
   const facultyStaff = users.filter((u) => u.role === "Faculty").length;
   const pendingApprovals = users.filter((u) => u.status === "Pending").length;
@@ -208,90 +208,101 @@ export default function UsersPage() {
 
   // Handle Role Change using SweetAlert2 Dark Modal
   const handleChangeRole = (user) => {
-    Swal.fire({
-      title: "Update Permission Level",
-      html: `
-        <div class="space-y-3 text-left">
-          <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs space-y-1">
-            <p class="font-bold text-slate-100">${user.name}</p>
-            <p class="text-slate-400">${user.email}</p>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Select New Role</label>
-            <select id="swal-user-new-role" class="swal2-select !m-0 !w-full !bg-slate-900 !text-slate-100 !border-slate-700 !rounded-xl text-sm">
-              <option value="Student" ${user.role === "Student" ? "selected" : ""}>Student</option>
-              <option value="Faculty" ${user.role === "Faculty" ? "selected" : ""}>Faculty</option>
-              <option value="Operator" ${user.role === "Operator" ? "selected" : ""}>Operator</option>
-            </select>
-          </div>
+  // Normalize current role to lowercase for clean comparisons
+  const currentRole = user.role?.toLowerCase() || "student";
+
+  Swal.fire({
+    title: "Update Permission Level",
+    html: `
+      <div class="space-y-3 text-left">
+        <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs space-y-1">
+          <p class="font-bold text-slate-100">${user.name}</p>
+          <p class="text-slate-400">${user.email}</p>
         </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Save Changes",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
-      background: "#0f172a",
-      color: "#f8fafc",
-      confirmButtonColor: "#06b6d4",
-      cancelButtonColor: "#334155",
-      customClass: {
-        popup: "border border-slate-800 rounded-2xl shadow-2xl max-w-sm",
-        title: "text-lg font-bold text-white mb-2",
-        confirmButton:
-          "px-4 py-2 rounded-xl text-sm font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 border-none focus:ring-0",
-        cancelButton:
-          "px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-slate-700 hover:bg-slate-600 border-none focus:ring-0",
-      },
-      preConfirm: () => {
-        return document.getElementById("swal-user-new-role").value;
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed && result.value) {
-        try {
-          Swal.fire({
-            title: "Updating Role...",
-            background: "#0f172a",
-            color: "#f8fafc",
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-          });
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Select New Role</label>
+          <select id="swal-user-new-role" class="swal2-select !m-0 !w-full !bg-slate-900 !text-slate-100 !border-slate-700 !rounded-xl text-sm">
+            <option value="user" ${currentRole === "user" ? "selected" : ""}>User</option>
+            <option value="student" ${currentRole === "student" ? "selected" : ""}>Student</option>
+            <option value="faculty" ${currentRole === "faculty" ? "selected" : ""}>Faculty</option>
+            <option value="operator" ${currentRole === "operator" ? "selected" : ""}>Operator</option>
+            <option value="admin" ${currentRole === "admin" ? "selected" : ""}>Admin</option>
+          </select>
+        </div>
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: "Save Changes",
+    cancelButtonText: "Cancel",
+    reverseButtons: true,
+    background: "#0f172a",
+    color: "#f8fafc",
+    confirmButtonColor: "#06b6d4",
+    cancelButtonColor: "#334155",
+    customClass: {
+      popup: "border border-slate-800 rounded-2xl shadow-2xl max-w-sm",
+      title: "text-lg font-bold text-white mb-2",
+      confirmButton:
+        "px-4 py-2 rounded-xl text-sm font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 border-none focus:ring-0",
+      cancelButton:
+        "px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-slate-700 hover:bg-slate-600 border-none focus:ring-0",
+    },
+    preConfirm: () => {
+      // Returns lowercase role string ("user", "student", "faculty", "operator", "admin")
+      return document.getElementById("swal-user-new-role").value.toLowerCase();
+    },
+  }).then(async (result) => {
+    if (result.isConfirmed && result.value) {
+      try {
+        Swal.fire({
+          title: "Updating Role...",
+          background: "#0f172a",
+          color: "#f8fafc",
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
 
-          await axiosSecure.patch(`/users/${user._id || user.id}`, {
-            role: result.value,
-          });
-          await refetch();
+        const userId = user._id || user.id;
 
-          Swal.fire({
-            title: "Updated!",
-            text: "User permissions updated successfully.",
-            icon: "success",
-            background: "#0f172a",
-            color: "#f8fafc",
-            confirmButtonColor: "#06b6d4",
-            timer: 2000,
-            timerProgressBar: true,
-            customClass: {
-              popup: "border border-slate-800 rounded-2xl shadow-2xl",
-            },
-          });
-        } catch (error) {
-          console.error("Failed to update role:", error);
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to update user role. Please try again.",
-            icon: "error",
-            background: "#0f172a",
-            color: "#f8fafc",
-            confirmButtonColor: "#06b6d4",
-            customClass: {
-              popup: "border border-slate-800 rounded-2xl shadow-2xl",
-            },
-          });
-        }
+        // Update database with lowercase role string
+        await axiosSecure.patch(`/users/${userId}`, {
+          role: result.value,
+        });
+
+        // Refetch cache to update UI instantly
+        await refetch();
+
+        Swal.fire({
+          title: "Updated!",
+          text: "User permissions updated successfully.",
+          icon: "success",
+          background: "#0f172a",
+          color: "#f8fafc",
+          confirmButtonColor: "#06b6d4",
+          timer: 2000,
+          timerProgressBar: true,
+          customClass: {
+            popup: "border border-slate-800 rounded-2xl shadow-2xl",
+          },
+        });
+      } catch (error) {
+        console.error("Failed to update role:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to update user role. Please try again.",
+          icon: "error",
+          background: "#0f172a",
+          color: "#f8fafc",
+          confirmButtonColor: "#06b6d4",
+          customClass: {
+            popup: "border border-slate-800 rounded-2xl shadow-2xl",
+          },
+        });
       }
-    });
-  };
+    }
+  });
+};
 
   // Handle User Deletion using SweetAlert2 Dark Modal
   const handleDeleteUser = (id) => {
@@ -414,13 +425,19 @@ export default function UsersPage() {
               className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 shadow-sm space-y-2 backdrop-blur-md"
             >
               <div className="flex items-center justify-between">
-                <div className={`p-2.5 rounded-xl ${item.bg} ${item.color} border ${item.border}`}>
+                <div
+                  className={`p-2.5 rounded-xl ${item.bg} ${item.color} border ${item.border}`}
+                >
                   <Icon className="w-5 h-5" />
                 </div>
               </div>
               <div>
-                <p className="text-2xl font-black text-white tracking-tight">{item.value}</p>
-                <p className="text-xs font-bold text-slate-300 mt-0.5">{item.title}</p>
+                <p className="text-2xl font-black text-white tracking-tight">
+                  {item.value}
+                </p>
+                <p className="text-xs font-bold text-slate-300 mt-0.5">
+                  {item.title}
+                </p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{item.sub}</p>
               </div>
             </div>
@@ -434,7 +451,9 @@ export default function UsersPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/50 p-4 rounded-2xl border border-slate-800/80">
           <div>
             <h2 className="text-sm font-bold text-white">User Directory</h2>
-            <p className="text-[11px] text-slate-400">Search, filter, or manage user capabilities</p>
+            <p className="text-[11px] text-slate-400">
+              Search, filter, or manage user capabilities
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -481,14 +500,20 @@ export default function UsersPage() {
             <tbody className="divide-y divide-slate-800/60 text-xs">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
+                  <td
+                    colSpan={6}
+                    className="py-12 text-center text-slate-400 font-medium"
+                  >
                     <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                     No users matching criteria.
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map((user, index) => (
-                  <tr key={user._id || user.id || index} className="hover:bg-slate-800/40 transition group">
+                  <tr
+                    key={user._id || user.id || index}
+                    className="hover:bg-slate-800/40 transition group"
+                  >
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-slate-200 group-hover:text-cyan-300 transition">
                         {user.name}
@@ -505,11 +530,13 @@ export default function UsersPage() {
                           user.role === "Operator"
                             ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
                             : user.role === "Faculty"
-                            ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
-                            : "bg-slate-800 text-slate-400 border-slate-700"
+                              ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+                              : "bg-slate-800 text-slate-400 border-slate-700"
                         }`}
                       >
-                        {user.role === "Operator" && <Shield className="w-3 h-3" />}
+                        {user.role === "Operator" && (
+                          <Shield className="w-3 h-3" />
+                        )}
                         {user.role}
                       </span>
                     </td>
@@ -524,8 +551,8 @@ export default function UsersPage() {
                           user.status === "Active"
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                             : user.status === "Pending"
-                            ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                            : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                              ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                              : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                         }`}
                       >
                         {user.status === "Active" ? (
@@ -538,7 +565,10 @@ export default function UsersPage() {
                     </td>
 
                     <td className="py-3.5 px-4 text-slate-400 text-[11px] whitespace-nowrap">
-                      {user.joined || (user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A")}
+                      {user.joined ||
+                        (user.createdAt
+                          ? new Date(user.createdAt).toLocaleDateString()
+                          : "N/A")}
                     </td>
 
                     <td className="py-3.5 px-4 whitespace-nowrap text-center">
@@ -583,7 +613,9 @@ export default function UsersPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="font-bold text-slate-200 text-sm">{user.name}</h3>
+                    <h3 className="font-bold text-slate-200 text-sm">
+                      {user.name}
+                    </h3>
                     <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
                       <Mail className="w-3 h-3 text-slate-500" />
                       {user.email}
@@ -595,8 +627,8 @@ export default function UsersPage() {
                       user.role === "Operator"
                         ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
                         : user.role === "Faculty"
-                        ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
-                        : "bg-slate-800 text-slate-400 border-slate-700"
+                          ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+                          : "bg-slate-800 text-slate-400 border-slate-700"
                     }`}
                   >
                     {user.role === "Operator" && <Shield className="w-3 h-3" />}
@@ -615,8 +647,8 @@ export default function UsersPage() {
                       user.status === "Active"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                         : user.status === "Pending"
-                        ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                        : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                          ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                          : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                     }`}
                   >
                     {user.status === "Active" ? (
@@ -631,7 +663,10 @@ export default function UsersPage() {
                 <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-[11px] text-slate-500">
                   <span className="inline-flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-slate-600" />
-                    {user.joined || (user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A")}
+                    {user.joined ||
+                      (user.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString()
+                        : "N/A")}
                   </span>
 
                   <div className="flex items-center gap-2">

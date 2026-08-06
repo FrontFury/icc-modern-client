@@ -21,6 +21,8 @@ import Academic from "../pages/Operator/Academic/Academic";
 import UsersPage from "../pages/Operator/UsersPage/UsersPage";
 import SystemPage from "../pages/Operator/SystemPage/SystemPage";
 import AllNotices from "../pages/Operator/AllNotices/AllNotices";
+import AdminRoute from "./AdminRoute";
+import ForbiddenPage from "../pages/Shared/ForbiddenPage/ForbiddenPage";
 
 // Operator Sub-Page Imports
 
@@ -94,38 +96,49 @@ export const router = createBrowserRouter([
 
   // Operator / Admin Portal Nested Routes
   {
-    path: "/operator",
-    element: <OperatorLayout />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="dashboard" replace />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "addNotices",
-        element: <AddNotice />,
-      },
-      {
-        path: "allNotices",
-        element: <AllNotices/>
-      },
-      {
-        path: "academic",
-        element: <Academic />,
-      },
-      {
-        path: "users",
-        element: <UsersPage />,
-      },
-      {
-        path: "system",
-        element: <SystemPage />,
-      },
-    ],
-  },
+  path: "operator",
+  element: (
+    <PrivateRoute>
+      <OperatorLayout />
+    </PrivateRoute>
+  ),
+  children: [
+    {
+      index: true,
+      element: <Navigate to="dashboard" replace />,
+    },
+    {
+      path: "dashboard",
+      element: <Dashboard />,
+    },
+    {
+      path: "addNotices",
+      element: <AddNotice />,
+    },
+    {
+      path: "allNotices",
+      element: <AllNotices />,
+    },
+    {
+      path: "academic",
+      element: <Academic />,
+    },
+    {
+      path: "users",
+      element: (
+        <AdminRoute>
+          <UsersPage />
+        </AdminRoute>
+      ),
+    },
+    {
+      path: "system",
+      element: <SystemPage />,
+    },
+    {
+      path: "forbidden",
+      element: <ForbiddenPage />,
+    },
+  ],
+}
 ]);
