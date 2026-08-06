@@ -21,8 +21,9 @@ import Academic from "../pages/Operator/Academic/Academic";
 import UsersPage from "../pages/Operator/UsersPage/UsersPage";
 import SystemPage from "../pages/Operator/SystemPage/SystemPage";
 import AllNotices from "../pages/Operator/AllNotices/AllNotices";
-import AdminRoute from "./AdminRoute";
+import AdminRoute from "./RoleRoute";
 import ForbiddenPage from "../pages/Shared/ForbiddenPage/ForbiddenPage";
+import RoleRoute from "./RoleRoute";
 
 // Operator Sub-Page Imports
 
@@ -95,50 +96,78 @@ export const router = createBrowserRouter([
   },
 
   // Operator / Admin Portal Nested Routes
-  {
-  path: "operator",
-  element: (
-    <PrivateRoute>
-      <OperatorLayout />
-    </PrivateRoute>
-  ),
-  children: [
-    {
-      index: true,
-      element: <Navigate to="dashboard" replace />,
-    },
-    {
-      path: "dashboard",
-      element: <Dashboard />,
-    },
-    {
-      path: "addNotices",
-      element: <AddNotice />,
-    },
-    {
-      path: "allNotices",
-      element: <AllNotices />,
-    },
-    {
-      path: "academic",
-      element: <Academic />,
-    },
-    {
-      path: "users",
-      element: (
-        <AdminRoute>
-          <UsersPage />
-        </AdminRoute>
-      ),
-    },
-    {
-      path: "system",
-      element: <SystemPage />,
-    },
-    {
-      path: "forbidden",
-      element: <ForbiddenPage />,
-    },
-  ],
-}
+{
+    path: "/operator",
+    element: (
+      <PrivateRoute>
+        <OperatorLayout />
+      </PrivateRoute>
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="dashboard" replace />,
+      },
+
+      // Both Admin & Operator
+      {
+        path: "dashboard",
+        element: (
+          <RoleRoute allowedRoles={["admin", "operator"]}>
+            <Dashboard />
+          </RoleRoute>
+        ),
+      },
+
+      // Operator Only
+      {
+        path: "addNotices",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AddNotice />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "allNotices",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AllNotices />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "academic",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <Academic />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "system",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <SystemPage />
+          </RoleRoute>
+        ),
+      },
+
+      // Admin Only
+      {
+        path: "users",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <UsersPage />
+          </RoleRoute>
+        ),
+      },
+
+      {
+        path: "forbidden",
+        element: <ForbiddenPage />,
+      },
+    ],
+  },
 ]);

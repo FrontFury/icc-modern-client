@@ -266,7 +266,7 @@ export default function UsersPage() {
         const userId = user._id || user.id;
 
         // Update database with lowercase role string
-        await axiosSecure.patch(`/users/${userId}`, {
+        await axiosSecure.patch(`/users/${userId}/role`, {
           role: result.value,
         });
 

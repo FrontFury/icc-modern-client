@@ -62,7 +62,7 @@ export default function Academic() {
   });
 
   return (
-    <div className="w-full bg-[#030712] min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans text-slate-200">
+    <div className="w-full rounded-3xl bg-[#030712] min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans text-slate-200">
       
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />

@@ -1,14 +1,30 @@
-import { Menu, X, ChevronDown, LogOut, LogIn } from "lucide-react";
-import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Menu, X, ChevronDown, LogOut, LogIn, User, LayoutDashboard, Mail } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { NavLink, useLocation, Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
+import useRole from "../../../hooks/useRole";
 import logo from "../../../assets/icc-logo.png";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeptOpen, setIsDeptOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const profileRef = useRef(null);
   const location = useLocation();
   const { user, logOut } = useAuth();
+  const { role } = useRole();
+
+  // Profile dropdown dismiss on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logOut()
@@ -21,6 +37,8 @@ const NavBar = () => {
   };
 
   const isDeptActive = location.pathname.startsWith("/departments");
+  const userRole = role?.role;
+  const isAdminOrOperator = userRole === "admin" || userRole === "operator";
 
   const departments = [
     { name: "Science", to: "/departments/science" },
@@ -85,7 +103,7 @@ const NavBar = () => {
                     )}
                   </button>
 
-                  {/* Desktop Dropdown Submenu */}
+                  {/* Desktop Submenu Dropdown */}
                   {isDeptOpen && (
                     <div className="absolute top-full left-0 w-48 bg-[#0b1120] border border-slate-800 shadow-2xl rounded-xl py-2 z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
                       {departments.map((dept) => (
@@ -136,16 +154,71 @@ const NavBar = () => {
           })}
         </ul>
 
-        {/* Auth Action Button (Desktop) */}
+        {/* Auth / Profile Area (Desktop) */}
         <div className="hidden lg:flex items-center">
           {user ? (
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-cyan-500/40 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]"
-            >
-              <LogOut className="w-4 h-4 text-cyan-400" />
-              <span>Log Out</span>
-            </button>
+            <div className="relative" ref={profileRef}>
+              {/* Profile Image Trigger */}
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center focus:outline-none group"
+              >
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-cyan-400/80 shadow-[0_0_12px_rgba(34,211,238,0.3)] group-hover:scale-105 transition-transform duration-200"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-cyan-400/80 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform duration-200">
+                    <User className="w-5 h-5" />
+                  </div>
+                )}
+              </button>
+
+              {/* Profile Dropdown */}
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-3 w-64 bg-[#0b1120] border border-slate-800 shadow-2xl rounded-2xl py-3 z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* User Info Section */}
+                  <div className="px-4 pb-3 border-b border-slate-800/80 space-y-1">
+                    <div className="flex items-center gap-2 text-slate-100 font-bold text-sm">
+                      <User className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <span className="truncate">{user?.displayName || "User"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-400 text-xs">
+                      <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="truncate">{user?.email || "No email"}</span>
+                    </div>
+                  </div>
+
+                  <div className="py-2 space-y-1">
+                    {/* Conditional Dashboard Link */}
+                    {isAdminOrOperator && (
+                      <Link
+                        to="/operator/dashboard"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-cyan-400 hover:bg-slate-800/60 transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4 text-cyan-400" />
+                        <span>Dashboard</span>
+                      </Link>
+                    )}
+
+                    {/* Logout Button */}
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <NavLink
               to="/signIn"
@@ -243,19 +316,56 @@ const NavBar = () => {
             })}
           </ul>
 
-          {/* Auth Action Button (Mobile) */}
-          <div className="pt-2 border-t border-slate-800/80">
+          {/* User Info & Actions (Mobile) */}
+          <div className="pt-4 border-t border-slate-800/80 space-y-3">
             {user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold uppercase tracking-wider py-3 rounded-xl transition-all"
-              >
-                <LogOut className="w-4 h-4 text-cyan-400" />
-                <span>Log Out</span>
-              </button>
+              <>
+                <div className="flex items-center gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-cyan-400"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-cyan-400 flex items-center justify-center text-cyan-400">
+                      <User className="w-5 h-5" />
+                    </div>
+                  )}
+                  <div className="overflow-hidden">
+                    <p className="text-xs font-bold text-slate-100 truncate">
+                      {user?.displayName || "User"}
+                    </p>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      {user?.email || "No email"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {isAdminOrOperator && (
+                    <Link
+                      to="/operator/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold uppercase tracking-wider py-2.5 rounded-xl transition-all"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-cyan-400" />
+                      <span>Dashboard</span>
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold uppercase tracking-wider py-2.5 rounded-xl transition-all"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </>
             ) : (
               <NavLink
                 to="/signIn"
