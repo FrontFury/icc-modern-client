@@ -24,6 +24,8 @@ import AllNotices from "../pages/Operator/AllNotices/AllNotices";
 import AdminRoute from "./RoleRoute";
 import ForbiddenPage from "../pages/Shared/ForbiddenPage/ForbiddenPage";
 import RoleRoute from "./RoleRoute";
+import AddFaculty from "../pages/Operator/AddFaculty/AddFaculty";
+import AllFaculty from "../pages/Operator/AllFaculty/AllFaculty";
 
 // Operator Sub-Page Imports
 
@@ -134,6 +136,22 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <AllNotices />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "addFaculty",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AddFaculty/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "allFaculty",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AllFaculty/>
           </RoleRoute>
         ),
       },
