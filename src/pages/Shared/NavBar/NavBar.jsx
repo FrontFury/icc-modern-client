@@ -8,6 +8,7 @@ import logo from "../../../assets/icc-logo.png";
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeptOpen, setIsDeptOpen] = useState(false);
+  const [isFacultyOpen, setIsFacultyOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const profileRef = useRef(null);
@@ -37,6 +38,9 @@ const NavBar = () => {
   };
 
   const isDeptActive = location.pathname.startsWith("/departments");
+  const isFacultyActive =
+    location.pathname.startsWith("/faculty") || location.pathname.startsWith("/staff");
+
   const userRole = role?.role;
   const isAdminOrOperator = userRole === "admin" || userRole === "operator";
 
@@ -46,12 +50,17 @@ const NavBar = () => {
     { name: "Arts", to: "/departments/arts" },
   ];
 
+  const facultyStaffItems = [
+    { name: "Faculty Members", to: "/faculty" },
+    { name: "Staff Members", to: "/staff" },
+  ];
+
   const navItems = [
     { name: "Home", to: "/" },
     { name: "About", to: "/about" },
     { name: "Notice", to: "/notices" },
-    { name: "Departments", isDropdown: true },
-    { name: "Faculty", to: "/faculty" },
+    { name: "Departments", isDeptDropdown: true },
+    { name: "Faculty & Staff", isFacultyDropdown: true },
     { name: "Admission", to: "/admission" },
     { name: "Alumni", to: "/alumni" },
     { name: "Contact", to: "/contact" },
@@ -74,7 +83,8 @@ const NavBar = () => {
         {/* Desktop Navigation Links */}
         <ul className="hidden lg:flex items-center space-x-7">
           {navItems.map((item) => {
-            if (item.isDropdown) {
+            // Departments Dropdown
+            if (item.isDeptDropdown) {
               return (
                 <li
                   key={item.name}
@@ -103,7 +113,7 @@ const NavBar = () => {
                     )}
                   </button>
 
-                  {/* Desktop Submenu Dropdown */}
+                  {/* Desktop Departments Submenu */}
                   {isDeptOpen && (
                     <div className="absolute top-full left-0 w-48 bg-[#0b1120] border border-slate-800 shadow-2xl rounded-xl py-2 z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
                       {departments.map((dept) => (
@@ -128,6 +138,62 @@ const NavBar = () => {
               );
             }
 
+            // Faculty & Staff Dropdown
+            if (item.isFacultyDropdown) {
+              return (
+                <li
+                  key={item.name}
+                  className="relative group"
+                  onMouseEnter={() => setIsFacultyOpen(true)}
+                  onMouseLeave={() => setIsFacultyOpen(false)}
+                >
+                  <button
+                    onClick={() => setIsFacultyOpen(!isFacultyOpen)}
+                    className={`relative py-2 text-xs xl:text-sm font-semibold tracking-wide uppercase transition-colors flex items-center gap-1.5 focus:outline-none ${
+                      isFacultyActive
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
+                    }`}
+                  >
+                    {item.name}
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isFacultyOpen
+                          ? "rotate-180 text-cyan-400"
+                          : "text-slate-400"
+                      }`}
+                    />
+                    {isFacultyActive && (
+                      <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                    )}
+                  </button>
+
+                  {/* Desktop Faculty & Staff Submenu */}
+                  {isFacultyOpen && (
+                    <div className="absolute top-full left-0 w-52 bg-[#0b1120] border border-slate-800 shadow-2xl rounded-xl py-2 z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                      {facultyStaffItems.map((fs) => (
+                        <NavLink
+                          key={fs.name}
+                          to={fs.to}
+                          onClick={() => setIsFacultyOpen(false)}
+                          className={({ isActive }) =>
+                            `block px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all ${
+                              isActive
+                                ? "text-cyan-400 bg-cyan-500/10 border-l-2 border-cyan-400"
+                                : "text-slate-300 hover:bg-slate-800/60 hover:text-cyan-400"
+                            }`
+                          }
+                        >
+                          {fs.name}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              );
+            }
+
+            // Standard Navigation Items
             return (
               <li key={item.name}>
                 <NavLink
@@ -247,7 +313,8 @@ const NavBar = () => {
         <div className="lg:hidden bg-[#030712]/95 border-b border-slate-800 px-6 pt-4 pb-6 space-y-4 backdrop-blur-xl">
           <ul className="space-y-3">
             {navItems.map((item) => {
-              if (item.isDropdown) {
+              // Mobile Departments Dropdown
+              if (item.isDeptDropdown) {
                 return (
                   <li key={item.name} className="space-y-2">
                     <button
@@ -268,7 +335,7 @@ const NavBar = () => {
                       />
                     </button>
 
-                    {/* Mobile Submenu Options */}
+                    {/* Mobile Departments Submenu Options */}
                     {isDeptOpen && (
                       <div className="pl-4 space-y-2 border-l-2 border-slate-800 my-1">
                         {departments.map((dept) => (
@@ -296,6 +363,57 @@ const NavBar = () => {
                 );
               }
 
+              // Mobile Faculty & Staff Dropdown
+              if (item.isFacultyDropdown) {
+                return (
+                  <li key={item.name} className="space-y-2">
+                    <button
+                      onClick={() => setIsFacultyOpen(!isFacultyOpen)}
+                      className={`w-full flex items-center justify-between py-2 text-sm font-bold tracking-wider uppercase focus:outline-none ${
+                        isFacultyActive
+                          ? "text-cyan-400"
+                          : "text-slate-300 hover:text-cyan-400"
+                      }`}
+                    >
+                      <span>{item.name}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isFacultyOpen
+                            ? "rotate-180 text-cyan-400"
+                            : "text-slate-400"
+                        }`}
+                      />
+                    </button>
+
+                    {/* Mobile Faculty & Staff Submenu Options */}
+                    {isFacultyOpen && (
+                      <div className="pl-4 space-y-2 border-l-2 border-slate-800 my-1">
+                        {facultyStaffItems.map((fs) => (
+                          <NavLink
+                            key={fs.name}
+                            to={fs.to}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setIsFacultyOpen(false);
+                            }}
+                            className={({ isActive }) =>
+                              `block py-1.5 text-xs font-semibold tracking-wider uppercase transition-colors ${
+                                isActive
+                                  ? "text-cyan-400"
+                                  : "text-slate-400 hover:text-slate-200"
+                              }`
+                            }
+                          >
+                            {fs.name}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              }
+
+              // Mobile Standard Links
               return (
                 <li key={item.name}>
                   <NavLink
