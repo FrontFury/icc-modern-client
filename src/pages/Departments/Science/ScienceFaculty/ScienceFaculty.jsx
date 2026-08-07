@@ -1,4 +1,6 @@
 import React from "react";
+import { Mail } from "lucide-react";
+
 import faculty1 from "../../../../assets/Dept/faculty-chemistry.jpg";
 import faculty2 from "../../../../assets/Dept/faculty-math.png";
 import faculty3 from "../../../../assets/Dept/faculty-biology.png";
@@ -8,31 +10,31 @@ const ScienceFaculty = () => {
   const facultyMembers = [
     {
       id: 1,
-      name: "MD. HABIBUR RAHMAN HABIB",
-      role: "ASSISTANT PROFESSOR (CHEMISTRY)",
-      qualification: "Ph.D. in Organic Chemistry, BUET",
-      image: faculty1,
-    },
-    {
-      id: 2,
       name: "MD. IMRAN HOSSAIN FAISAL",
       role: "HEAD OF DEPARTMENT (MATH)",
-      qualification: "25+ Years of Academic Excellence",
+      email: "imranfaisl285@gmail.com",
       image: faculty2,
     },
     {
-      id: 3,
+      id: 2,
       name: "JALAL PEARI ARJU",
       role: "LECTURER (BIOLOGY)",
-      qualification: "M.Sc. in Molecular Biology, RU",
+      email: "jalalpeariarju@gmail.com",
       image: faculty3,
     },
     {
-      id: 4,
+      id: 3,
       name: "DIPAK BISWAS",
       role: "LECTURER (PHYSICS)",
-      qualification: "M.Sc. in Theoretical Physics, DU",
+      email: "dipakhstu.phy@gmail.com",
       image: faculty4,
+    },
+    {
+      id: 4,
+      name: "KHAMA RANI DAS",
+      role: "LECTURER (CHEMISTRY)",
+      email: "krdas75@gmail.com",
+      image: faculty1,
     },
   ];
 
@@ -94,11 +96,15 @@ const ScienceFaculty = () => {
                 </div>
               </div>
 
-              {/* Qualification Footer */}
+              {/* Email Footer with Icon */}
               <div className="mt-4 pt-3 border-t border-slate-800/80">
-                <p className="text-xs text-slate-400 font-medium">
-                  {member.qualification}
-                </p>
+                <a
+                  href={`mailto:${member.email}`}
+                  className="flex items-center gap-2 text-xs text-slate-400 font-medium hover:text-cyan-400 transition-colors group/mail"
+                >
+                  <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/mail:scale-110 transition-transform" />
+                  <span className="truncate">{member.email}</span>
+                </a>
               </div>
 
             </div>

@@ -1,98 +1,118 @@
 import React from "react";
-import { ArrowRight } from "lucide-react";
+import { Mail } from "lucide-react";
+
+import faculty1 from "../../.../../../../assets/Esteemed Leaders/vice-principal.png";
+import faculty2 from "../../.../../../../assets/Esteemed Leaders/basher-sir.png";
+import faculty3 from "../../.../../../../assets/Esteemed Leaders/Shahjahan Alamgir.png";
+import faculty4 from "../../.../../../../assets/Esteemed Leaders/asgar-ali-sir.png";
+import faculty5 from "../../.../../../../assets/Esteemed Leaders/kaniz-maam.png";
 
 const CommerceFaculty = () => {
   const facultyMembers = [
     {
       id: 1,
-      name: "Dr. Khandaker M. Sohel",
-      role: "PRINCIPAL & PROFESSOR OF COMMERCE",
-      bio: "Leading academic in corporate governance and educational management with over 20 years of academic excellence.",
-      image:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800",
+      name: "SHAHNAZ BINTE ISLAM",
+      role: "ASSISTANT PROFESSOR (MANAGEMENT)",
+      email: "binteshahnaz7@gmail.com",
+      image: faculty1,
     },
     {
       id: 2,
-      name: "Prof. Bazlur Rahman",
-      role: "HEAD OF ACCOUNTING & FINANCE",
-      bio: "Expert in financial risk management, fiscal strategy, and national curricula development for commerce education.",
-      image:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+      name: "MD. ABU-AL-BASHER",
+      role: "ASSISTANT PROFESSOR (PRODUCTION MANAGEMENT & MARKETING)",
+      email: "mdabulabasher75@gmail.com",
+      image: faculty2,
     },
     {
       id: 3,
-      name: "Prof. Moniruzzaman",
-      role: "DIRECTOR OF BUSINESS STUDIES",
-      bio: "Specializing in corporate strategy, organizational behavior, and modern entrepreneurship training.",
-      image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800",
+      name: "MD. SHAHJAHAN ALAMGIR",
+      role: "ASSISTANT PROFESSOR & HEAD OF DEPARTMENT (ACCOUNTING)",
+      email: "shahjahan01716@gmail.com",
+      image: faculty3,
+    },
+    {
+      id: 4,
+      name: "MD. AZGAR ALI",
+      role: "ASSISTANT PROFESSOR (MANAGEMENT)",
+      email: "azgarsi@gmail.com",
+      image: faculty4,
+    },
+    {
+      id: 5,
+      name: "KANIZ FATEMA",
+      role: "SENIOR LECTURER (FINANCE, BANKING & INSURANCE)",
+      email: "fatemarahman400@gmail.com",
+      image: faculty5,
     },
   ];
 
   return (
-    <section className="relative w-full bg-[#030712] py-20 px-6 md:px-12 lg:px-20 overflow-hidden font-sans">
+    <section className="relative w-full bg-[#030712] py-20 px-6 md:px-12 lg:px-16 overflow-hidden font-sans">
       
       {/* Background Decorative Ambient Glows */}
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/5 blur-[140px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 max-w-6xl mx-auto space-y-10">
+      <div className="relative z-10 max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase block mb-1">
-              OUR LEADERSHIP
-            </span>
-            <div className="flex items-center gap-3">
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                Distinguished Faculty
-              </h2>
-              <div className="w-10 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_#22d3ee] hidden sm:block" />
-            </div>
-          </div>
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase block">
+            OUR ACADEMICS
+          </span>
 
-          <a
-            href="#all-faculty"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors self-start sm:self-auto group"
-          >
-            View All Faculty{" "}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+            Distinguished Faculty
+          </h2>
+
+          {/* Cyan Neon Accent Line */}
+          <div className="w-12 h-1 bg-cyan-400 rounded-full mx-auto shadow-[0_0_10px_#22d3ee]" />
+
+          {/* Subtitle */}
+          <p className="text-slate-400 text-sm md:text-base pt-2 leading-relaxed font-medium">
+            Guided by world-class educators and industry veterans dedicated to academic mentorship and research leadership.
+          </p>
         </div>
 
-        {/* Faculty Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {facultyMembers.map((faculty) => (
+        {/* Faculty Grid (4 Columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {facultyMembers.map((member) => (
             <div
-              key={faculty.id}
-              className="group bg-[#0a1120]/60 backdrop-blur-md hover:bg-[#0f172a]/90 rounded-3xl p-6 border border-slate-800/80 hover:border-cyan-500/50 shadow-2xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between"
+              key={member.id}
+              className="group bg-[#0a1120]/60 backdrop-blur-md hover:bg-[#0f172a]/90 rounded-3xl p-5 border border-slate-800/80 hover:border-cyan-500/50 shadow-2xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between"
             >
-              <div className="space-y-4">
-                {/* Image Container */}
-                <div className="aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative">
+              <div>
+                {/* Profile Image Box */}
+                <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-950 mb-5 border border-slate-800 relative">
                   <img
-                    src={faculty.image}
-                    alt={faculty.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a1120]/80 via-transparent to-transparent pointer-events-none" />
                 </div>
 
-                {/* Information */}
+                {/* Text Info */}
                 <div className="space-y-2">
-                  <h3 className="text-xl font-extrabold text-white group-hover:text-cyan-400 transition-colors">
-                    {faculty.name}
+                  <h3 className="text-base font-extrabold text-white leading-snug group-hover:text-cyan-400 transition-colors">
+                    {member.name}
                   </h3>
-
+                  
                   <span className="inline-block text-[10px] font-bold tracking-wider text-cyan-400 uppercase bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full">
-                    {faculty.role}
+                    {member.role}
                   </span>
-
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium pt-1">
-                    {faculty.bio}
-                  </p>
                 </div>
+              </div>
+
+              {/* Email Footer with Icon */}
+              <div className="mt-4 pt-3 border-t border-slate-800/80">
+                <a
+                  href={`mailto:${member.email}`}
+                  className="flex items-center gap-2 text-xs text-slate-400 font-medium hover:text-cyan-400 transition-colors group/mail"
+                >
+                  <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/mail:scale-110 transition-transform" />
+                  <span className="truncate">{member.email}</span>
+                </a>
               </div>
 
             </div>

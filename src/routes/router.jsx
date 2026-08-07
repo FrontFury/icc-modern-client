@@ -29,6 +29,9 @@ import AllFaculty from "../pages/Operator/AllFaculty/AllFaculty";
 import AddGallery from "../pages/Operator/AddGallery/AddGallery";
 import ManageGallery from "../pages/Operator/ManageGallery/ManageGallery";
 import AllGallery from "../pages/Home/AllGallery/AllGallery";
+import Staff from "../pages/Staff/Staff";
+import AddStaff from "../pages/Operator/AddStaff/AddStaff";
+import ManageStaff from "../pages/Operator/ManageStaff/ManageStaff";
 
 // Operator Sub-Page Imports
 
@@ -87,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: "faculty",
         element: <Faculty />,
+      },
+      {
+        path: "staff",
+        element: <Staff />,
       },
       {
         path: "notices",
@@ -175,6 +182,22 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <ManageGallery/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "addStaff",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AddStaff/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manageStaff",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <ManageStaff/>
           </RoleRoute>
         ),
       },

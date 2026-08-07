@@ -46,8 +46,8 @@ const NavBar = () => {
 
   const departments = [
     { name: "Science", to: "/departments/science" },
-    { name: "Commerce", to: "/departments/commerce" },
-    { name: "Arts", to: "/departments/arts" },
+    { name: "Business Studies", to: "/departments/commerce" },
+    { name: "Humanities", to: "/departments/arts" },
   ];
 
   const facultyStaffItems = [
