@@ -28,6 +28,7 @@ import AddFaculty from "../pages/Operator/AddFaculty/AddFaculty";
 import AllFaculty from "../pages/Operator/AllFaculty/AllFaculty";
 import AddGallery from "../pages/Operator/AddGallery/AddGallery";
 import ManageGallery from "../pages/Operator/ManageGallery/ManageGallery";
+import AllGallery from "../pages/Home/AllGallery/AllGallery";
 
 // Operator Sub-Page Imports
 
@@ -78,6 +79,10 @@ export const router = createBrowserRouter([
       {
         path: "signUp",
         element: <SignUp />,
+      },
+      {
+        path: "allGallery",
+        element: <AllGallery/>,
       },
       {
         path: "faculty",
