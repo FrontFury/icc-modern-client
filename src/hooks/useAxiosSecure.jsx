@@ -1,45 +1,41 @@
 import axios from "axios";
-import { useEffect } from "react";
-import useAuth from "./useAuth";
 import { useNavigate } from "react-router-dom";
+import useAuth from "./useAuth"; // আপনার Auth Context হুক
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "http://localhost:5000", // আপনার ব্যাকএন্ড URL
 });
 
 const useAxiosSecure = () => {
-  const {user, logOut} = useAuth()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { logOut } = useAuth();
 
-  useEffect(() => {
-    //interceptor request
-    const reqInterceptor = axiosSecure.interceptors.request.use(config => {
-      config.headers.Authorization = `Bearer ${user?.accessToken}`;
-      return config;
-    })
-
-
-    ///interceptor response
-    const resInterceptor = axiosSecure.interceptors.response.use((response ) =>{
-      return response ;
-    }, (error) =>{
-
-      const statusCode = error.status;
-      if(statusCode === 401 || statusCode === 403) {
-        logOut()
-        .then(() => {
-          navigate('/signIn')
-        })
+  // Request Interceptor: প্রতিটি রিকোয়েস্টের সাথে টোকেন যোগ করা
+  axiosSecure.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("access-token");
+      if (token) {
+        config.headers.authorization = `Bearer ${token}`;
       }
-
-      return Promise.reject(error)
-    })
-
-    return () => {
-      axiosSecure.interceptors.request.eject(reqInterceptor);
-      axiosSecure.interceptors.response.eject(resInterceptor);
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-  },[user, logOut , navigate])
+  );
+
+  // Response Interceptor: 401 বা 403 পেলে অটোমেটিক লগআউট ও রিডাইরেক্ট করা
+  axiosSecure.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const status = error.response ? error.response.status : null;
+      if (status === 401 || status === 403) {
+        await logOut();
+        navigate("/login");
+      }
+      return Promise.reject(error);
+    }
+  );
 
   return axiosSecure;
 };

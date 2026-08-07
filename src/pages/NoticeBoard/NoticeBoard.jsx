@@ -58,9 +58,8 @@ export default function NoticeBoard() {
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
       
-      // Get file extension from URL or default to pdf/png
       const extension = url.split(".").pop().split(/\#|\?/)[0] || "file";
-      const sanitizedFileName = `${fileName.replace(/[^a-zA-Z0-0]/g, "_")}.${extension}`;
+      const sanitizedFileName = `${fileName.replace(/[^a-zA-Z0-9]/g, "_")}.${extension}`;
 
       const link = document.createElement("a");
       link.href = blobUrl;
@@ -70,7 +69,6 @@ export default function NoticeBoard() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-      // Fallback: If CORS blocks fetch, trigger standard direct download via link target
       const link = document.createElement("a");
       link.href = url;
       link.download = fileName;
@@ -81,7 +79,7 @@ export default function NoticeBoard() {
     }
   };
 
-  // Filter and Sort Logic
+  // Filter Logic
   const filteredNotices = notices.filter((notice) => {
     const title = notice?.title ?? "";
     const summary = notice?.summary ?? "";
@@ -99,10 +97,12 @@ export default function NoticeBoard() {
     return matchesCategory && matchesSearch;
   });
 
+  // Sort strictly based on createdAt (Missing createdAt moves to the bottom)
   const sortedNotices = [...filteredNotices].sort((a, b) => {
-    const dateA = new Date(a.publishedDate || a.createdAt || 0);
-    const dateB = new Date(b.publishedDate || b.createdAt || 0);
-    return sortBy === "newest" ? dateB - dateA : dateA - dateB;
+    const timeA = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const timeB = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+
+    return sortBy === "newest" ? timeB - timeA : timeA - timeB;
   });
 
   // Limit pinned notices strictly to the TOP 2
@@ -138,6 +138,20 @@ export default function NoticeBoard() {
     return notices.filter(
       (n) => (n?.category ?? "").toLowerCase() === cat.toLowerCase()
     ).length;
+  };
+
+  // Format Helper for Display Dates
+  const formatDateDisplay = (notice) => {
+    const targetDate = notice?.publishedDate || notice?.createdAt;
+    if (!targetDate) return "N/A";
+    const date = new Date(targetDate);
+    return isNaN(date.getTime())
+      ? targetDate
+      : date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
   };
 
   return (
@@ -192,7 +206,7 @@ export default function NoticeBoard() {
                           {notice.priority || "IMPORTANT"}
                         </span>
                         <span className="text-xs font-medium text-slate-400">
-                          Published: {notice.publishedDate}
+                          Published: {formatDateDisplay(notice)}
                         </span>
                       </div>
 
@@ -201,7 +215,7 @@ export default function NoticeBoard() {
                       </h3>
 
                       <p className="text-xs sm:text-sm leading-relaxed mb-6 text-slate-300 line-clamp-3">
-                        {notice.summary}
+                        {notice.summary || notice.content}
                       </p>
                     </div>
 
@@ -359,7 +373,7 @@ export default function NoticeBoard() {
                             {notice.category}
                           </span>
                           <span className="text-[11px] font-semibold text-slate-400">
-                            {notice.publishedDate}
+                            {formatDateDisplay(notice)}
                           </span>
                         </div>
 
@@ -368,7 +382,7 @@ export default function NoticeBoard() {
                         </h3>
 
                         <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
-                          {notice.summary}
+                          {notice.summary || notice.content}
                         </p>
                       </div>
 
@@ -488,19 +502,32 @@ export default function NoticeBoard() {
                 <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                    Published: {selectedNotice.publishedDate}
+                    Published: {formatDateDisplay(selectedNotice)}
                   </span>
                   <span>•</span>
                   <span>Ideal Commerce College Admin</span>
                 </div>
               </div>
 
+              {/* Render Image Banner if available */}
+              {selectedNotice.imageUrl && (
+                <div className="mb-6 rounded-2xl overflow-hidden border border-slate-800 max-h-64 bg-slate-950">
+                  <img
+                    src={selectedNotice.imageUrl}
+                    alt={selectedNotice.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
               <div className="space-y-4 text-sm text-slate-300 leading-relaxed mb-8 pt-4 border-t border-slate-800">
-                <p className="font-semibold text-white">
-                  {selectedNotice.summary}
-                </p>
-                <p className="text-slate-400">
-                  {selectedNotice.description || selectedNotice.summary}
+                {selectedNotice.summary && (
+                  <p className="font-semibold text-white bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                    {selectedNotice.summary}
+                  </p>
+                )}
+                <p className="text-slate-300 whitespace-pre-line">
+                  {selectedNotice.content || selectedNotice.description || selectedNotice.summary}
                 </p>
               </div>
 

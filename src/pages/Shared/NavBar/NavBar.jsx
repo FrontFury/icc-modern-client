@@ -59,7 +59,7 @@ const NavBar = () => {
     { name: "Home", to: "/" },
     { name: "About", to: "/about" },
     { name: "Notice", to: "/notices" },
-    { name: "Departments", isDeptDropdown: true },
+    { name: "Groups", isDeptDropdown: true },
     { name: "Faculty & Staff", isFacultyDropdown: true },
     { name: "Admission", to: "/admission" },
     { name: "Alumni", to: "/alumni" },
