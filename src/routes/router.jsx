@@ -21,7 +21,6 @@ import Academic from "../pages/Operator/Academic/Academic";
 import UsersPage from "../pages/Operator/UsersPage/UsersPage";
 import SystemPage from "../pages/Operator/SystemPage/SystemPage";
 import AllNotices from "../pages/Operator/AllNotices/AllNotices";
-import AdminRoute from "./RoleRoute";
 import ForbiddenPage from "../pages/Shared/ForbiddenPage/ForbiddenPage";
 import RoleRoute from "./RoleRoute";
 import AddFaculty from "../pages/Operator/AddFaculty/AddFaculty";
@@ -32,6 +31,7 @@ import AllGallery from "../pages/Home/AllGallery/AllGallery";
 import Staff from "../pages/Staff/Staff";
 import AddStaff from "../pages/Operator/AddStaff/AddStaff";
 import ManageStaff from "../pages/Operator/ManageStaff/ManageStaff";
+import AdmissionApplications from "../pages/Operator/AdmissionApplications/AdmissionApplications";
 
 // Operator Sub-Page Imports
 
@@ -198,6 +198,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <ManageStaff/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "admissionApplications",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AdmissionApplications/>
           </RoleRoute>
         ),
       },

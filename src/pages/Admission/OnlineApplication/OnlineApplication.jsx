@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
-import { HelpCircle, UploadCloud, ChevronDown, Send, Sparkles } from 'lucide-react';
+import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { 
+  HelpCircle, 
+  UploadCloud, 
+  ChevronDown, 
+  Send, 
+  Sparkles, 
+  Loader2, 
+  CheckCircle2, 
+  AlertCircle 
+} from 'lucide-react';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+
+// Get ImgBB API Key from environment variables
+const IMGBB_API_KEY = import.meta.env.VITE_image_host_key;
+const IMGBB_UPLOAD_URL = `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`;
 
 export default function OnlineApplication() {
+  const axiosSecure = useAxiosSecure();
+
   const [formData, setFormData] = useState({
     studentName: '',
     gender: '',
@@ -15,6 +33,8 @@ export default function OnlineApplication() {
     photo: null,
   });
 
+  const [formSuccess, setFormSuccess] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -22,13 +42,73 @@ export default function OnlineApplication() {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, photo: e.target.files[0].name }));
+      setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
     }
   };
 
+  // TanStack Query Mutation
+  const mutation = useMutation({
+    mutationFn: async (rawFormData) => {
+      let photoUrl = '';
+
+      // 1. Upload photo to ImgBB if a photo file was selected
+      if (rawFormData.photo) {
+        const imageFormData = new FormData();
+        imageFormData.append('image', rawFormData.photo);
+
+        const imgbbRes = await axios.post(IMGBB_UPLOAD_URL, imageFormData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (imgbbRes.data && imgbbRes.data.data) {
+          photoUrl = imgbbRes.data.data.display_url;
+        }
+      }
+
+      // 2. Prepare JSON payload with the uploaded image URL
+      const applicationPayload = {
+        studentName: rawFormData.studentName,
+        gender: rawFormData.gender,
+        fatherName: rawFormData.fatherName,
+        motherName: rawFormData.motherName,
+        dob: rawFormData.dob,
+        phone: rawFormData.phone,
+        email: rawFormData.email,
+        group: rawFormData.group,
+        sscGpa: rawFormData.sscGpa,
+        photo: photoUrl,
+      };
+
+      // 3. Post final application data to backend API
+      const response = await axiosSecure.post('/online-applications', applicationPayload);
+      return response.data;
+    },
+    onSuccess: () => {
+      setFormSuccess(true);
+      // Reset Form State
+      setFormData({
+        studentName: '',
+        gender: '',
+        fatherName: '',
+        motherName: '',
+        dob: '',
+        phone: '',
+        email: '',
+        group: '',
+        sscGpa: '',
+        photo: null,
+      });
+    },
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Application submitted successfully to Ideal Commerce College portal!');
+    setFormSuccess(false);
+
+    // Trigger mutation with local form state
+    mutation.mutate(formData);
   };
 
   return (
@@ -36,7 +116,7 @@ export default function OnlineApplication() {
       
       {/* Ambient Background Light Glows */}
       <div className="absolute top-1/4 left-10 w-96 h-96 bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-indigo-600/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
         
@@ -57,15 +137,15 @@ export default function OnlineApplication() {
           </div>
 
           {/* Stepper list */}
-          <div className="space-y-4 pt-2">
+          <div className="space-y-3 pt-2">
             
-            {/* Step 1 - Active */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
-              <div className="w-7 h-7 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5 shadow-[0_0_12px_rgba(34,211,238,0.5)]">
+            {/* Step 1 */}
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-cyan-500/30 backdrop-blur-md shadow-lg">
+              <div className="w-7 h-7 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center text-xs font-black shrink-0 mt-0.5 shadow-[0_0_12px_#22d3ee]">
                 1
               </div>
               <div>
-                <h3 className="text-sm font-extrabold text-white leading-none mb-1">
+                <h3 className="text-xs font-extrabold text-white leading-none mb-1">
                   Personal Details
                 </h3>
                 <p className="text-[11px] text-slate-400">
@@ -74,32 +154,32 @@ export default function OnlineApplication() {
               </div>
             </div>
 
-            {/* Step 2 - Inactive */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-950/40 border border-slate-900/60 backdrop-blur-md opacity-50">
-              <div className="w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+            {/* Step 2 */}
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-slate-800/80 backdrop-blur-md">
+              <div className="w-7 h-7 rounded-full bg-slate-800 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5">
                 2
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-300 leading-none mb-1">
+                <h3 className="text-xs font-extrabold text-white leading-none mb-1">
                   Academic History
                 </h3>
-                <p className="text-[11px] text-slate-500">
-                  Upload transcripts and grade sheets.
+                <p className="text-[11px] text-slate-400">
+                  Provide SSC grades and upload photo.
                 </p>
               </div>
             </div>
 
-            {/* Step 3 - Inactive */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-950/40 border border-slate-900/60 backdrop-blur-md opacity-50">
-              <div className="w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+            {/* Step 3 */}
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-slate-800/80 backdrop-blur-md">
+              <div className="w-7 h-7 rounded-full bg-slate-800 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5">
                 3
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-300 leading-none mb-1">
-                  Submission
+                <h3 className="text-xs font-extrabold text-white leading-none mb-1">
+                  Submission & Review
                 </h3>
-                <p className="text-[11px] text-slate-500">
-                  Receive confirmation code via SMS/email.
+                <p className="text-[11px] text-slate-400">
+                  Submit record directly to college database.
                 </p>
               </div>
             </div>
@@ -107,7 +187,7 @@ export default function OnlineApplication() {
           </div>
 
           {/* Need Assistance Callout Box */}
-          <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-800/80 backdrop-blur-md mt-8">
+          <div className="bg-[#0a1120]/60 rounded-2xl p-4 border border-slate-800/80 backdrop-blur-md mt-6">
             <div className="flex items-center gap-1.5 text-cyan-400 text-[11px] font-black uppercase tracking-wider mb-1">
               <HelpCircle className="w-3.5 h-3.5" />
               Need Assistance?
@@ -116,17 +196,38 @@ export default function OnlineApplication() {
               Contact our Farmgate admission helpdesk at:
             </p>
             <a 
-              href="mailto:admissions@icc.edu.bd" 
+              href="mailto:principalicc@yahoo.com" 
               className="text-xs font-bold text-cyan-300 hover:text-cyan-200 underline transition"
             >
-              admissions@icc.edu.bd
+              principalicc@yahoo.com
             </a>
           </div>
 
         </div>
 
         {/* RIGHT COLUMN: Application Form Card */}
-        <div className="lg:col-span-8 bg-slate-900/60 rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-800/80 backdrop-blur-xl">
+        <div className="lg:col-span-8 bg-[#0a1120]/60 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800/80 backdrop-blur-xl">
+          
+          {/* Success Banner */}
+          {formSuccess && (
+            <div className="mb-6 p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 shrink-0" />
+              <div className="text-xs sm:text-sm font-semibold">
+                Application submitted successfully! Our admissions department will get back to you shortly.
+              </div>
+            </div>
+          )}
+
+          {/* Error Banner */}
+          {mutation.isError && (
+            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <div className="text-xs sm:text-sm font-semibold">
+                {mutation.error?.response?.data?.message || 'Failed to process application. Please check your connection or image format.'}
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             
             {/* Grid 1: Name & Gender */}
@@ -142,7 +243,7 @@ export default function OnlineApplication() {
                   value={formData.studentName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
 
@@ -156,7 +257,7 @@ export default function OnlineApplication() {
                     value={formData.gender}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white appearance-none focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white appearance-none focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 cursor-pointer"
                   >
                     <option value="" disabled className="bg-slate-900 text-slate-400">Select Gender</option>
                     <option value="Male" className="bg-slate-900 text-white">Male</option>
@@ -180,7 +281,7 @@ export default function OnlineApplication() {
                   value={formData.fatherName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
 
@@ -195,7 +296,7 @@ export default function OnlineApplication() {
                   value={formData.motherName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
             </div>
@@ -212,7 +313,7 @@ export default function OnlineApplication() {
                   value={formData.dob}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 [color-scheme:dark]"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 [color-scheme:dark]"
                 />
               </div>
 
@@ -223,11 +324,11 @@ export default function OnlineApplication() {
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="+880 1700-000000"
+                  placeholder="+880 1900-000000"
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
             </div>
@@ -245,7 +346,7 @@ export default function OnlineApplication() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
 
@@ -259,7 +360,7 @@ export default function OnlineApplication() {
                     value={formData.group}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white appearance-none focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white appearance-none focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200 cursor-pointer"
                   >
                     <option value="" disabled className="bg-slate-900 text-slate-400">Select Group</option>
                     <option value="Business Studies (Commerce)" className="bg-slate-900 text-white">Business Studies (Commerce)</option>
@@ -287,7 +388,7 @@ export default function OnlineApplication() {
                   value={formData.sscGpa}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
+                  className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition duration-200"
                 />
               </div>
 
@@ -295,9 +396,9 @@ export default function OnlineApplication() {
                 <label className="block text-xs font-extrabold text-slate-300 mb-1.5">
                   Upload Photo
                 </label>
-                <label className="w-full flex items-center justify-between px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-xs text-slate-400 hover:border-slate-700 cursor-pointer transition">
+                <label className="w-full flex items-center justify-between px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-400 hover:border-slate-700 cursor-pointer transition">
                   <span className="truncate">
-                    {formData.photo ? formData.photo : 'Select file (JPG, PNG)'}
+                    {formData.photo ? formData.photo.name : 'Select file (JPG, PNG)'}
                   </span>
                   <UploadCloud className="w-4 h-4 text-cyan-400 shrink-0 ml-2" />
                   <input
@@ -305,6 +406,7 @@ export default function OnlineApplication() {
                     accept="image/*"
                     onChange={handleFileChange}
                     className="hidden"
+                    required
                   />
                 </label>
               </div>
@@ -314,10 +416,20 @@ export default function OnlineApplication() {
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] flex items-center justify-center gap-2 cursor-pointer hover:-translate-y-0.5"
+                disabled={mutation.isPending}
+                className="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] flex items-center justify-center gap-2 cursor-pointer hover:-translate-y-0.5"
               >
-                <span>Submit Application</span>
-                <Send className="w-4 h-4" />
+                {mutation.isPending ? (
+                  <>
+                    <span>Uploading & Submitting...</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    <span>Submit Application</span>
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </div>
 

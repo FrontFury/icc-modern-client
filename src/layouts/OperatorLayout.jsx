@@ -17,6 +17,7 @@ import {
   Users2,
   UserRoundArrowLeft,
   DatabaseBackup,
+  BookCheck,
 } from "lucide-react";
 import useRole from "../hooks/useRole";
 import useAuth from "../hooks/useAuth";
@@ -96,6 +97,11 @@ export default function OperatorLayout() {
         name: "Manage Staff",
         path: "/operator/manageStaff",
         icon: UserRoundArrowLeft ,
+      },
+      {
+        name: "Admission Applications",
+        path: "/operator/admissionApplications",
+        icon: BookCheck ,
       },
       {
         name: "Academic",
