@@ -18,6 +18,7 @@ import {
   UserRoundArrowLeft,
   DatabaseBackup,
   BookCheck,
+  CalendarPlus,
 } from "lucide-react";
 import useRole from "../hooks/useRole";
 import useAuth from "../hooks/useAuth";
@@ -106,7 +107,7 @@ export default function OperatorLayout() {
       {
         name: "Operate Events",
         path: "/operator/operateEvents",
-        icon: BookCheck ,
+        icon: CalendarPlus ,
       },
       {
         name: "Academic",
