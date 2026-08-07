@@ -104,6 +104,11 @@ export default function OperatorLayout() {
         icon: BookCheck ,
       },
       {
+        name: "Operate Events",
+        path: "/operator/operateEvents",
+        icon: BookCheck ,
+      },
+      {
         name: "Academic",
         path: "/operator/academic",
         icon: GraduationCap,

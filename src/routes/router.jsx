@@ -32,6 +32,8 @@ import Staff from "../pages/Staff/Staff";
 import AddStaff from "../pages/Operator/AddStaff/AddStaff";
 import ManageStaff from "../pages/Operator/ManageStaff/ManageStaff";
 import AdmissionApplications from "../pages/Operator/AdmissionApplications/AdmissionApplications";
+import EventCalendar from "../pages/EventCalendar/EventCalendar";
+import OperatorEvents from "../pages/Operator/OperatorEvents/OperatorEvents";
 
 // Operator Sub-Page Imports
 
@@ -86,6 +88,10 @@ export const router = createBrowserRouter([
       {
         path: "allGallery",
         element: <AllGallery/>,
+      },
+      {
+        path: "calendar",
+        element: <EventCalendar/>,
       },
       {
         path: "faculty",
@@ -206,6 +212,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <AdmissionApplications/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "operateEvents",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <OperatorEvents/>
           </RoleRoute>
         ),
       },
