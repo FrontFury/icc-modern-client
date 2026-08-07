@@ -13,7 +13,7 @@ import {
   Search,
   BellRing,
   Sparkles,
-  Image as ImageIcon,
+  Download,
 } from "lucide-react";
 
 export default function NoticeBoard() {
@@ -43,6 +43,42 @@ export default function NoticeBoard() {
       return;
     }
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  // Handle Downloading Notice File/Image
+  const handleDownload = async (e, url, fileName = "Notice") => {
+    e.stopPropagation();
+    if (!url) {
+      alert("File is not available for download.");
+      return;
+    }
+
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Get file extension from URL or default to pdf/png
+      const extension = url.split(".").pop().split(/\#|\?/)[0] || "file";
+      const sanitizedFileName = `${fileName.replace(/[^a-zA-Z0-0]/g, "_")}.${extension}`;
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = sanitizedFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      // Fallback: If CORS blocks fetch, trigger standard direct download via link target
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   // Filter and Sort Logic
@@ -140,7 +176,7 @@ export default function NoticeBoard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {pinnedNotices.map((notice, index) => {
-                const noticeImage = notice.imageUrl || notice.image;
+                const noticeFile = notice.pdfUrl || notice.imageUrl || notice.image;
 
                 return (
                   <div
@@ -176,14 +212,14 @@ export default function NoticeBoard() {
                       </span>
 
                       <div className="flex items-center gap-2">
-                        {noticeImage && (
+                        {noticeFile && (
                           <button
                             type="button"
-                            onClick={(e) => handleOpenLink(e, noticeImage, "Image")}
+                            onClick={(e) => handleDownload(e, noticeFile, notice.title)}
                             className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 hover:border-cyan-500/40 transition"
-                            title="Open Image"
+                            title="Download Notice"
                           >
-                            <ImageIcon className="w-4 h-4" />
+                            <Download className="w-4 h-4" />
                           </button>
                         )}
                         {notice.pdfUrl && (
@@ -309,7 +345,7 @@ export default function NoticeBoard() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {currentRecentNotices.map((notice, index) => {
-                  const noticeImage = notice.imageUrl || notice.image;
+                  const noticeFile = notice.pdfUrl || notice.imageUrl || notice.image;
 
                   return (
                     <div
@@ -343,14 +379,14 @@ export default function NoticeBoard() {
                         </span>
 
                         <div className="flex items-center gap-1">
-                          {noticeImage && (
+                          {noticeFile && (
                             <button
                               type="button"
-                              onClick={(e) => handleOpenLink(e, noticeImage, "Image")}
+                              onClick={(e) => handleDownload(e, noticeFile, notice.title)}
                               className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
-                              title="Open Image"
+                              title="Download Notice"
                             >
-                              <ImageIcon className="w-3.5 h-3.5" />
+                              <Download className="w-3.5 h-3.5" />
                             </button>
                           )}
                           {notice.pdfUrl && (
@@ -421,7 +457,7 @@ export default function NoticeBoard() {
 
       {/* FULL NOTICE DETAIL MODAL */}
       {selectedNotice && (() => {
-        const modalImage = selectedNotice.imageUrl || selectedNotice.image;
+        const noticeFile = selectedNotice.pdfUrl || selectedNotice.imageUrl || selectedNotice.image;
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -459,9 +495,6 @@ export default function NoticeBoard() {
                 </div>
               </div>
 
-              {/* Notice Image Preview in Modal */}
-              
-
               <div className="space-y-4 text-sm text-slate-300 leading-relaxed mb-8 pt-4 border-t border-slate-800">
                 <p className="font-semibold text-white">
                   {selectedNotice.summary}
@@ -481,14 +514,14 @@ export default function NoticeBoard() {
                   Close
                 </button>
 
-                {modalImage && (
+                {noticeFile && (
                   <button
                     type="button"
-                    onClick={(e) => handleOpenLink(e, modalImage, "Image")}
+                    onClick={(e) => handleDownload(e, noticeFile, selectedNotice.title)}
                     className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition inline-flex items-center gap-2"
                   >
-                    <ImageIcon className="w-4 h-4 text-cyan-400" />
-                    <span>View Image</span>
+                    <Download className="w-4 h-4 text-cyan-400" />
+                    <span>Download Notice</span>
                   </button>
                 )}
 

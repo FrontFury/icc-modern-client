@@ -26,6 +26,8 @@ import ForbiddenPage from "../pages/Shared/ForbiddenPage/ForbiddenPage";
 import RoleRoute from "./RoleRoute";
 import AddFaculty from "../pages/Operator/AddFaculty/AddFaculty";
 import AllFaculty from "../pages/Operator/AllFaculty/AllFaculty";
+import AddGallery from "../pages/Operator/AddGallery/AddGallery";
+import ManageGallery from "../pages/Operator/ManageGallery/ManageGallery";
 
 // Operator Sub-Page Imports
 
@@ -84,7 +86,7 @@ export const router = createBrowserRouter([
       {
         path: "notices",
         element: <NoticeBoard />,
-        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()), // 82 no line
+        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()),
       },
       {
         path: "admission",
@@ -152,6 +154,22 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <AllFaculty/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "addGallery",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AddGallery/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manageGallery",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <ManageGallery/>
           </RoleRoute>
         ),
       },

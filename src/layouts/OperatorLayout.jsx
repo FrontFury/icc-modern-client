@@ -13,6 +13,8 @@ import {
   User as UserIcon,
   FilePlusCorner,
   UserRoundPlus,
+  ImagePlus,
+  Users2,
 } from "lucide-react";
 import useRole from "../hooks/useRole";
 import useAuth from "../hooks/useAuth";
@@ -71,7 +73,17 @@ export default function OperatorLayout() {
       {
         name: "All Faculty",
         path: "/operator/allFaculty",
-        icon: UserRoundPlus,
+        icon: Users2,
+      },
+      {
+        name: "Add Gallery",
+        path: "/operator/addGallery",
+        icon: ImagePlus ,
+      },
+      {
+        name: "Manage Gallery",
+        path: "/operator/manageGallery",
+        icon: ImagePlus ,
       },
       {
         name: "Academic",
