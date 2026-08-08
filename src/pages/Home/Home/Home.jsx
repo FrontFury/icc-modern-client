@@ -3,7 +3,7 @@ import DeptNnotice from "../DeptNnotice/DeptNnotice";
 import EsteemedLeaders from "../EsteemedLeaders/EsteemedLeaders";
 import FAQ from "../FAQ/FAQ";
 import Gallery from "../Gallery/Gallery";
-import NewsNEvents from "../NewsNEvents/NewsNEvents";
+import {NewsNEvents} from "../NewsNEvents/NewsNEvents";
 import AlumniStories from "../AlumniSuccess/AlumniSuccess";
 
 const Home = () => {
