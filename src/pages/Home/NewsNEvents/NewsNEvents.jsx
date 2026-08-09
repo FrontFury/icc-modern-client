@@ -2,9 +2,9 @@ import React, { useMemo } from "react";
 import { Newspaper, Calendar, MapPin, Clock, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../../hooks/useAxiosSecure"; 
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
-// 1. Date Parse করার জন্য Helper Function
+// Date Parser Helper Function
 const parseEventDate = (dateString) => {
   const dateObj = new Date(dateString);
   if (isNaN(dateObj.getTime())) {
@@ -18,24 +18,25 @@ const parseEventDate = (dateString) => {
 export const NewsNEvents = () => {
   const axiosSecure = useAxiosSecure();
 
+  // News items relevant to Ideal Commerce College (ICC)
   const newsItems = [
     {
       id: 1,
-      date: "OCT 30, 2024",
-      title: "New Research Center Opening",
-      description: "State-of-the-art facilities dedicated to sustainable energy and AI research.",
+      date: "AUG 15, 2026",
+      title: "HSC 2026 Admission Orientation Program",
+      description: "Ideal Commerce College welcomes the newly enrolled XI class students for the upcoming academic session across Science, Business Studies, and Humanities streams.",
     },
     {
       id: 2,
-      date: "OCT 25, 2024",
-      title: "Annual Science Fair Winners Announced",
-      description: "Celebrating the innovative projects and scientific breakthroughs of our students.",
+      date: "JUL 28, 2026",
+      title: "Special Workshop on Accounting & Business Studies",
+      description: "A specialized seminar for commerce stream students focusing on modern financial practices, led by guest faculty from Dhaka University.",
     },
     {
       id: 3,
-      date: "OCT 20, 2024",
-      title: "ABC College Ranks Top 10 for Innovation",
-      description: "Recognized globally for our commitment to pioneering educational methodologies.",
+      date: "JUN 10, 2026",
+      title: "Academic Excellence Award Ceremony",
+      description: "Celebrating HSC test examinees and board top scorers for outstanding academic performance at the ICC main campus.",
     },
   ];
 
@@ -47,7 +48,6 @@ export const NewsNEvents = () => {
     },
   });
 
-  // UPDATE: কেবল প্রথম ৪টি ইভেন্ট ফিল্টার/স্লাইস করে নেওয়া হচ্ছে
   const upcomingEvents = useMemo(() => {
     if (!Array.isArray(events)) return [];
     return events.slice(0, 4);
@@ -122,7 +122,7 @@ export const NewsNEvents = () => {
               <div className="space-y-4">
                 {upcomingEvents.map((event) => {
                   const { day, month } = parseEventDate(event.start || event.date);
-                  const location = event.extendedProps?.location || event.location || "N/A";
+                  const location = event.extendedProps?.location || event.location || "ICC Campus";
                   const time = event.extendedProps?.time || event.time || "N/A";
 
                   return (

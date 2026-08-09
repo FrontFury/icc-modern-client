@@ -1,4 +1,13 @@
-import { Menu, X, ChevronDown, LogOut, LogIn, User, LayoutDashboard, Mail } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  LogOut,
+  LogIn,
+  User,
+  LayoutDashboard,
+  Mail,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { NavLink, useLocation, Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
@@ -16,6 +25,10 @@ const NavBar = () => {
   const location = useLocation();
   const { user, logOut } = useAuth();
   const { role } = useRole();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Profile dropdown dismiss on outside click
   useEffect(() => {
@@ -40,7 +53,8 @@ const NavBar = () => {
 
   const isDeptActive = location.pathname.startsWith("/departments");
   const isFacultyActive =
-    location.pathname.startsWith("/faculty") || location.pathname.startsWith("/staff");
+    location.pathname.startsWith("/faculty") ||
+    location.pathname.startsWith("/staff");
 
   const userRole = role?.role;
   const isAdminOrOperator = userRole === "admin" || userRole === "operator";
@@ -250,11 +264,15 @@ const NavBar = () => {
                   <div className="px-4 pb-3 border-b border-slate-800/80 space-y-1">
                     <div className="flex items-center gap-2 text-slate-100 font-bold text-sm">
                       <User className="w-4 h-4 text-cyan-400 shrink-0" />
-                      <span className="truncate">{user?.displayName || "User"}</span>
+                      <span className="truncate">
+                        {user?.displayName || "User"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-slate-400 text-xs">
                       <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{user?.email || "No email"}</span>
+                      <span className="truncate">
+                        {user?.email || "No email"}
+                      </span>
                     </div>
                   </div>
 

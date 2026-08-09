@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { Quote, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Quote, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import Marquee from "react-fast-marquee";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../../hooks/useAxiosSecure"; // আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী এডজাস্ট করুন
 
 // Safely handle default/named ESM import mismatches
 const MarqueeContainer = Marquee.default || Marquee;
 
 const AlumniStories = () => {
-  const [alumni, setAlumni] = useState([]);
+  const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    // Fetch data from public/alumni.json
-    fetch("/alumni.json")
-      .then((res) => res.json())
-      .then((data) => setAlumni(data))
-      .catch((err) => console.error("Error loading alumni data:", err));
-  }, []);
+  // Fetching alumni data from API endpoint '/alumni' using Tanstack Query
+  const { data: alumni = [], isLoading, isError, error } = useQuery({
+    queryKey: ["alumni-stories"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/alumni");
+      return res.data;
+    },
+  });
 
   return (
     <section className="w-full bg-[#030712] py-20 md:py-28 overflow-hidden relative">
@@ -43,63 +46,76 @@ const AlumniStories = () => {
         </p>
       </div>
 
-      {/* Marquee Wrapper */}
-      <div className="w-full overflow-hidden relative z-10 [&>div]:!overflow-x-hidden [&>div]:!overflow-y-hidden">
-        <MarqueeContainer
-          pauseOnHover={true}
-          speed={40}
-          gradient={true}
-          gradientColor="#030712"
-          gradientWidth={120}
-          className="py-6 overflow-hidden"
-          style={{ overflow: "hidden" }}
-        >
-          {alumni.map((item) => (
-            <div
-              key={item.id}
-              className="group w-[300px] sm:w-[340px] md:w-[370px] bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md border border-slate-800/80 hover:border-cyan-500/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300 flex flex-col justify-between relative mx-3.5 my-2 hover:-translate-y-1.5"
-            >
-              {/* Decorative Accent Glow on Card Hover */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      {/* Main Data Render Area */}
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-10 space-y-3 relative z-10">
+          <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+          <p className="text-xs text-slate-400">Loading alumni stories...</p>
+        </div>
+      ) : isError ? (
+        <div className="max-w-md mx-auto p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs flex items-center justify-center gap-2 relative z-10">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{error?.message || "Failed to load alumni stories."}</span>
+        </div>
+      ) : (
+        /* Marquee Wrapper */
+        <div className="w-full overflow-hidden relative z-10 [&>div]:!overflow-x-hidden [&>div]:!overflow-y-hidden">
+          <MarqueeContainer
+            pauseOnHover={true}
+            speed={40}
+            gradient={true}
+            gradientColor="#030712"
+            gradientWidth={120}
+            className="py-6 overflow-hidden"
+            style={{ overflow: "hidden" }}
+          >
+            {alumni.map((item) => (
+              <div
+                key={item._id || item.id}
+                className="group w-[300px] sm:w-[340px] md:w-[370px] bg-gradient-to-b from-slate-900/90 via-[#071927]/80 to-slate-950/90 backdrop-blur-md border border-slate-800/80 hover:border-cyan-500/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300 flex flex-col justify-between relative mx-3.5 my-2 hover:-translate-y-1.5"
+              >
+                {/* Decorative Accent Glow on Card Hover */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-              {/* Top Accent Quote Icon */}
-              <div className="absolute top-5 right-5 p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 group-hover:scale-110 transition-transform">
-                <Quote className="w-4 h-4 fill-cyan-400/20" />
-              </div>
-
-              <div>
-                {/* Header Profile Section */}
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="relative">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-14 h-14 rounded-xl object-cover border-2 border-cyan-500/30 bg-slate-800 flex-shrink-0 group-hover:border-cyan-400 transition-colors shadow-md"
-                    />
-                  </div>
-
-                  <div className="pr-8">
-                    <h3 className="text-base font-bold text-slate-100 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-1">
-                      {item.name}
-                    </h3>
-                    <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                      Batch of {item.passing_year}
-                    </p>
-                    <p className="text-xs font-semibold text-cyan-400/90">
-                      Dept. of {item.dept}
-                    </p>
-                  </div>
+                {/* Top Accent Quote Icon */}
+                <div className="absolute top-5 right-5 p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 group-hover:scale-110 transition-transform">
+                  <Quote className="w-4 h-4 fill-cyan-400/20" />
                 </div>
 
-                {/* Quote Body */}
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed italic line-clamp-4 relative z-10">
-                  "{item.memories}"
-                </p>
+                <div>
+                  {/* Header Profile Section */}
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="relative">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-14 h-14 rounded-xl object-cover border-2 border-cyan-500/30 bg-slate-800 flex-shrink-0 group-hover:border-cyan-400 transition-colors shadow-md"
+                      />
+                    </div>
+
+                    <div className="pr-8">
+                      <h3 className="text-base font-bold text-slate-100 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-1">
+                        {item.name}
+                      </h3>
+                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                        Batch of {item.passing_year}
+                      </p>
+                      <p className="text-xs font-semibold text-cyan-400/90">
+                        Dept. of {item.dept}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Quote Body */}
+                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed italic line-clamp-4 relative z-10">
+                    "{item.memories}"
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </MarqueeContainer>
-      </div>
+            ))}
+          </MarqueeContainer>
+        </div>
+      )}
     </section>
   );
 };

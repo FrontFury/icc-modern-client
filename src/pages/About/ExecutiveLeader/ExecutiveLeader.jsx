@@ -3,19 +3,19 @@ import { Mail, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // Replace these imports with your actual leader photo assets
-import leader1 from "../../../assets/Esteemed Leaders/Principle.png";
-import leader2 from "../../../assets/Esteemed Leaders/vice-principal.png";
+import leader1 from "../../../assets/Esteemed Leaders/Chairman.png";
+import leader2 from "../../../assets/Esteemed Leaders/Principle.png";
 
 const ExecutiveLeader = () => {
   const leaders = [
     {
       id: 1,
-      name: "SHAHNAZ BINTE ISLAM",
-      role: "VICE-PRINCIPAL",
+      name: "DR. M. A. HALIM PATWARY",
+      role: "CHAIRMAN",
       description:
-        "Shahnaz Binte Islam leads the Academic Affairs division, focusing on HSC curriculum innovation, student mentorship, and fostering an inspiring campus environment.",
-      image: leader2,
-      email: "viceprincipal@icc.edu.bd",
+        "Dr. M. A. Halim Patwary is the esteemed Chairman of Ideal Commerce College. With his visionary leadership, dedication, and commitment to educational excellence, he has played an important role in guiding the institution toward continuous development and academic growth.",
+      image: leader1,
+      email: "",
       bioLink: "#"
     },
     {
@@ -24,8 +24,8 @@ const ExecutiveLeader = () => {
       role: "PRINCIPAL",
       description:
         "With over 20 years in academic administration, Md. Amjad Hossain has pioneered numerous college excellence initiatives and remains dedicated to student success and discipline.",
-      image: leader1,
-      email: "principal@icc.edu.bd",
+      image: leader2,
+      email: "",
       bioLink: "#",
     },
   ];

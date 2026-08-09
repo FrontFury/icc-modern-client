@@ -1,5 +1,6 @@
 import React from "react";
 import { Mail, MapPin, Phone, Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -72,10 +73,10 @@ const Footer = () => {
               ADMISSIONS
             </h3>
             <ul className="space-y-3 text-xs sm:text-sm font-medium">
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">How to Apply</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">HSC Admission Guidelines</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Fees & Scholarships</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Eligibility & Requirements</a></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">How to Apply</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">HSC Admission Guidelines</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">Fees & Scholarships</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">Eligibility & Requirements</Link></p></li>
             </ul>
           </div>
 
@@ -85,10 +86,10 @@ const Footer = () => {
               ACADEMICS
             </h3>
             <ul className="space-y-3 text-xs sm:text-sm font-medium">
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Business Studies</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Science Division</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Humanities / Arts</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Academic Calendar</a></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/commerce">Business Studies</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/science">Science Division</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/arts">Humanities / Arts</Link></p></li>
+              <li><p className="hover:text-cyan-400 transition-colors"><Link to="calendar">Academic Calendar</Link></p></li>
             </ul>
           </div>
 
