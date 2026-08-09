@@ -110,6 +110,11 @@ export default function OperatorLayout() {
         icon: CalendarPlus ,
       },
       {
+        name: "Admission Announcement",
+        path: "/operator/announcements",
+        icon: CalendarPlus ,
+      },
+      {
         name: "Academic",
         path: "/operator/academic",
         icon: GraduationCap,

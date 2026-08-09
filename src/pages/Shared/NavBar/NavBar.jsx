@@ -4,6 +4,7 @@ import { NavLink, useLocation, Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useRole from "../../../hooks/useRole";
 import logo from "../../../assets/icc-logo.png";
+import AdmissionMarquee from "../../Home/AdmissionMarquee/AdmissionMarquee";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -497,6 +498,7 @@ const NavBar = () => {
           </div>
         </div>
       )}
+      <AdmissionMarquee />
     </nav>
   );
 };

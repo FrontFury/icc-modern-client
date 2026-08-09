@@ -34,6 +34,7 @@ import ManageStaff from "../pages/Operator/ManageStaff/ManageStaff";
 import AdmissionApplications from "../pages/Operator/AdmissionApplications/AdmissionApplications";
 import EventCalendar from "../pages/EventCalendar/EventCalendar";
 import OperatorEvents from "../pages/Operator/OperatorEvents/OperatorEvents";
+import AdmissionAnnouncement from "../pages/Operator/AdmissionAnnouncement/AdmissionAnnouncement";
 
 // Operator Sub-Page Imports
 
@@ -220,6 +221,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <OperatorEvents/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "announcements",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <AdmissionAnnouncement/>
           </RoleRoute>
         ),
       },
