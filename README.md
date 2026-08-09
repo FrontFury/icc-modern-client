@@ -1,50 +1,98 @@
-# Ideal Commerce College — Official College Management Website
+# 🏫 Ideal Commerce College — College Management & Information Portal
 
-## 📌 Project Overview
+A modern, full-stack web platform developed for **Ideal Commerce College** to provide institutional information, online admission services, academic notices, event management, alumni information, and role-based administrative management.
 
-**Ideal Commerce College** is a comprehensive college website and management platform designed to provide students, prospective applicants, alumni, faculty, staff, operators, and administrators with an organized and user-friendly digital experience.
-
-The platform consists of three major access levels:
-
-* **Public / Student Portal** — Provides college-related information, academic resources, notices, admission facilities, alumni information, events, and contact services.
-* **Operator Dashboard** — Enables authorized operators to manage notices, faculty, staff, gallery content, admission applications, and college events.
-* **Admin Dashboard** — Provides administrative control over users and their assigned roles and permissions.
-
-The system is designed to centralize college information and administrative operations into a single, modern web-based platform.
+The platform is built with **React.js, Node.js, Express.js, MongoDB, and Firebase** and is currently under **local development**.
 
 ---
 
-## 🎯 Objectives
+## 📌 Project Overview
 
-The primary objectives of the Ideal Commerce College website are to:
+The **Ideal Commerce College Website** is designed as a centralized digital platform for students, prospective students, faculty members, staff, alumni, operators, administrators, and general visitors.
 
-* Provide students and visitors with accurate and up-to-date college information.
-* Publish official notices and announcements digitally.
-* Present detailed information about academic departments.
-* Provide faculty and staff information.
+The system provides two primary experiences:
+
+1. **Public / Student Portal** — For accessing college information, notices, departments, faculty and staff information, admission services, alumni information, events, galleries, and contact facilities.
+2. **Management Portal** — For authorized Operators and Administrators to manage website content, admission applications, events, and users.
+
+The application follows a **role-based access control (RBAC)** approach to ensure that users can access only the features permitted for their assigned roles.
+
+---
+
+# 🎯 Project Objectives
+
+The main objectives of this project are to:
+
+* Digitize important college information.
+* Provide students and visitors with easy access to official information.
+* Publish and manage college notices online.
+* Provide detailed information about academic departments.
+* Maintain faculty and staff information.
 * Simplify the admission application process.
-* Maintain and showcase alumni information and achievements.
-* Display college events, activities, and photo galleries.
-* Provide convenient contact and query submission facilities.
-* Allow authorized operators to manage website content efficiently.
-* Allow administrators to manage users and their roles.
+* Maintain alumni information and success stories.
+* Manage college events and activities.
+* Provide an online gallery for college programs and activities.
+* Provide an online contact and query submission facility.
+* Provide operators with centralized content-management tools.
+* Provide administrators with user and role-management capabilities.
+* Establish a scalable foundation for future college management features.
+
+---
+
+# ✨ Key Features
+
+### Public Website
+
+* 🏠 Home Page
+* ℹ️ About College
+* 📢 Notice Board
+* 🎓 Department Information
+* 👨‍🏫 Faculty & Staff
+* 📝 Online Admission
+* 🎓 Alumni Information
+* 📅 Events
+* 🖼️ Gallery
+* 📞 Contact & Query Submission
+* 🗺️ Google Maps Integration
+* ⭐ Alumni Success Stories
+* 👑 Esteemed Leaders
+
+### Operator Dashboard
+
+* 📊 Operator Dashboard
+* ➕ Add Notice
+* 📋 Manage Notices
+* 👨‍🏫 Add Faculty
+* 📋 Manage Faculty
+* 👥 Add Staff
+* 📋 Manage Staff
+* 🖼️ Add Gallery
+* 📋 Manage Gallery
+* 📝 Admission Applications
+* 📅 Event Management
+
+### Admin Dashboard
+
+* 👤 User Management
+* 🔐 Role Management
+* 🔄 User Status/Role Update
+* 🛡️ Administrative Access Control
+* 📊 Dashboard Management
 
 ---
 
 # 🌐 Public / Student Portal
 
-The Public Portal is accessible to students, prospective students, alumni, guardians, and general visitors.
-
 ## 🏠 Home Page
 
-The Home Page provides an overview of the college and highlights important information and activities.
+The Home Page provides an overview of Ideal Commerce College and highlights important institutional information.
 
-### Main Sections
+### Sections
 
 * Hero / Welcome Section
 * Department Information
 * Latest Notices
-* Upcoming and Recent Events
+* Upcoming Events
 * Esteemed Leaders
 * College Gallery
 * Alumni Success Stories
@@ -52,9 +100,9 @@ The Home Page provides an overview of the college and highlights important infor
 
 ---
 
-## ℹ️ About Page
+# ℹ️ About Page
 
-The About Page provides detailed information about Ideal Commerce College.
+The About Page provides detailed information about the college.
 
 ### Sections
 
@@ -62,7 +110,7 @@ The About Page provides detailed information about Ideal Commerce College.
 * Department Information
 * Club Information
 * Executive Leadership
-* Other institutional information
+* Institutional Information
 
 ---
 
@@ -72,16 +120,14 @@ The Notice Page contains all official notices and announcements published by the
 
 ### Features
 
-* Display all published notices.
+* View all notices.
 * Filter notices by category.
 * View complete notice details.
 * Pin important notices.
 * Display pinned notices prominently.
-* Organize notices for easier access.
+* Organize notices by category.
 
 ### Notice Categories
-
-Notices can be organized into categories such as:
 
 * Academic
 * Examination
@@ -93,127 +139,29 @@ Notices can be organized into categories such as:
 
 # 🎓 Departments
 
-The college website contains information about three academic departments:
+The website provides information about three academic departments.
 
 ### 1. Science
 
-Provides detailed information about the Science Department, including its academic programs and related information.
+Contains information about the Science Department, including its academic programs and related activities.
 
 ### 2. Business Studies
 
-Provides detailed information about the Business Studies Department and its academic activities.
+Contains information about the Business Studies Department and its academic activities.
 
 ### 3. Humanities
 
-Provides detailed information about the Humanities Department and its academic activities.
+Contains information about the Humanities Department and its academic activities.
 
-Each department has its own detailed information section.
+Each department has a dedicated information section.
 
 ---
 
 # 👨‍🏫 Faculty & Staff
 
-The Faculty & Staff section contains information about the college's faculty members and staff.
+The Faculty & Staff section provides information about the people working at Ideal Commerce College.
 
-### Information Includes
-
-* Name
-* Designation
-* Department
-* Profile Information
-* Contact Information, where applicable
-* Profile Image
-* Other relevant information
-
-This section helps students and visitors easily identify and learn about the people working at the institution.
-
----
-
-# 📝 Admission Page
-
-The Admission Page provides prospective students with the necessary information to apply for admission.
-
-### Features
-
-* Admission requirements
-* Minimum eligibility criteria
-* Admission-related information
-* Application form
-* Online admission application submission
-
-Candidates can submit their admission applications directly through the website.
-
----
-
-# 🎓 Alumni Page
-
-The Alumni Page maintains information about former students of Ideal Commerce College.
-
-### Features
-
-* Alumni profiles
-* Academic information
-* Professional information
-* Achievements
-* Alumni success stories
-* Other relevant alumni information
-
-The section helps highlight the achievements and contributions of former students.
-
----
-
-# 📞 Contact Page
-
-The Contact Page provides visitors with all necessary information for communicating with the college.
-
-### Features
-
-* College location
-* Google Maps integration
-* Contact information
-* Email information
-* Office/contact details
-* Query submission form
-
-Visitors can submit their queries through the online contact form.
-
----
-
-# 👨‍💼 Operator Dashboard
-
-The Operator Dashboard is designed for authorized operators who are responsible for managing the college website's content and day-to-day information.
-
-Operators can manage notices, faculty, staff, gallery content, admission applications, and events.
-
----
-
-## 📢 Notice Management
-
-### Add Notice
-
-Operators can publish new notices by providing the required notice information.
-
-### All Notices
-
-Operators can manage all existing notices.
-
-Available actions:
-
-* View Notice
-* Update Notice
-* Delete Notice
-* Pin / Unpin Notice
-* Manage Notice Categories
-
----
-
-# 👨‍🏫 Faculty Management
-
-## Add Faculty
-
-Operators can add new faculty members to the system.
-
-Faculty information may include:
+### Information May Include
 
 * Name
 * Designation
@@ -221,42 +169,140 @@ Faculty information may include:
 * Profile Image
 * Contact Information
 * Academic/Professional Information
-
-## Manage Faculty
-
-Operators can view and manage all faculty members.
-
-Available actions:
-
-* View Faculty
-* Update Faculty Information
-* Delete Faculty
+* Other relevant details
 
 ---
 
-# 🖼️ Gallery Management
+# 📝 Admission
 
-## Add Gallery
+The Admission Page provides prospective students with information about the admission process.
 
-Operators can add new images and gallery content to the college website.
+### Features
 
-Gallery information may include:
+* Minimum admission requirements
+* Eligibility information
+* Admission guidelines
+* Online application form
+* Admission application submission
 
-* Title
-* Description
-* Event/Activity Information
-* Date
-* Image
+Candidates can submit their applications directly through the website.
 
-## Manage Gallery
+---
 
-Operators can manage all existing gallery items.
+# 🎓 Alumni
 
-Available actions:
+The Alumni section contains information about former students of Ideal Commerce College.
 
-* View Gallery Item
-* Update Gallery Information
-* Delete Gallery Item
+### Features
+
+* Alumni profiles
+* Academic information
+* Professional information
+* Achievements
+* Career information
+* Alumni success stories
+
+This section helps showcase the achievements and contributions of former students.
+
+---
+
+# 📅 Events
+
+The website provides information about college events and activities.
+
+Events can include:
+
+* Academic Programs
+* Cultural Programs
+* Seminars
+* Workshops
+* Sports Events
+* Religious Programs
+* Orientation Programs
+* Other Institutional Events
+
+---
+
+# 🖼️ Gallery
+
+The Gallery section showcases images from college activities and events.
+
+Gallery content may include:
+
+* Event photographs
+* Academic activities
+* Cultural programs
+* Sports activities
+* Seminars
+* Workshops
+* Institutional programs
+
+---
+
+# 📞 Contact
+
+The Contact Page provides visitors with multiple ways to communicate with the college.
+
+### Features
+
+* College location
+* Google Maps
+* Contact information
+* Email information
+* Phone information
+* Office information
+* Online query submission form
+
+---
+
+# 👨‍💼 Operator Dashboard
+
+The Operator Dashboard is designed for authorized operators responsible for managing college website content and operational information.
+
+---
+
+## 📢 Notice Management
+
+### Add Notice
+
+Operators can create and publish new notices.
+
+### Manage Notices
+
+Operators can:
+
+* View notices
+* Update notices
+* Delete notices
+* Pin notices
+* Unpin notices
+* Manage notice categories
+
+---
+
+# 👨‍🏫 Faculty Management
+
+## Add Faculty
+
+Operators can add new faculty members.
+
+Faculty information can include:
+
+* Name
+* Designation
+* Department
+* Profile Image
+* Contact Information
+* Academic Information
+* Professional Information
+
+## Manage Faculty
+
+Operators can:
+
+* View faculty information
+* Update faculty information
+* Delete faculty information
 
 ---
 
@@ -264,9 +310,9 @@ Available actions:
 
 ## Add Staff
 
-Operators can add new staff members to the system.
+Operators can add staff members to the system.
 
-Staff information may include:
+Staff information can include:
 
 * Name
 * Designation
@@ -277,59 +323,83 @@ Staff information may include:
 
 ## Manage Staff
 
-Operators can manage all staff members.
+Operators can:
 
-Available actions:
+* View staff information
+* Update staff information
+* Delete staff information
 
-* View Staff Information
-* Update Staff Information
-* Delete Staff
+---
+
+# 🖼️ Gallery Management
+
+## Add Gallery
+
+Operators can upload new gallery content.
+
+Gallery items can contain:
+
+* Title
+* Description
+* Date
+* Event information
+* Image
+
+## Manage Gallery
+
+Operators can:
+
+* View gallery items
+* Update gallery information
+* Delete gallery items
 
 ---
 
 # 📝 Admission Application Management
 
-The Admission Application section allows operators to manage applications submitted through the public Admission Page.
+The Admission Application module allows operators to manage applications submitted through the public admission form.
 
 ### Features
 
-* View submitted applications.
-* View applicant information.
-* Update application status.
-* Delete applications when necessary.
-* Track the current status of each application.
+* View applicant information
+* Review applications
+* Update application status
+* Delete applications
+* Track application progress
 
 ### Default Application Status
 
-Every newly submitted application is assigned the default status:
+Every newly submitted application receives the default status:
 
-**`Submitted`**
+```text
+Submitted
+```
 
-The operator can update the status as the application progresses.
+The operator can update the application status as the admission process progresses.
 
-Example statuses may include:
+### Example Statuses
 
-* Submitted
-* Under Review
-* Approved
-* Rejected
+```text
+Submitted
+Under Review
+Approved
+Rejected
+```
 
 ---
 
 # 📅 Event Management
 
-The Operate Event section allows operators to manage college events through an interactive calendar.
+The Event Management module provides an interactive calendar for managing college events.
 
-### Features
+Operators can:
 
-* Add new events.
-* Set event dates.
-* View scheduled events.
-* Update event information.
-* Delete events.
-* Manage upcoming college activities.
-
-Operators can use the calendar interface to efficiently organize and maintain the college event schedule.
+* Create events
+* Set event dates
+* View scheduled events
+* Update event information
+* Delete events
+* Manage upcoming activities
 
 ---
 
@@ -337,247 +407,534 @@ Operators can use the calendar interface to efficiently organize and maintain th
 
 The Admin Dashboard provides higher-level administrative control over the platform.
 
-Administrators have access to the same public-facing information and can access administrative functionality through the Admin Dashboard.
+The Admin has access to the public website as well as administrative functionality.
 
-## 👤 User Management
+---
 
-The Admin can manage registered users and assign or update their roles.
+# 👤 User Management
 
-### Available User Roles
+Administrators can manage registered users and assign appropriate roles.
 
-* **User**
-* **Student**
-* **Faculty**
-* **Operator**
-* **Admin**
+### Available Roles
 
-The administrator can update a user's role according to their responsibilities within the college.
+| Role       | Description                        |
+| ---------- | ---------------------------------- |
+| `User`     | General registered user            |
+| `Student`  | Student-level account              |
+| `Faculty`  | Faculty-level account              |
+| `Operator` | Website/content management account |
+| `Admin`    | Full administrative account        |
 
-### Example
+Administrators can update a user's role when required.
 
-An administrator can change a user's role from:
+For example:
 
-`User → Student`
-
-or:
-
-`Student → Faculty`
-
-or:
-
-`Faculty → Operator`
-
-The role-based access system ensures that users only have access to the features and management capabilities appropriate to their assigned role.
+```text
+User → Student
+Student → Faculty
+Faculty → Operator
+```
 
 ---
 
 # 🔐 Role-Based Access Control
 
-The system follows a role-based access control architecture.
+The system uses role-based authorization to control access to protected features.
 
-| Role     | Public Website | Content Management | User Management |
-| -------- | -------------- | ------------------ | --------------- |
-| User     | ✅              | ❌                  | ❌               |
-| Student  | ✅              | ❌                  | ❌               |
-| Faculty  | ✅              | ❌                  | ❌               |
-| Operator | ✅              | ✅                  | ❌               |
-| Admin    | ✅              | ✅                  | ✅               |
-
-### User
-
-Can browse publicly available college information.
-
-### Student
-
-Can access the public/student-facing features of the website.
-
-### Faculty
-
-Can access the public-facing college information and features assigned to their role.
-
-### Operator
-
-Can manage website content and operational information such as:
-
-* Notices
-* Faculty
-* Staff
-* Gallery
-* Admission Applications
-* Events
-
-### Admin
-
-Has the highest level of access and can:
-
-* Manage users
-* Update user roles
-* Access administrative features
-* Manage website content
-* Control role-based permissions
+| Feature               | User | Student | Faculty | Operator | Admin |
+| --------------------- | :--: | :-----: | :-----: | :------: | :---: |
+| Public Website        |   ✅  |    ✅    |    ✅    |     ✅    |   ✅   |
+| View Notices          |   ✅  |    ✅    |    ✅    |     ✅    |   ✅   |
+| Admission Application |   ✅  |    ✅    |    ✅    |     ✅    |   ✅   |
+| Manage Notices        |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Faculty        |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Staff          |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Gallery        |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Admissions     |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Events         |   ❌  |    ❌    |    ❌    |     ✅    |   ✅   |
+| Manage Users          |   ❌  |    ❌    |    ❌    |     ❌    |   ✅   |
+| Manage Roles          |   ❌  |    ❌    |    ❌    |     ❌    |   ✅   |
 
 ---
 
-# 🗂️ Core Modules
+# 🛠️ Technology Stack
 
-The complete system can be divided into the following major modules:
+## Frontend
 
-### Public Modules
+* **React.js**
+* **React Router**
+* **Tailwind CSS**
+* **JavaScript**
+* **React Query / TanStack Query**
+* **Axios**
+* **Lucide React**
 
-* Home
-* About
-* Notices
-* Departments
-* Faculty & Staff
-* Admission
-* Alumni
-* Contact
-* Gallery
-* Events
+## Backend
 
-### Operator Modules
+* **Node.js**
+* **Express.js**
+* **JavaScript**
 
-* Operator Dashboard
-* Add Notice
-* Manage Notices
-* Add Faculty
-* Manage Faculty
-* Add Gallery
-* Manage Gallery
-* Add Staff
-* Manage Staff
-* Admission Applications
-* Event Management
+## Database
 
-### Admin Modules
+* **MongoDB**
 
-* Admin Dashboard
-* User Management
-* Role Management
-* Content Management
-* Administrative Controls
+## Authentication & Security
+
+* **Firebase Authentication**
+* **Firebase Admin SDK**
+* Role-Based Access Control
+* Protected API Routes
+
+## Development Tools
+
+* **Git**
+* **GitHub**
+* **Visual Studio Code**
+* **Vite**
+* **npm**
 
 ---
 
-# ⚙️ Key Features
+# 🏗️ System Architecture
 
-* Modern and responsive user interface
-* Role-based authentication and authorization
-* Secure administrative dashboard
-* Notice management system
-* Notice categorization and pinning
-* Faculty management
-* Staff management
-* Gallery management
-* Online admission application
-* Admission application status management
-* Event calendar and management
-* Alumni management
-* Department information management
-* Contact and query submission system
-* Google Maps integration
-* Centralized content management
-* CRUD-based administrative operations
-
----
-
-# 🔄 Content Management Workflow
-
-The general content management workflow is:
+The application follows a client-server architecture.
 
 ```text
-Operator/Admin
-      │
-      ▼
-Dashboard
-      │
-      ├── Notices
-      │     ├── Add
-      │     ├── View
-      │     ├── Update
-      │     ├── Pin/Unpin
-      │     └── Delete
-      │
-      ├── Faculty
-      │     ├── Add
-      │     ├── View
-      │     ├── Update
-      │     └── Delete
-      │
-      ├── Staff
-      │     ├── Add
-      │     ├── View
-      │     ├── Update
-      │     └── Delete
-      │
-      ├── Gallery
-      │     ├── Add
-      │     ├── View
-      │     ├── Update
-      │     └── Delete
-      │
-      ├── Admission Applications
-      │     ├── View
-      │     ├── Update Status
-      │     └── Delete
-      │
-      └── Events
-            ├── Add
-            ├── View
-            ├── Update
-            └── Delete
+                    ┌─────────────────────────┐
+                    │       React Client      │
+                    │                         │
+                    │  Public Website         │
+                    │  Student Portal         │
+                    │  Operator Dashboard     │
+                    │  Admin Dashboard        │
+                    └────────────┬────────────┘
+                                 │
+                                 │ HTTP / REST API
+                                 ▼
+                    ┌─────────────────────────┐
+                    │    Node.js + Express    │
+                    │                         │
+                    │ Authentication          │
+                    │ Authorization            │
+                    │ API Endpoints            │
+                    │ CRUD Operations          │
+                    └────────────┬────────────┘
+                                 │
+                  ┌──────────────┴──────────────┐
+                  │                             │
+                  ▼                             ▼
+        ┌──────────────────┐          ┌──────────────────┐
+        │     MongoDB      │          │     Firebase     │
+        │                  │          │                  │
+        │ College Data     │          │ Authentication   │
+        │ Notices          │          │ User Identity    │
+        │ Faculty          │          │ Token Validation │
+        │ Staff            │          │                  │
+        │ Gallery          │          └──────────────────┘
+        │ Applications     │
+        │ Events           │
+        │ Users            │
+        └──────────────────┘
 ```
 
 ---
 
-# 🔒 Security & Authorization
+# 📂 Core Data Modules
 
-The platform uses role-based authorization to protect administrative functionality.
+The backend manages several major data collections/modules.
 
-Authenticated users are assigned specific roles, and access to protected routes and dashboard features is determined by those roles.
+### Users
 
-This approach helps ensure that:
+Stores registered user information and role assignments.
 
-* Unauthorized users cannot access administrative pages.
-* Operators cannot manage user roles.
-* Only administrators can modify user roles.
-* Protected CRUD operations are restricted to authorized personnel.
-* Sensitive admission application information is accessible only to authorized users.
+### Notices
+
+Stores college notices and announcements.
+
+### Faculty
+
+Stores faculty member information.
+
+### Staff
+
+Stores staff member information.
+
+### Gallery
+
+Stores college gallery information and images.
+
+### Online Applications
+
+Stores admission applications submitted by candidates.
+
+### Events
+
+Stores college events and calendar information.
 
 ---
 
-# 🚀 Future Improvements
+# 🔄 Admission Application Workflow
 
-The platform can be extended with additional features in the future, including:
+```text
+Candidate
+    │
+    ▼
+Admission Page
+    │
+    ▼
+Submit Application
+    │
+    ▼
+Application Stored
+    │
+    ▼
+Status: Submitted
+    │
+    ▼
+Operator Reviews Application
+    │
+    ├── Under Review
+    │
+    ├── Approved
+    │
+    └── Rejected
+```
+
+---
+
+# 🔄 Notice Management Workflow
+
+```text
+Operator
+   │
+   ▼
+Add Notice
+   │
+   ▼
+Notice Published
+   │
+   ├── View
+   ├── Update
+   ├── Pin / Unpin
+   └── Delete
+```
+
+---
+
+# 🔐 Authentication Flow
+
+Firebase Authentication is used for user authentication.
+
+```text
+User
+ │
+ ▼
+Firebase Authentication
+ │
+ ▼
+Authenticated User
+ │
+ ▼
+Firebase ID Token
+ │
+ ▼
+React Client
+ │
+ ▼
+Protected API Request
+ │
+ ▼
+Express Server
+ │
+ ▼
+Firebase Admin Token Verification
+ │
+ ▼
+Role Verification
+ │
+ ▼
+Authorized Resource
+```
+
+---
+
+# 🛡️ Security
+
+Security is an important part of the application architecture.
+
+The system uses:
+
+* Firebase Authentication
+* Firebase Admin SDK
+* ID Token Verification
+* Protected API Routes
+* Role-Based Authorization
+* Secure CRUD Operations
+* Environment Variables for Sensitive Credentials
+
+Administrative operations are restricted to authorized users according to their assigned roles.
+
+---
+
+# 💻 Local Development
+
+> **Current Status:** The project is currently running in a local development environment and has not yet been deployed to production.
+
+---
+
+## 📋 Prerequisites
+
+Before running the project locally, make sure the following are installed:
+
+* Node.js
+* npm
+* MongoDB
+* Git
+* Firebase Project
+* Visual Studio Code or another preferred code editor
+
+---
+
+# 🚀 Installation & Setup
+
+## 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+```
+
+Navigate into the project directory:
+
+```bash
+cd ideal-commerce-college
+```
+
+---
+
+## 2. Install Frontend Dependencies
+
+```bash
+cd client
+npm install
+```
+
+---
+
+## 3. Configure Firebase
+
+Create a Firebase project and configure Firebase Authentication.
+
+Add the required Firebase configuration to the frontend environment variables.
+
+Example:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+> Never commit private credentials or sensitive environment variables to GitHub.
+
+---
+
+# 🗄️ Backend Setup
+
+Navigate to the server directory:
+
+```bash
+cd server
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+```
+
+Configure Firebase Admin SDK credentials according to your project's backend authentication setup.
+
+---
+
+# ▶️ Run the Application
+
+## Start the Backend
+
+```bash
+npm run dev
+```
+
+or, depending on the project configuration:
+
+```bash
+node index.js
+```
+
+The backend will run locally, for example:
+
+```text
+http://localhost:5000
+```
+
+---
+
+## Start the Frontend
+
+From the client directory:
+
+```bash
+npm run dev
+```
+
+The frontend will normally be available at:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# 🧪 Development Status
+
+| Feature                | Status |
+| ---------------------- | :----: |
+| Public Website         |    ✅   |
+| Home Page              |    ✅   |
+| About Page             |    ✅   |
+| Notice Management      |    ✅   |
+| Department Information |    ✅   |
+| Faculty Management     |    ✅   |
+| Staff Management       |    ✅   |
+| Admission Application  |    ✅   |
+| Alumni Section         |    ✅   |
+| Gallery Management     |    ✅   |
+| Event Management       |    ✅   |
+| Operator Dashboard     |    ✅   |
+| Admin Dashboard        |    ✅   |
+| Role Management        |    ✅   |
+| Production Deployment  |    ⏳   |
+
+> Feature status may change as development continues.
+
+---
+
+# 🗺️ Future Development
+
+Several additional features can be introduced in future versions.
+
+### Student Management
 
 * Student Dashboard
-* Online Student Registration
-* Student Profile Management
-* Academic Result Management
-* Attendance Management
+* Student Profile
+* Academic Results
+* Attendance
 * Class Routine
-* Online Payment System
-* Examination Management
-* Digital ID Card
-* SMS/Email Notifications
+* Examination Information
+* Digital Student ID
+
+### Academic Management
+
+* Course Management
+* Subject Management
+* Result Management
+* Teacher Dashboard
+* Academic Calendar
+
+### Communication
+
+* Email Notifications
+* SMS Notifications
 * Push Notifications
-* Online Course Materials
-* Scholarship Management
-* Teacher/Faculty Dashboard
-* Advanced Analytics
-* Website Search
+* Important Announcement Alerts
+
+### Financial Services
+
+* Online Payment
+* Admission Fee Payment
+* Tuition Fee Management
+* Payment History
+
+### Additional Features
+
+* Advanced Search
 * Multi-language Support
+* Advanced Analytics
+* Scholarship Management
+* Online Study Materials
+* Digital Certificates
 
 ---
 
-# 📌 Project Vision
+# 📈 Project Vision
 
-The ultimate goal of the **Ideal Commerce College Website** is to establish a centralized digital platform that connects students, teachers, staff, alumni, applicants, operators, and administrators.
+The long-term vision of the **Ideal Commerce College Management Platform** is to create a complete digital ecosystem for the institution.
 
-By combining public information services with secure administrative tools, the system aims to make college communication, information management, admission processing, event management, and content administration more efficient, transparent, and accessible.
+The platform can gradually evolve from an informational college website into a comprehensive **College Management System (CMS)** that connects:
+
+```text
+Students
+   │
+   ├──────────────┐
+   │              │
+   ▼              ▼
+Faculty         Administration
+   │              │
+   └──────┬───────┘
+          │
+          ▼
+    Ideal Commerce
+       College
+          │
+     ┌────┴────┐
+     ▼         ▼
+  Alumni    Applicants
+```
+
+The ultimate goal is to make college information, communication, admission, content management, and administrative operations more efficient, organized, transparent, and accessible.
+
+---
+
+# 👨‍💻 Project Information
+
+**Project Name:** Ideal Commerce College Website & Management Platform
+
+**Institution:** Ideal Commerce College
+
+**Project Type:** Full-Stack College Website & Management System
+
+**Development Status:** Local Development
+
+**Frontend:** React.js
+
+**Backend:** Node.js + Express.js
+
+**Database:** MongoDB
+
+**Authentication:** Firebase Authentication
+
+**Authorization:** Role-Based Access Control
+
+---
+
+# 📄 License
+
+This project is developed specifically for **Ideal Commerce College**.
+
+The licensing and distribution policy can be defined by the institution/project owner.
 
 ---
 
 ## 🏫 Ideal Commerce College
 
-**A centralized digital platform for information, communication, admission, and college management.**
+**Connecting students, faculty, staff, alumni, applicants, and administration through a centralized digital platform.**
