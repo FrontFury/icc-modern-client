@@ -100,6 +100,16 @@ export default function OperatorLayout() {
         icon: UserRoundArrowLeft ,
       },
       {
+        name: "Add Alumni",
+        path: "/operator/addAlumni",
+        icon: UserRoundArrowLeft ,
+      },
+      {
+        name: "Manage Alumni",
+        path: "/operator/manageAlumni",
+        icon: UserRoundArrowLeft ,
+      },
+      {
         name: "Admission Applications",
         path: "/operator/admissionApplications",
         icon: BookCheck ,
