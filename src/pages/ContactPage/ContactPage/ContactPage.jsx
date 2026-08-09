@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { 
   MapPin, 
   Phone, 
@@ -7,35 +8,54 @@ import {
   Send, 
   CheckCircle,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
+import useAxiosSecure from '../../../hooks/useAxiosSecure'; // আপনার প্রজেক্ট এর পাথ অনুযায়ী এডজাস্ট করে নিন
 
 export default function ContactPage() {
+  const axiosSecure = useAxiosSecure();
+
+  // State keys updated: 'fullName' changed to 'name'
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     phone: '',
     subject: 'HSC - Business Studies',
     message: ''
   });
-  
+
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.message) return;
-    
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
+  // TanStack Query Mutation for posting student inquiries
+  const queryMutation = useMutation({
+    mutationFn: async (newQuery) => {
+      const response = await axiosSecure.post('/student-query', newQuery);
+      return response.data;
+    },
+    onSuccess: () => {
+      setSubmitted(true);
       setFormData({
-        fullName: '',
+        name: '',
         email: '',
         phone: '',
         subject: 'HSC - Business Studies',
         message: ''
       });
-    }, 4000);
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+    }
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    // Trigger API call with updated formData
+    queryMutation.mutate(formData);
   };
 
   return (
@@ -178,6 +198,14 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Error Notification */}
+                  {queryMutation.isError && (
+                    <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{queryMutation.error?.message || 'Failed to submit inquiry. Please try again.'}</span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1.5">Full Name</label>
@@ -185,8 +213,8 @@ export default function ContactPage() {
                         type="text"
                         required
                         placeholder="John Doe"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-slate-900/80 border border-slate-800 focus:border-cyan-500/50 rounded-xl outline-none text-xs text-slate-200 placeholder-slate-500 transition"
                       />
                     </div>
@@ -204,7 +232,18 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  {/* Expanded & Organized Subject Dropdown */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Phone Number (Optional)</label>
+                    <input
+                      type="tel"
+                      placeholder="+880 1700-000000"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900/80 border border-slate-800 focus:border-cyan-500/50 rounded-xl outline-none text-xs text-slate-200 placeholder-slate-500 transition"
+                    />
+                  </div>
+
+                  {/* Subject Dropdown */}
                   <div>
                     <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Subject of Inquiry
@@ -243,10 +282,20 @@ export default function ContactPage() {
                   <div className="flex justify-end pt-2">
                     <button
                       type="submit"
-                      className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:-translate-y-0.5"
+                      disabled={queryMutation.isPending}
+                      className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:-translate-y-0.5 cursor-pointer disabled:cursor-not-allowed"
                     >
-                      <span>Send Inquiry</span>
-                      <Send className="w-3.5 h-3.5" />
+                      {queryMutation.isPending ? (
+                        <>
+                          <span>Sending...</span>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Send Inquiry</span>
+                          <Send className="w-3.5 h-3.5" />
+                        </>
+                      )}
                     </button>
                   </div>
                 </form>

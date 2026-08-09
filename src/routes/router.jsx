@@ -37,6 +37,7 @@ import OperatorEvents from "../pages/Operator/OperatorEvents/OperatorEvents";
 import AdmissionAnnouncement from "../pages/Operator/AdmissionAnnouncement/AdmissionAnnouncement";
 import AddAlumni from "../pages/Operator/AddAlumni/AddAlumni";
 import ManageAlumni from "../pages/Operator/ManageAlumni/ManageAlumni";
+import ManageQuery from "../pages/Operator/ManageQuery/ManageQuery";
 
 // Operator Sub-Page Imports
 
@@ -231,6 +232,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["operator"]}>
             <AdmissionApplications/>
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manageQuery",
+        element: (
+          <RoleRoute allowedRoles={["operator"]}>
+            <ManageQuery/>
           </RoleRoute>
         ),
       },

@@ -115,6 +115,11 @@ export default function OperatorLayout() {
         icon: BookCheck ,
       },
       {
+        name: "Manage Query",
+        path: "/operator/manageQuery",
+        icon: BookCheck ,
+      },
+      {
         name: "Operate Events",
         path: "/operator/operateEvents",
         icon: CalendarPlus ,
