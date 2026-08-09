@@ -10,22 +10,22 @@ const ExecutiveLeader = () => {
   const leaders = [
     {
       id: 1,
-      name: "MD. AMJAD HOSSAIN",
-      role: "PRINCIPAL",
-      description:
-        "With over 20 years in academic administration, Md. Amjad Hossain has pioneered numerous college excellence initiatives and remains dedicated to student success and discipline.",
-      image: leader1,
-      email: "principal@icc.edu.bd",
-      bioLink: "#",
-    },
-    {
-      id: 2,
       name: "SHAHNAZ BINTE ISLAM",
       role: "VICE-PRINCIPAL",
       description:
         "Shahnaz Binte Islam leads the Academic Affairs division, focusing on HSC curriculum innovation, student mentorship, and fostering an inspiring campus environment.",
       image: leader2,
       email: "viceprincipal@icc.edu.bd",
+      bioLink: "#"
+    },
+    {
+      id: 2,
+      name: "MD. AMJAD HOSSAIN",
+      role: "PRINCIPAL",
+      description:
+        "With over 20 years in academic administration, Md. Amjad Hossain has pioneered numerous college excellence initiatives and remains dedicated to student success and discipline.",
+      image: leader1,
+      email: "principal@icc.edu.bd",
       bioLink: "#",
     },
   ];

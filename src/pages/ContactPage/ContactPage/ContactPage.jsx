@@ -107,7 +107,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Campus Address</h3>
                     <p className="font-semibold text-slate-200 mt-0.5 leading-snug">
-                      16, Indira Road, Farmgate, Tejgaon,<br />Dhaka-1215, Bangladesh
+                      81, Green Road, Farmgate, <br />Dhaka-1205, Bangladesh
                     </p>
                   </div>
                 </div>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Phone & Admission Desk</h3>
                     <p className="font-semibold text-slate-200 mt-0.5">
-                      +880 2-9133452 / +880 1912-130388
+                      +880 1912-130388
                     </p>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">General Email</h3>
                     <p className="font-semibold text-slate-200 mt-0.5">
-                      info@idealcommercecollege.edu.bd
+                      icc.edu.2004@gmail.com
                     </p>
                   </div>
                 </div>
@@ -317,7 +317,7 @@ export default function ContactPage() {
                     Ideal Commerce College Main Campus
                   </h4>
                   <p className="text-[11px] text-slate-400">
-                    16, Indira Road, Farmgate, Dhaka-1215
+                    81, Green Road, Farmgate, Dhaka-1205, Bangladesh
                   </p>
                 </div>
                 <a
