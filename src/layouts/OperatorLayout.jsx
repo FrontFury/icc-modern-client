@@ -116,7 +116,7 @@ export default function OperatorLayout() {
       },
       {
         name: "Manage Query",
-        path: "/operator/manageQuery",
+        path: "/operator/ManageQuery",
         icon: BookCheck ,
       },
       {

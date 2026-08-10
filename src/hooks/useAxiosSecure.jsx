@@ -1,16 +1,16 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuth from "./useAuth"; // আপনার Auth Context হুক
+import useAuth from "./useAuth"; 
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000", // আপনার ব্যাকএন্ড URL
+  baseURL: "https://icc-modern-server.vercel.app", 
 });
 
 const useAxiosSecure = () => {
   const navigate = useNavigate();
   const { logOut } = useAuth();
 
-  // Request Interceptor: প্রতিটি রিকোয়েস্টের সাথে টোকেন যোগ করা
+ 
   axiosSecure.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("access-token");
@@ -24,7 +24,6 @@ const useAxiosSecure = () => {
     }
   );
 
-  // Response Interceptor: 401 বা 403 পেলে অটোমেটিক লগআউট ও রিডাইরেক্ট করা
   axiosSecure.interceptors.response.use(
     (response) => response,
     async (error) => {

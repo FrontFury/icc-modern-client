@@ -1,93 +1,58 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import useAuth from "../../../hooks/useAuth"; // Fresh Token এর জন্য
 import Swal from "sweetalert2";
 import {
-  Users,
-  UserCheck,
-  ShieldCheck,
-  UserPlus,
   Search,
-  Filter,
-  Mail,
-  CheckCircle2,
-  XCircle,
+  Plus,
   Shield,
-  UserCog,
   Trash2,
-  Calendar,
-  Building,
+  Filter,
+  CheckCircle,
+  AlertCircle,
+  UserCheck,
+  UserX,
+  RefreshCw,
+  SlidersHorizontal,
 } from "lucide-react";
 
-export default function UsersPage() {
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
+
+const UsersPage = () => {
   const axiosSecure = useAxiosSecure();
-  const { user: currentUser } = useAuth(); // বর্তমান লগইন করা ইউজার
+  const { user: currentUser } = useAuth();
 
+  // Component States
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  // Fetch users with TanStack Query
+  // Fetch Users using React Query
   const {
     data: users = [],
     isLoading,
+    isError,
+    error,
     refetch,
   } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users-management"],
     queryFn: async () => {
       const res = await axiosSecure.get("/users");
       return res.data;
     },
   });
 
-  // Calculate dynamic statistics safely
-  const totalUsers = users.length;
-  const activeStudents = users.filter(
-    (u) => u.role?.toLowerCase() === "student" && u.status === "Active"
-  ).length;
-  const facultyStaff = users.filter((u) => u.role?.toLowerCase() === "faculty").length;
-  const pendingApprovals = users.filter((u) => u.status === "Pending").length;
+  // Helper to fetch fresh authorization headers
+  const getAuthHeader = async () => {
+    if (currentUser) {
+      const freshToken = await currentUser.getIdToken(true);
+      localStorage.setItem("access-token", freshToken);
+      return { Authorization: `Bearer ${freshToken}` };
+    }
+    return {};
+  };
 
-  const stats = [
-    {
-      title: "Total Registered Users",
-      value: totalUsers,
-      sub: "Across all departments",
-      icon: Users,
-      bg: "bg-cyan-500/10",
-      color: "text-cyan-400",
-      border: "border-cyan-500/20",
-    },
-    {
-      title: "Active Students",
-      value: activeStudents,
-      sub: "Currently enrolled",
-      icon: UserCheck,
-      bg: "bg-emerald-500/10",
-      color: "text-emerald-400",
-      border: "border-emerald-500/20",
-    },
-    {
-      title: "Faculty & Staff",
-      value: facultyStaff,
-      sub: "Teaching & Admin",
-      icon: ShieldCheck,
-      bg: "bg-indigo-500/10",
-      color: "text-indigo-400",
-      border: "border-indigo-500/20",
-    },
-    {
-      title: "Pending Approval",
-      value: pendingApprovals,
-      sub: "New registrations",
-      icon: UserPlus,
-      bg: "bg-amber-500/10",
-      color: "text-amber-400",
-      border: "border-amber-500/20",
-    },
-  ];
-
-  // Handle Create User
+  // 1. Handle Create User
   const handleAddUser = () => {
     Swal.fire({
       title: "Add New User",
@@ -175,13 +140,8 @@ export default function UsersPage() {
             didOpen: () => Swal.showLoading(),
           });
 
-          // Fresh Token আপডেট করে নেওয়া (401 রোধ করতে)
-          if (currentUser) {
-            const freshToken = await currentUser.getIdToken(true);
-            localStorage.setItem("access-token", freshToken);
-          }
-
-          await axiosSecure.post("/users", result.value);
+          const headers = await getAuthHeader();
+          await axiosSecure.post("/users", result.value, { headers });
           await refetch();
 
           Swal.fire({
@@ -209,7 +169,7 @@ export default function UsersPage() {
     });
   };
 
-  // Handle Role Change
+  // 2. Handle Role Change
   const handleChangeRole = (userTarget) => {
     const currentRole = userTarget.role?.toLowerCase() || "student";
 
@@ -264,17 +224,14 @@ export default function UsersPage() {
             didOpen: () => Swal.showLoading(),
           });
 
-          // 401 ফিক্স: পাঠানোর পূর্বে নতুন টোকেন সংগ্রহ
-          if (currentUser) {
-            const freshToken = await currentUser.getIdToken(true);
-            localStorage.setItem("access-token", freshToken);
-          }
-
+          const headers = await getAuthHeader();
           const userId = userTarget._id || userTarget.id;
 
-          await axiosSecure.patch(`/users/${userId}/role`, {
-            role: result.value,
-          });
+          await axiosSecure.patch(
+            `/users/${userId}/role`,
+            { role: result.value },
+            { headers }
+          );
 
           await refetch();
 
@@ -292,7 +249,7 @@ export default function UsersPage() {
           console.error("Failed to update role:", error);
           Swal.fire({
             title: "Error!",
-            text: error.response?.data?.message || "Failed to update user role. Status code: " + error.response?.status,
+            text: error.response?.data?.message || "Failed to update user role.",
             icon: "error",
             background: "#0f172a",
             color: "#f8fafc",
@@ -303,7 +260,7 @@ export default function UsersPage() {
     });
   };
 
-  // Handle User Deletion
+  // 3. Handle User Deletion
   const handleDeleteUser = (id) => {
     Swal.fire({
       title: "Delete Account?",
@@ -338,12 +295,8 @@ export default function UsersPage() {
             didOpen: () => Swal.showLoading(),
           });
 
-          if (currentUser) {
-            const freshToken = await currentUser.getIdToken(true);
-            localStorage.setItem("access-token", freshToken);
-          }
-
-          await axiosSecure.delete(`/users/${id}`);
+          const headers = await getAuthHeader();
+          await axiosSecure.delete(`/users/${id}`, { headers });
           await refetch();
 
           Swal.fire({
@@ -371,343 +324,223 @@ export default function UsersPage() {
     });
   };
 
-  const filteredUsers = users.filter((user) => {
-    const nameStr = user.name || "";
-    const emailStr = user.email || "";
-    const userRole = user.role?.toLowerCase() || "";
-
+  // Client-side Filtering
+  const filteredUsers = users.filter((u) => {
     const matchesSearch =
-      nameStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emailStr.toLowerCase().includes(searchTerm.toLowerCase());
+      (u.name && u.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (u.email && u.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (u.department && u.department.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesRole = roleFilter === "all" || userRole === roleFilter;
-    return matchesSearch && matchesRole;
+    const matchesRole =
+      roleFilter === "All" ||
+      (u.role && u.role.toLowerCase() === roleFilter.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      (u.status && u.status.toLowerCase() === statusFilter.toLowerCase());
+
+    return matchesSearch && matchesRole && matchesStatus;
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  // Dynamic Badge Helpers
+  const getRoleBadge = (role) => {
+    const r = role ? role.toLowerCase() : "student";
+    switch (r) {
+      case "admin":
+        return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+      case "operator":
+        return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+      case "faculty":
+        return "bg-purple-500/10 text-purple-400 border-purple-500/20";
+      default:
+        return "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const s = status ? status.toLowerCase() : "active";
+    switch (s) {
+      case "active":
+        return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+      case "inactive":
+        return "bg-slate-500/10 text-slate-400 border-slate-500/20";
+      default:
+        return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+    }
+  };
 
   return (
-    <div className="p-4 sm:p-6 bg-[#030712] text-slate-100 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl space-y-6">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+    <div className="min-h-screen bg-[#090d16] text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8 font-sans">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/40 p-6 rounded-3xl border border-slate-800/80 backdrop-blur-md">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <Users className="w-6 h-6 text-cyan-400" />
-            User Access Management
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            System Users
+            <span className="text-xs font-medium px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full">
+              {users.length} Total
+            </span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Manage student, faculty, and administrative accounts and privileges.
+          <p className="text-slate-400 text-sm mt-1">
+            Manage user accounts, update security privileges, and control platform access.
           </p>
         </div>
 
         <button
-          type="button"
           onClick={handleAddUser}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold rounded-xl transition shadow-lg shadow-cyan-500/10 w-fit"
+          className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-5 py-2.5 rounded-2xl shadow-lg shadow-cyan-500/10 transition-all active:scale-95 text-sm"
         >
-          <UserPlus className="w-4 h-4" />
-          Add User
+          <Plus size={18} strokeWidth={2.5} />
+          Add User Account
         </button>
       </div>
 
-      {/* Analytics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={idx}
-              className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 shadow-sm space-y-2 backdrop-blur-md"
-            >
-              <div className="flex items-center justify-between">
-                <div
-                  className={`p-2.5 rounded-xl ${item.bg} ${item.color} border ${item.border}`}
-                >
-                  <Icon className="w-5 h-5" />
-                </div>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight">
-                  {item.value}
-                </p>
-                <p className="text-xs font-bold text-slate-300 mt-0.5">
-                  {item.title}
-                </p>
-                <p className="text-[10px] text-slate-500 mt-0.5">{item.sub}</p>
-              </div>
-            </div>
-          );
-        })}
+      {/* Control Bar (Search & Filters) */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        {/* Search Input */}
+        <div className="md:col-span-6 relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+          <input
+            type="text"
+            placeholder="Search by name, email, or department..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-all"
+          />
+        </div>
+
+        {/* Role Filter */}
+        <div className="md:col-span-3 relative">
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
+          >
+            <option value="All">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="operator">Operator</option>
+            <option value="faculty">Faculty</option>
+            <option value="student">Student</option>
+            <option value="user">User</option>
+          </select>
+        </div>
+
+        {/* Status Filter */}
+        <div className="md:col-span-3 relative">
+          <SlidersHorizontal className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
       </div>
 
-      {/* Directory & Controls Area */}
-      <div className="space-y-4">
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/50 p-4 rounded-2xl border border-slate-800/80">
-          <div>
-            <h2 className="text-sm font-bold text-white">User Directory</h2>
-            <p className="text-[11px] text-slate-400">
-              Search, filter, or manage user capabilities
-            </p>
+      {/* Main Table Container */}
+      <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl overflow-hidden backdrop-blur-md">
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-400 space-y-3">
+            <RefreshCw className="animate-spin mx-auto text-cyan-400" size={28} />
+            <p className="text-sm font-medium">Fetching accounts database...</p>
           </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-3" />
-              <input
-                type="text"
-                placeholder="Search name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition w-48 sm:w-60"
-              />
-            </div>
-
-            <div className="relative flex items-center">
-              <Filter className="w-3.5 h-3.5 text-slate-500 absolute left-3 pointer-events-none" />
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="pl-9 pr-4 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition capitalize"
-              >
-                <option value="all">All Roles</option>
-                <option value="student">Student</option>
-                <option value="faculty">Faculty</option>
-                <option value="operator">Operator</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
+        ) : isError ? (
+          <div className="p-12 text-center space-y-3">
+            <AlertCircle className="mx-auto text-rose-500" size={32} />
+            <p className="text-slate-200 font-semibold">Failed to load users</p>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto">{error?.message || "Authorization failed."}</p>
+            <button
+              onClick={() => refetch()}
+              className="mt-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl transition-all"
+            >
+              Retry Load
+            </button>
           </div>
-        </div>
-
-        {/* Desktop Table View */}
-        <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-900/90 text-slate-400 text-[11px] font-extrabold uppercase tracking-wider border-b border-slate-800">
-                <th className="py-4 px-4">User</th>
-                <th className="py-4 px-4">Role</th>
-                <th className="py-4 px-4">Department</th>
-                <th className="py-4 px-4">Status</th>
-                <th className="py-4 px-4">Joined</th>
-                <th className="py-4 px-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="py-12 text-center text-slate-400 font-medium"
-                  >
-                    <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    No users matching criteria.
-                  </td>
+        ) : filteredUsers.length === 0 ? (
+          <div className="p-12 text-center text-slate-500">
+            <p className="text-sm">No accounts found matching your query criteria.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800/80 bg-slate-900/80 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  <th className="py-4 px-6">User Info</th>
+                  <th className="py-4 px-6">Role Privilege</th>
+                  <th className="py-4 px-6">Department</th>
+                  <th className="py-4 px-6">Account Status</th>
+                  <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
-              ) : (
-                filteredUsers.map((user, index) => {
-                  const r = user.role?.toLowerCase();
-                  return (
-                    <tr
-                      key={user._id || user.id || index}
-                      className="hover:bg-slate-800/40 transition group"
-                    >
-                      <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-200 group-hover:text-cyan-300 transition">
-                          {user.name}
-                        </div>
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-                          <Mail className="w-3 h-3 text-slate-500" />
-                          {user.email}
-                        </div>
-                      </td>
-
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-1 rounded-md border uppercase ${
-                            r === "admin"
-                              ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                              : r === "operator"
-                              ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                              : r === "faculty"
-                              ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
-                              : "bg-slate-800 text-slate-400 border-slate-700"
-                          }`}
-                        >
-                          {(r === "operator" || r === "admin") && (
-                            <Shield className="w-3 h-3" />
+              </thead>
+              <tbody className="divide-y divide-slate-800/50 text-sm">
+                {filteredUsers.map((item) => (
+                  <tr key={item._id || item.id} className="hover:bg-slate-800/20 transition-colors">
+                    {/* User Info */}
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-bold overflow-hidden shrink-0">
+                          {item.image || item.photoURL ? (
+                            <img src={item.image || item.photoURL} alt={item.name} className="w-full h-full object-cover" />
+                          ) : (
+                            item.name?.charAt(0).toUpperCase() || "U"
                           )}
-                          {user.role}
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-4 font-medium text-slate-400 whitespace-nowrap">
-                        {user.department || "N/A"}
-                      </td>
-
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-1 rounded-md border uppercase ${
-                            user.status === "Active"
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                              : user.status === "Pending"
-                              ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                              : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                          }`}
-                        >
-                          {user.status === "Active" ? (
-                            <CheckCircle2 className="w-3 h-3" />
-                          ) : user.status === "Suspended" ? (
-                            <XCircle className="w-3 h-3" />
-                          ) : null}
-                          {user.status || "Active"}
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-slate-400 text-[11px] whitespace-nowrap">
-                        {user.joined ||
-                          (user.createdAt
-                            ? new Date(user.createdAt).toLocaleDateString()
-                            : "N/A")}
-                      </td>
-
-                      <td className="py-3.5 px-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleChangeRole(user)}
-                            className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 transition"
-                            title="Change Role"
-                          >
-                            <UserCog className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteUser(user._id || user.id)}
-                            className="p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition"
-                            title="Delete User"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Card List View */}
-        <div className="md:hidden space-y-3">
-          {filteredUsers.length === 0 ? (
-            <div className="py-12 text-center text-slate-400 font-medium bg-slate-900/40 rounded-2xl border border-slate-800">
-              <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              No users matching criteria.
-            </div>
-          ) : (
-            filteredUsers.map((user, index) => {
-              const r = user.role?.toLowerCase();
-              return (
-                <div
-                  key={user._id || user.id || index}
-                  className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 space-y-3"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-bold text-slate-200 text-sm">
-                        {user.name}
-                      </h3>
-                      <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-                        <Mail className="w-3 h-3 text-slate-500" />
-                        {user.email}
+                        <div>
+                          <p className="font-semibold text-slate-100">{item.name || "Unnamed User"}</p>
+                          <p className="text-xs text-slate-400">{item.email}</p>
+                        </div>
                       </div>
-                    </div>
+                    </td>
 
-                    <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md border uppercase shrink-0 ${
-                        r === "admin"
-                          ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                          : r === "operator"
-                          ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                          : r === "faculty"
-                          ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
-                          : "bg-slate-800 text-slate-400 border-slate-700"
-                      }`}
-                    >
-                      {(r === "operator" || r === "admin") && (
-                        <Shield className="w-3 h-3" />
-                      )}
-                      {user.role}
-                    </span>
-                  </div>
+                    {/* Role */}
+                    <td className="py-4 px-6">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getRoleBadge(item.role)}`}>
+                        {item.role || "student"}
+                      </span>
+                    </td>
 
-                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
-                    <span className="inline-flex items-center gap-1 text-slate-400">
-                      <Building className="w-3 h-3 text-slate-500" />
-                      {user.department || "N/A"}
-                    </span>
+                    {/* Department */}
+                    <td className="py-4 px-6 text-slate-300 text-xs">
+                      {item.department || item.dept || "General"}
+                    </td>
 
-                    <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded border uppercase ml-auto ${
-                        user.status === "Active"
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : user.status === "Pending"
-                          ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                          : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                      }`}
-                    >
-                      {user.status === "Active" ? (
-                        <CheckCircle2 className="w-3 h-3" />
-                      ) : user.status === "Suspended" ? (
-                        <XCircle className="w-3 h-3" />
-                      ) : null}
-                      {user.status || "Active"}
-                    </span>
-                  </div>
+                    {/* Status */}
+                    <td className="py-4 px-6">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(item.status)}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                        {item.status || "Active"}
+                      </span>
+                    </td>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-[11px] text-slate-500">
-                    <span className="inline-flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-slate-600" />
-                      {user.joined ||
-                        (user.createdAt
-                          ? new Date(user.createdAt).toLocaleDateString()
-                          : "N/A")}
-                    </span>
-
-                    <div className="flex items-center gap-2">
+                    {/* Actions */}
+                    <td className="py-4 px-6 text-right space-x-2">
                       <button
-                        type="button"
-                        onClick={() => handleChangeRole(user)}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold"
+                        onClick={() => handleChangeRole(item)}
+                        title="Change Access Role"
+                        className="p-2 bg-slate-800/80 hover:bg-slate-700 text-cyan-400 hover:text-cyan-300 rounded-xl border border-slate-700/50 transition-all"
                       >
-                        <UserCog className="w-3.5 h-3.5" />
-                        Role
+                        <Shield size={15} />
                       </button>
-
                       <button
-                        type="button"
-                        onClick={() => handleDeleteUser(user._id || user.id)}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold"
+                        onClick={() => handleDeleteUser(item._id || item.id)}
+                        title="Remove Account"
+                        className="p-2 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 rounded-xl border border-slate-700/50 hover:border-rose-500/20 transition-all"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Delete
+                        <Trash2 size={15} />
                       </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default UsersPage;

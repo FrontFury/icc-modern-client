@@ -784,7 +784,7 @@ node index.js
 The backend will run locally, for example:
 
 ```text
-http://localhost:5000
+https://icc-modern-server.vercel.app
 ```
 
 ---
