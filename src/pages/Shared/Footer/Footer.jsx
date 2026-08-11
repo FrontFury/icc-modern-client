@@ -3,6 +3,26 @@ import { Mail, MapPin, Phone, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const handleShare = async () => {
+    const shareData = {
+      title: "Ideal Commerce College",
+      text: "Visit Ideal Commerce College",
+      url: "https://www.icc.edu.bd/",
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Website link copied!");
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        console.error("Error sharing:", error);
+      }
+    }
+  };
   return (
     <footer className="bg-[#030712] text-slate-400 font-sans border-t border-slate-800/80 relative overflow-hidden">
       {/* Background Ambient Glow */}
@@ -12,20 +32,24 @@ const Footer = () => {
       <div className="relative z-10 w-11/12 md:w-5/6 mx-auto px-3 md:px-6 py-12 md:py-16">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          
           {/* Column 1: Brand Info */}
           <div className="space-y-4">
             <h2 className="text-xl font-black text-white tracking-wider uppercase">
-              IDEAL COMMERCE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">COLLEGE</span>
+              IDEAL COMMERCE{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                COLLEGE
+              </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-4">
-              Built for academic excellence since 2004. Directed by Abdul Halim Patwary Foundation and dedicated to nurturing future leaders in Dhaka.
+              Built for academic excellence since 2004. Directed by Abdul Halim
+              Patwary Foundation and dedicated to nurturing future leaders in
+              Dhaka.
             </p>
             {/* Social / Action Icons */}
             <div className="flex gap-3 pt-2">
               {/* Facebook Button */}
               <a
-                href="https://www.facebook.com/iccofficialsCampusLifeSection" 
+                href="https://www.facebook.com/share/1BhheVNUVs/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook Page"
@@ -58,8 +82,9 @@ const Footer = () => {
               </a>
 
               {/* Share Button */}
-              <button 
-                aria-label="Share" 
+              <button
+                aria-label="Share"
+                onClick={handleShare}
                 className="w-10 h-10 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition-all shadow-sm hover:shadow-[0_0_12px_rgba(34,211,238,0.2)]"
               >
                 <Share2 className="w-4 h-4" />
@@ -73,10 +98,26 @@ const Footer = () => {
               ADMISSIONS
             </h3>
             <ul className="space-y-3 text-xs sm:text-sm font-medium">
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">How to Apply</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">HSC Admission Guidelines</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">Fees & Scholarships</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="admission">Eligibility & Requirements</Link></p></li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="admission">How to Apply</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="admission">HSC Admission Guidelines</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="admission">Fees & Scholarships</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="admission">Eligibility & Requirements</Link>
+                </p>
+              </li>
             </ul>
           </div>
 
@@ -86,10 +127,26 @@ const Footer = () => {
               ACADEMICS
             </h3>
             <ul className="space-y-3 text-xs sm:text-sm font-medium">
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/commerce">Business Studies</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/science">Science Division</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="departments/arts">Humanities / Arts</Link></p></li>
-              <li><p className="hover:text-cyan-400 transition-colors"><Link to="calendar">Academic Calendar</Link></p></li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="departments/commerce">Business Studies</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="departments/science">Science Division</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="departments/arts">Humanities / Arts</Link>
+                </p>
+              </li>
+              <li>
+                <p className="hover:text-cyan-400 transition-colors">
+                  <Link to="calendar">Academic Calendar</Link>
+                </p>
+              </li>
             </ul>
           </div>
 
@@ -101,38 +158,56 @@ const Footer = () => {
             <ul className="space-y-4 text-xs sm:text-sm font-medium">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                <span className="text-slate-300">81, Green Road, Farmgate, Dhaka-1205, Bangladesh</span>
+                <span className="text-slate-300">
+                  81, Green Road, Farmgate, Dhaka-1205, Bangladesh
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="tel:+8801912130388" className="text-slate-300 hover:text-cyan-400 transition-colors">+880 1912-130388</a>
+                <a
+                  href="tel:+8801912130388"
+                  className="text-slate-300 hover:text-cyan-400 transition-colors"
+                >
+                  +880 1912-130388
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="mailto:principalicc@yahoo.com" className="text-slate-300 hover:text-cyan-400 transition-colors">principalicc@yahoo.com</a>
+                <a
+                  href="mailto:principalicc@yahoo.com"
+                  className="text-slate-300 hover:text-cyan-400 transition-colors"
+                >
+                  principalicc@yahoo.com
+                </a>
               </li>
             </ul>
           </div>
-
         </div>
 
         {/* Bottom Bar Divider & Copyright */}
         <div className="pt-8 border-t border-slate-800/80 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
           <p className="text-center md:text-left">
-            © {new Date().getFullYear()} Ideal Commerce College (EIIN: 134207). All rights reserved. Developed by{' '}
-            <a 
-              href="https://tasin07.vercel.app/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            © {new Date().getFullYear()} Ideal Commerce College (EIIN: 134207).
+            All rights reserved. Developed by{" "}
+            <a
+              href="https://tasin07.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-cyan-400 font-bold transition-colors"
             >
               T E X O N
             </a>
           </p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-slate-300 transition-colors">Campus Map</a>
-            <a href="#" className="hover:text-slate-300 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-slate-300 transition-colors">
+              Privacy Policy
+            </a>
+            <p className="hover:text-slate-300 transition-colors">
+              <Link to="/contact">Campus Map</Link>
+            </p>
+            <a href="#" className="hover:text-slate-300 transition-colors">
+              Terms of Service
+            </a>
           </div>
         </div>
       </div>

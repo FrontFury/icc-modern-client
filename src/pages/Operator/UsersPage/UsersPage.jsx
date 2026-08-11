@@ -324,8 +324,16 @@ const UsersPage = () => {
     });
   };
 
-  // Client-side Filtering
+  // Client-side Filtering (লগইন করা ইউজারকে বাদ দিয়ে)
   const filteredUsers = users.filter((u) => {
+    // ১. লগইন থাকা ইউজারকে বাদ দেওয়ার চেক
+    const isCurrentUser =
+      (currentUser?.email && u.email === currentUser.email) ||
+      (currentUser?.uid && (u.uid === currentUser.uid || u._id === currentUser.uid));
+
+    if (isCurrentUser) return false;
+
+    // ২. অন্যান্য ফিল্টারিং শর্তসমূহ
     const matchesSearch =
       (u.name && u.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (u.email && u.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -377,7 +385,7 @@ const UsersPage = () => {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
             System Users
             <span className="text-xs font-medium px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full">
-              {users.length} Total
+              {filteredUsers.length} Displayed
             </span>
           </h1>
           <p className="text-slate-400 text-sm mt-1">

@@ -9,7 +9,9 @@ import {
   Sparkles, 
   Loader2, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  X,
+  PartyPopper
 } from 'lucide-react';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
@@ -33,7 +35,8 @@ export default function OnlineApplication() {
     photo: null,
   });
 
-  const [formSuccess, setFormSuccess] = useState(false);
+  // Modal State Management
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +89,9 @@ export default function OnlineApplication() {
       return response.data;
     },
     onSuccess: () => {
-      setFormSuccess(true);
+      // Trigger Modal Open
+      setIsModalOpen(true);
+      
       // Reset Form State
       setFormData({
         studentName: '',
@@ -105,9 +110,6 @@ export default function OnlineApplication() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormSuccess(false);
-
-    // Trigger mutation with local form state
     mutation.mutate(formData);
   };
 
@@ -122,7 +124,6 @@ export default function OnlineApplication() {
         
         {/* LEFT COLUMN: Section Details & Step Indicator */}
         <div className="lg:col-span-4 space-y-6 pt-2">
-          
           <div>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-md mb-3">
               <Sparkles className="w-3.5 h-3.5" />
@@ -138,8 +139,6 @@ export default function OnlineApplication() {
 
           {/* Stepper list */}
           <div className="space-y-3 pt-2">
-            
-            {/* Step 1 */}
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-cyan-500/30 backdrop-blur-md shadow-lg">
               <div className="w-7 h-7 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center text-xs font-black shrink-0 mt-0.5 shadow-[0_0_12px_#22d3ee]">
                 1
@@ -154,7 +153,6 @@ export default function OnlineApplication() {
               </div>
             </div>
 
-            {/* Step 2 */}
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-slate-800/80 backdrop-blur-md">
               <div className="w-7 h-7 rounded-full bg-slate-800 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5">
                 2
@@ -169,7 +167,6 @@ export default function OnlineApplication() {
               </div>
             </div>
 
-            {/* Step 3 */}
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0a1120]/60 border border-slate-800/80 backdrop-blur-md">
               <div className="w-7 h-7 rounded-full bg-slate-800 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5">
                 3
@@ -183,7 +180,6 @@ export default function OnlineApplication() {
                 </p>
               </div>
             </div>
-
           </div>
 
           {/* Need Assistance Callout Box */}
@@ -202,22 +198,11 @@ export default function OnlineApplication() {
               principalicc@yahoo.com
             </a>
           </div>
-
         </div>
 
         {/* RIGHT COLUMN: Application Form Card */}
         <div className="lg:col-span-8 bg-[#0a1120]/60 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800/80 backdrop-blur-xl">
           
-          {/* Success Banner */}
-          {formSuccess && (
-            <div className="mb-6 p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <div className="text-xs sm:text-sm font-semibold">
-                Application submitted successfully! Our admissions department will get back to you shortly.
-              </div>
-            </div>
-          )}
-
           {/* Error Banner */}
           {mutation.isError && (
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center gap-3">
@@ -442,6 +427,49 @@ export default function OnlineApplication() {
         </div>
 
       </div>
+
+      {/* SUCCESS MODAL OVERLAY */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all animate-in fade-in duration-300">
+          <div className="relative w-full max-w-md bg-[#0a1120] border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(34,211,238,0.15)] text-center overflow-hidden">
+            
+            {/* Modal Ambient Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-cyan-500/20 blur-3xl rounded-full pointer-events-none" />
+
+            {/* Close Icon Button */}
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-900/50 hover:bg-slate-800 transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Success Icon */}
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-5 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+              <PartyPopper className="w-8 h-8" />
+            </div>
+
+            {/* Modal Header */}
+            <h2 className="text-xl sm:text-2xl font-black text-white mb-2 tracking-tight">
+              Application Submitted!
+            </h2>
+
+            {/* Modal Description */}
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-6">
+              Thank you for applying to Ideal Commerce College. Your details have been received, and our admissions team will review your file shortly.
+            </p>
+
+            {/* Modal Actions */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition duration-200 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+            >
+              Done / Got It
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
