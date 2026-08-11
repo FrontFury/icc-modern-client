@@ -42,7 +42,7 @@ const DeptNnotice = () => {
   const departments = [
     {
       id: 1,
-      title: "Science",
+      title: "Department of Science",
       description:
         "Exploring the laws of nature through rigorous experimentation and research.",
       icon: <FlaskConical className="w-8 h-8 text-blue-600" />,
@@ -52,7 +52,7 @@ const DeptNnotice = () => {
     },
     {
       id: 2,
-      title: "Arts",
+      title: "Department of Humanities",
       description:
         "Nurturing creativity and critical thinking through diverse humanities studies.",
       icon: <Palette className="w-8 h-8 text-amber-500" />,
@@ -62,7 +62,7 @@ const DeptNnotice = () => {
     },
     {
       id: 3,
-      title: "Commerce",
+      title: "Department of Business Studies",
       description:
         "Mastering business, finance, and economics in a globalized landscape.",
       icon: <Banknote className="w-8 h-8 text-blue-600" />,

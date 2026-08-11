@@ -108,7 +108,7 @@ export const router = createBrowserRouter([
       {
         path: "notices",
         element: <NoticeBoard />,
-        loader: () => fetch("https://icc-modern-server.vercel.app/notices").then((res) => res.json()),
+        loader: () => fetch("http://localhost:5000/notices").then((res) => res.json()),
       },
       {
         path: "admission",

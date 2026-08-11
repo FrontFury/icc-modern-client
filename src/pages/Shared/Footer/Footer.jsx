@@ -124,9 +124,9 @@ const Footer = () => {
               href="https://tasin07.vercel.app/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-cyan-400 font-semibold transition-colors"
+              className="hover:text-cyan-400 font-bold transition-colors"
             >
-              Estiak Ahamed Tasin
+              T E X O N
             </a>
           </p>
           <div className="flex gap-6">

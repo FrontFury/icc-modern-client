@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Users, GraduationCap, Award, TrendingUp } from "lucide-react";
 import heroBg from "../../../assets/Campus Culture/6.png"; 
+import { Link } from "react-router-dom";
 
 // Custom Counter Component without any npm packages
 const AnimatedCounter = ({ targetNumber, duration = 2000 }) => {
@@ -93,7 +94,7 @@ const Banner = () => {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-slate-950/80 " />
       </div>
 
       {/* Main Content */}
@@ -121,10 +122,10 @@ const Banner = () => {
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3 sm:gap-4">
             <button className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm sm:text-base px-6 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-cyan-500/20 cursor-pointer">
-              Apply Now
+              <Link to="/admission">Apply Now</Link>
             </button>
             <button className="border border-slate-700 hover:border-slate-500 bg-slate-900/60 text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3 rounded-xl transition-all backdrop-blur-md cursor-pointer">
-              Explore Departments
+              <Link to="/departments/science">Explore Departments</Link>
             </button>
           </div>
         </div>

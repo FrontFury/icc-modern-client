@@ -5,19 +5,24 @@ import {
   User, Mail, IdCard, Lock, Eye, EyeOff, Building2, 
   UploadCloud, X, GraduationCap, ShieldCheck, ArrowRight, Sparkles 
 } from 'lucide-react';
-import SuccessModal from '../Shared/SuccessModal/SuccessModal';
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
 import axios from 'axios';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import OTPVerificationModal from './OTPVerificationModal/OTPVerificationModal';
 
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-  const axiosSecure = useAxiosSecure()
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const axiosSecure = useAxiosSecure();
+
+  // Modal State for OTP
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [formDataCache, setFormDataCache] = useState(null);
 
   const {
     register,
@@ -66,66 +71,95 @@ export default function SignUp() {
     setValue('profileImage', null, { shouldValidate: true });
   };
 
-  // Fixed Async Submit Handler
-const onSubmit = async (data) => {
+  // Step 1: Form Submit -> Send OTP to Email and Open Modal
+  const onSubmit = async (data) => {
     try {
-      // 1. Upload profile image to ImgBB
-      let imageUrl = '';
-      if (data.profileImage) {
-        const formData = new FormData();
-        formData.append('image', data.profileImage);
+      setFormDataCache(data);
 
-        const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
-        const res = await axios.post(image_API_URL, formData);
-        imageUrl = res.data.data.display_url;
-      }
+      // ব্যাকএন্ডে অনুরোধ পাঠিয়ে ইমেইলে OTP কোড সেন্ড করুন
+      await axiosSecure.post('/send-otp', { email: data.email });
 
-      // 2. Create Firebase User
-      await registerUser(data.email, data.password);
-
-      // 3. Update Firebase Profile
-      const userProfile = {
-        displayName: data.fullName,
-        photoURL: imageUrl,
-      };
-      await updateUserProfile(userProfile);
-
-      // 4. Save User Info to MongoDB via secure POST request
-      const userInfo = {
-        name: data.fullName,
-        email: data.email,
-        studentId: data.studentId,
-        department: data.department,
-        photoURL: imageUrl
-      };
-
-      const userRes = await axiosSecure.post('/users', userInfo);
-
-      if (userRes.data.insertedId || userRes.data.success) {
-
-        setIsSuccessOpen(true);
-      }
+      // OTP মডাল খুলুন
+      setIsOtpModalOpen(true);
     } catch (error) {
-      console.error('Sign Up Error:', error);
+      console.error('Failed to send OTP:', error);
+      alert('Could not send verification code to your email. Please try again.');
     }
   };
-  const handleModalClose = () => {
-    setIsSuccessOpen(false);
-    navigate(location.state || '/', { replace: true });
+
+  // Step 2: Handle OTP Verification & Create Account
+  const handleVerifyOtp = async (enteredOtp) => {
+    setIsVerifyingOtp(true);
+    setOtpError('');
+
+    try {
+      // ব্যাকএন্ডে OTP কোডটি সঠিক কি না যাচাই করুন
+      const verifyRes = await axiosSecure.post('/verify-otp', {
+        email: formDataCache.email,
+        otp: enteredOtp,
+      });
+
+      if (verifyRes.data.success) {
+        // ১. Upload profile image to ImgBB
+        let imageUrl = '';
+        if (formDataCache.profileImage) {
+          const formData = new FormData();
+          formData.append('image', formDataCache.profileImage);
+
+          const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
+          const res = await axios.post(image_API_URL, formData);
+          imageUrl = res.data.data.display_url;
+        }
+
+        // ২. Create Firebase User
+        await registerUser(formDataCache.email, formDataCache.password);
+
+        // ৩. Update Firebase Profile
+        await updateUserProfile({
+          displayName: formDataCache.fullName,
+          photoURL: imageUrl,
+        });
+
+        // ৪. Save User Info to Database
+        const userInfo = {
+          name: formDataCache.fullName,
+          email: formDataCache.email,
+          studentId: formDataCache.studentId,
+          department: formDataCache.department,
+          photoURL: imageUrl,
+        };
+
+        await axiosSecure.post('/users', userInfo);
+
+        // ৫. ওটিপি ম্যাচ করার পর সরাসরি Home Page এ নিয়ে যাওয়া
+        setIsOtpModalOpen(false);
+        navigate(location.state || '/', { replace: true });
+      } else {
+        setOtpError('Invalid verification code. Please check and try again.');
+      }
+    } catch (error) {
+      console.error('OTP Verification Error:', error);
+      setOtpError(error.response?.data?.message || 'Invalid code or verification failed.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 font-sans text-slate-800 selection:bg-blue-500 selection:text-white">
-      <SuccessModal
-        isOpen={isSuccessOpen}
-        onClose={handleModalClose}
-        title="Welcome to Ideal Commerce College"
-        message="Your student profile has been created successfully."
-        buttonText="Go to Portal"
+      
+      {/* OTP Verification Modal */}
+      <OTPVerificationModal
+        isOpen={isOtpModalOpen}
+        email={formDataCache?.email}
+        onVerify={handleVerifyOtp}
+        onClose={() => setIsOtpModalOpen(false)}
+        isVerifying={isVerifyingOtp}
+        error={otpError}
       />
+
       {/* Left Column - Hero Visual Section */}
       <div className="relative lg:w-5/12 xl:w-1/2 bg-slate-950 text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 overflow-hidden min-h-[380px] lg:min-h-screen">
-        {/* Background Image & Overlays */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000 ease-out"
           style={{ backgroundImage: `url('https://i.ibb.co.com/WpcNNKKJ/Sign-Up.jpg')` }}
@@ -134,7 +168,6 @@ const onSubmit = async (data) => {
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Top Header */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-500 text-white flex items-center justify-center font-black text-lg border border-white/20 shadow-xl shadow-blue-900/30">
@@ -151,7 +184,6 @@ const onSubmit = async (data) => {
           </div>
         </div>
 
-        {/* Hero Content */}
         <div className="relative z-10 my-auto py-8 max-w-lg">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-blue-200 text-xs font-medium mb-6 backdrop-blur-md shadow-inner">
             <Building2 className="w-3.5 h-3.5 text-blue-400" />
@@ -166,7 +198,6 @@ const onSubmit = async (data) => {
           </p>
         </div>
 
-        {/* Hero Footer Stats */}
         <div className="relative z-10 grid grid-cols-2 gap-6 pt-6 border-t border-white/10 max-w-sm">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
@@ -435,7 +466,7 @@ const onSubmit = async (data) => {
               disabled={isSubmitting}
               className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.99] mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>{isSubmitting ? 'Creating Account...' : 'Complete Sign Up'}</span>
+              <span>{isSubmitting ? 'Sending Code...' : 'Continue & Verify'}</span>
               {!isSubmitting && <ArrowRight className="w-4 h-4" />}
             </button>
 

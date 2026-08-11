@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendEmailVerification, // <-- Import Added
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -17,9 +18,13 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const registerUser = (email, password) => {
+  // Register and send verification email
+  const registerUser = async (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Send email verification
+    await sendEmailVerification(userCredential.user);
+    return userCredential;
   };
 
   const signInUser = (email, password) => {
@@ -32,25 +37,24 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, googleProvider);
   };
 
-
-  const logOut = () =>{
+  const logOut = () => {
     setLoading(true);
-    signOut(auth);
-  }
+    return signOut(auth);
+  };
 
-  const updateUserProfile = (profile) =>{
+  const updateUserProfile = (profile) => {
     return updateProfile(auth.currentUser, profile);
-  }
+  };
 
-  // observe user state
+  // Observe user state
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-        setLoading(false)
-    })
-    return () =>{
-        unSubscribe()
-    }
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => {
+      unSubscribe();
+    };
   }, []);
 
   const authInfo = {
@@ -62,7 +66,8 @@ const AuthProvider = ({ children }) => {
     signInGoogle,
     updateUserProfile,
   };
-  return <AuthContext value={authInfo}>{children}</AuthContext>;
+
+  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

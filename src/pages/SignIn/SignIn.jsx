@@ -4,10 +4,22 @@ import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import OTPVerificationModal from '../SignUp/OTPVerificationModal/OTPVerificationModal';
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const axiosSecure = useAxiosSecure();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  // Modal & OTP States
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [tempCredentials, setTempCredentials] = useState(null);
 
   const {
     register,
@@ -23,24 +35,70 @@ export default function SignIn() {
   });
 
   const { signInUser } = useAuth();
-  const location = useLocation();
 
-  const onSubmit = (data) => {
-    signInUser(data.email, data.password)
-      .then((result) => {
-        console.log(result.user);
-        navigate(location?.state || '/');
-      })
-      .catch((error) => {
-        console.log(error);
+  // Step 1: Login Form Submit -> Send OTP and Open Modal
+  const onSubmit = async (data) => {
+    setAuthError('');
+    try {
+      // প্রথমে ক্রেডেনশিয়াল সাময়িকভাবে সেভ রাখুন
+      setTempCredentials(data);
+
+      // ব্যাকএন্ডে OTP পাঠাতে বলুন
+      await axiosSecure.post('/send-otp', { email: data.email });
+
+      // OTP মডাল পপআপ ওপেন করুন
+      setIsOtpModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      setAuthError('Could not send verification code. Please check your credentials or backend server.');
+    }
+  };
+
+  // Step 2: Handle OTP Verification & Redirect to Home
+  const handleVerifyOtp = async (enteredOtp) => {
+    setIsVerifyingOtp(true);
+    setOtpError('');
+
+    try {
+      // ব্যাকএন্ডে OTP ঠিক আছে কিনা চেক করুন
+      const verifyRes = await axiosSecure.post('/verify-otp', {
+        email: tempCredentials.email,
+        otp: enteredOtp,
       });
+
+      if (verifyRes.data.success) {
+        // ওটিপি সঠিক হলে ফায়ারবেসে ইউজারকে সাইন ইন করান
+        await signInUser(tempCredentials.email, tempCredentials.password);
+
+        // মডাল ক্লোজ করে হোম পেজে রিডাইরেক্ট করুন
+        setIsOtpModalOpen(false);
+        navigate(location?.state || '/', { replace: true });
+      } else {
+        setOtpError('Invalid verification code. Please try again.');
+      }
+    } catch (error) {
+      console.error('OTP Verification Error:', error);
+      setOtpError(error.response?.data?.message || 'Invalid verification code.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 font-sans text-slate-100">
+      
+      {/* OTP Verification Modal */}
+      <OTPVerificationModal
+        isOpen={isOtpModalOpen}
+        email={tempCredentials?.email}
+        onVerify={handleVerifyOtp}
+        onClose={() => setIsOtpModalOpen(false)}
+        isVerifying={isVerifyingOtp}
+        error={otpError}
+      />
+
       {/* Left Column - Hero Visual Section */}
       <div className="relative md:w-7/12 bg-slate-900 text-white flex flex-col justify-between p-8 md:p-16 overflow-hidden">
-        {/* Background Image with Dark Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ 
@@ -49,7 +107,6 @@ export default function SignIn() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/40" />
 
-        {/* Top Header / Branding */}
         <div className="relative z-10 flex items-center">
           <Link to="/" className="flex items-center gap-3 group">
             <img
@@ -63,7 +120,6 @@ export default function SignIn() {
           </Link>
         </div>
 
-        {/* Middle Heading and Subtitle */}
         <div className="relative z-10 my-auto py-12 max-w-xl">
           <div className="w-12 h-1 bg-amber-400 mb-6 rounded-full" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-6">
@@ -75,7 +131,6 @@ export default function SignIn() {
           </p>
         </div>
 
-        {/* Bottom Badges */}
         <div className="relative z-10 flex flex-wrap items-center gap-6 pt-6 border-t border-slate-800">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/80 px-3.5 py-2 rounded-full border border-slate-700/60 backdrop-blur-md">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -92,7 +147,6 @@ export default function SignIn() {
       <div className="md:w-5/12 flex flex-col justify-between p-8 md:p-16 lg:p-20 bg-slate-950">
         <div className="w-full max-w-md mx-auto my-auto p-6 md:p-8 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-sm">
           
-          {/* Title & Description */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-white mb-2">
               Sign In
@@ -102,9 +156,13 @@ export default function SignIn() {
             </p>
           </div>
 
+          {authError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-xs text-red-400">
+              {authError}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-            
-            {/* Student / Staff ID or Email Field */}
             <div>
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide mb-2">
                 Student Email / ID
@@ -115,9 +173,9 @@ export default function SignIn() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Enter your email or unique ID"
+                  placeholder="Enter your email"
                   {...register('email', {
-                    required: 'Email or Student ID is required',
+                    required: 'Email is required',
                   })}
                   className={`w-full pl-11 pr-4 py-3 bg-slate-800/80 border rounded-lg text-sm text-slate-100 placeholder-slate-500 transition focus:bg-slate-800 focus:outline-none ${
                     errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-700 focus:border-cyan-400'
@@ -129,7 +187,6 @@ export default function SignIn() {
               )}
             </div>
 
-            {/* Password Field */}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide">
@@ -148,11 +205,6 @@ export default function SignIn() {
                   placeholder="••••••••"
                   {...register('password', {
                     required: 'Password is required',
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message:
-                        'Password must be 8+ characters with at least one uppercase letter, one lowercase letter, one number, and one special character',
-                    },
                   })}
                   className={`w-full pl-11 pr-11 py-3 bg-slate-800/80 border rounded-lg text-sm text-slate-100 placeholder-slate-500 transition focus:bg-slate-800 focus:outline-none ${
                     errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-700 focus:border-cyan-400'
@@ -171,7 +223,6 @@ export default function SignIn() {
               )}
             </div>
 
-            {/* Remember Me Checkbox */}
             <div className="flex items-center pt-1">
               <input
                 id="remember-me"
@@ -184,17 +235,15 @@ export default function SignIn() {
               </label>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={isSubmitting}
               className="w-full py-3.5 px-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm rounded-lg transition shadow-md hover:shadow-amber-400/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Logging in...' : 'Login'}
+              {isSubmitting ? 'Sending Code...' : 'Login & Verify'}
             </button>
           </form>
 
-          {/* OR Divider */}
           <div className="relative my-6 text-center">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-800" />
@@ -204,7 +253,6 @@ export default function SignIn() {
             </span>
           </div>
 
-          {/* Create Account Button */}
           <button
             type="button"
             onClick={() => navigate('/signup', { state: location.state })}
