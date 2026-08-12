@@ -24,6 +24,9 @@ export default function AddGallery() {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
+  // Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   // DatePicker State
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -49,15 +52,10 @@ export default function AddGallery() {
     onSuccess: () => {
       // Invalidate existing gallery cache so feed automatically refreshes
       queryClient.invalidateQueries({ queryKey: ["gallery"] });
-
-      setStatusMessage({
-        type: "success",
-        text: "Gallery item created and published successfully!",
-      });
-
-      setTimeout(() => {
-        navigate("/operator/manageGallery");
-      }, 1500);
+      
+      // Clear status message and trigger Success Modal
+      setStatusMessage({ type: "", text: "" });
+      setShowSuccessModal(true);
     },
     onError: (error) => {
       console.error("Gallery Submission Error:", error);
@@ -211,7 +209,7 @@ export default function AddGallery() {
         {/* Navigation Link */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors mb-6 group"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors mb-6 group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Gallery
@@ -386,7 +384,7 @@ export default function AddGallery() {
                         setImageFile(null);
                         setImagePreview(null);
                       }}
-                      className="p-3 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white shadow-lg transition-transform hover:scale-110"
+                      className="p-3 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white shadow-lg transition-transform hover:scale-110 cursor-pointer"
                       title="Remove Image"
                     >
                       <X className="w-5 h-5" />
@@ -401,7 +399,7 @@ export default function AddGallery() {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all"
+                className="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
               >
                 Cancel
               </button>
@@ -427,6 +425,45 @@ export default function AddGallery() {
           </form>
         </div>
       </div>
+
+      {/* Theme Matching Custom Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="bg-gradient-to-b from-slate-900 via-[#071927] to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl shadow-cyan-500/10 space-y-5 relative">
+            {/* Glowing Background Glow effect inside modal */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-cyan-500/20 blur-2xl rounded-full pointer-events-none" />
+
+            {/* Check Icon with Cyan Glow */}
+            <div className="relative w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-2xl flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+              <CheckCircle2 className="w-8 h-8 text-cyan-400" />
+            </div>
+
+            {/* Content */}
+            <div className="space-y-2 relative z-10">
+              <h3 className="text-xl font-black text-white tracking-tight">
+                Published Successfully!
+              </h3>
+              <p className="text-xs font-medium text-slate-400 leading-relaxed">
+                Gallery item has been created and updated in the live feed records.
+              </p>
+            </div>
+
+            {/* Button */}
+            <div className="pt-2 relative z-10">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/operator/manageGallery");
+                }}
+                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 active:scale-95 cursor-pointer"
+              >
+                Go to Manage Gallery
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

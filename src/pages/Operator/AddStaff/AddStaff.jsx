@@ -24,6 +24,9 @@ export default function AddStaff() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   // Form State
   const [formData, setFormData] = useState({
     name: "",
@@ -44,23 +47,17 @@ export default function AddStaff() {
       return res.data;
     },
     onSuccess: () => {
-      setStatus({
-        type: "success",
-        message: "Staff member added successfully!",
-      });
-
       // Invalidate query to refresh staff directory list automatically
       queryClient.invalidateQueries({ queryKey: ["staff-members"] });
+
+      // Clear alerts & trigger Success Modal
+      setStatus({ type: "", message: "" });
+      setShowSuccessModal(true);
 
       // Reset form fields
       setFormData({ name: "", designation: "", email: "" });
       setImageFile(null);
       setImagePreview("");
-
-      // Redirect after short delay
-      setTimeout(() => {
-        navigate("/operator/manageStaff");
-      }, 1500);
     },
     onError: (error) => {
       setStatus({
@@ -360,7 +357,7 @@ export default function AddStaff() {
                   setStatus({ type: "", message: "" });
                 }}
                 disabled={isSubmitting}
-                className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+                className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Reset
               </button>
@@ -368,7 +365,7 @@ export default function AddStaff() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -388,6 +385,45 @@ export default function AddStaff() {
 
         </div>
       </div>
+
+      {/* Theme Matching Custom Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="bg-gradient-to-b from-slate-900 via-[#0a1120] to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl shadow-cyan-500/10 space-y-5 relative">
+            {/* Glowing Background Effect */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-cyan-500/20 blur-2xl rounded-full pointer-events-none" />
+
+            {/* Check Icon with Cyan Glow */}
+            <div className="relative w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-2xl flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+              <CheckCircle2 className="w-8 h-8 text-cyan-400" />
+            </div>
+
+            {/* Content */}
+            <div className="space-y-2 relative z-10">
+              <h3 className="text-xl font-black text-white tracking-tight">
+                Staff Member Added!
+              </h3>
+              <p className="text-xs font-medium text-slate-400 leading-relaxed">
+                The new staff record and profile photo have been saved successfully.
+              </p>
+            </div>
+
+            {/* Action Button */}
+            <div className="pt-2 relative z-10">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/operator/manageStaff");
+                }}
+                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 active:scale-95 cursor-pointer"
+              >
+                Go to Manage Staff
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

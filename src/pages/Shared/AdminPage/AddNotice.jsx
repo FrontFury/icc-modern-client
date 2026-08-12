@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
 import {
   Eye,
   Pin,
@@ -26,9 +27,7 @@ export default function AddNotice() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState('https://i.ibb.co/JwH9xM');
   const [isPinned, setIsPinned] = useState(true);
-  const [description, setDescription] = useState(
-    'This is an official announcement from the administration of Ideal Commerce College regarding the Fall 2026 course registration process. Students must verify their course enrollment with their respective department advisors prior to submitting the online form.'
-  );
+  const [description, setDescription] = useState('');
 
   const {
     register,
@@ -38,11 +37,11 @@ export default function AddNotice() {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      title: 'Registration Deadline for Semester Fall 2026',
+      title: '',
       category: 'Academic',
       priority: 'URGENT',
-      summary: 'All students are required to complete their course registration by October 30th. Failure to register will result in late fees.',
-      publishedDate: '2026-10-24',
+      summary: '',
+      publishedDate: new Date().toISOString().split('T')[0],
       isPinned: true,
       imageUrl: 'https://i.ibb.co/JwH9xM',
     },
@@ -62,7 +61,13 @@ export default function AddNotice() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      Swal.fire({
+        icon: 'warning',
+        title: 'File Too Large',
+        text: 'File size must be less than 5MB',
+        background: '#0f172a',
+        color: '#f8fafc'
+      });
       return;
     }
 
@@ -83,7 +88,13 @@ export default function AddNotice() {
       setValue('imageUrl', directUrl, { shouldValidate: true });
     } catch (error) {
       console.error('ImgBB Upload Error:', error);
-      alert('Failed to upload image to ImgBB. Check your API key.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Upload Failed',
+        text: 'Failed to upload image to ImgBB. Check your API key.',
+        background: '#0f172a',
+        color: '#f8fafc'
+      });
     } finally {
       setIsUploading(false);
     }
@@ -101,13 +112,30 @@ export default function AddNotice() {
         createdAt: new Date().toISOString(),
       };
 
-      console.log('Final Notice Payload:', payload);
-      axiosSecure.post('/notices', payload).then((res) => {
-        console.log('after saving notice', res.data);
-      });
+      const res = await axiosSecure.post('/notices', payload);
+      
+      // Checking if MongoDB returned insertedId or acknowledged success
+      if (res.data?.insertedId || res.data?.acknowledged) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Notice Created!',
+          text: 'The notice has been published successfully.',
+          background: '#0f172a',
+          color: '#f8fafc',
+          confirmButtonColor: '#06b6d4',
+        }).then(() => {
+          navigate('/operator/allNotices');
+        });
+      }
     } catch (error) {
       console.error('Error saving notice:', error);
-      alert('Failed to save notice.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Save Failed',
+        text: 'Failed to save notice. Please try again.',
+        background: '#0f172a',
+        color: '#f8fafc'
+      });
     }
   };
 
@@ -165,7 +193,7 @@ export default function AddNotice() {
         {/* Main Grid Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Left Column: Content Details Panel (Spans 2 Columns) */}
+          {/* Left Column: Content Details Panel */}
           <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-md shadow-xl space-y-5">
             <h2 className="text-sm font-bold text-white border-b border-slate-800/80 pb-3">
               Content Details
@@ -230,7 +258,7 @@ export default function AddNotice() {
               />
             </div>
 
-            {/* Description (Rich Text Simulation) */}
+            {/* Description */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
                 Description (Rich Text)
@@ -260,7 +288,7 @@ export default function AddNotice() {
             </div>
           </div>
 
-          {/* Right Column: Publish Settings & Attachment Panels */}
+          {/* Right Column: Settings & Attachment */}
           <div className="space-y-6">
 
             {/* Publish Settings Panel */}
@@ -306,7 +334,7 @@ export default function AddNotice() {
               </div>
             </div>
 
-            {/* Attachment Panel (ImgBB Converter Integrated) */}
+            {/* Attachment Panel */}
             <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-md shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-bold text-white">Attachment</h2>

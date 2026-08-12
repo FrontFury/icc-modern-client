@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   UserPlus,
   Upload,
@@ -14,10 +15,10 @@ import {
   Briefcase,
   BookOpen,
   Eye,
-  Check
-} from 'lucide-react';
-import axios from 'axios';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
+  Check,
+} from "lucide-react";
+import axios from "axios";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 export default function AddFaculty() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function AddFaculty() {
   const axiosSecure = useAxiosSecure();
 
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const {
     register,
@@ -34,13 +35,13 @@ export default function AddFaculty() {
     watch,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      name: '',
-      designation: '',
-      subject: '',
-      email: '',
-      imageUrl: '',
+      name: "",
+      designation: "",
+      subject: "",
+      email: "",
+      imageUrl: "",
     },
   });
 
@@ -49,18 +50,31 @@ export default function AddFaculty() {
   // TanStack Query Mutation for saving Faculty Data
   const addFacultyMutation = useMutation({
     mutationFn: async (newFaculty) => {
-      const response = await axiosSecure.post('/faculty', newFaculty);
+      const response = await axiosSecure.post("/faculty", newFaculty);
       return response.data;
     },
     onSuccess: () => {
       // Invalidate faculties cache to auto-refetch list pages
-      queryClient.invalidateQueries({ queryKey: ['faculties'] });
-      alert('Faculty member added successfully!');
-      navigate('/operator/allFaculty');
+      queryClient.invalidateQueries({ queryKey: ["faculties"] });
+
+      // Show SweetAlert2 Success Modal
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Faculty member added successfully!",
+        background: "#0f172a", 
+        color: "#f8fafc",
+        confirmButtonColor: "#06b6d4", 
+        confirmButtonText: "View All Faculty",
+      }).then((result) => {
+        if (result.isConfirmed || result.isDismissed) {
+          navigate("/operator/allFaculty");
+        }
+      });
     },
     onError: (error) => {
-      console.error('Error adding faculty member:', error);
-      alert('Failed to save faculty details. Please try again.');
+      console.error("Error adding faculty member:", error);
+      alert("Failed to save faculty details. Please try again.");
     },
   });
 
@@ -70,7 +84,7 @@ export default function AddFaculty() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      alert("File size must be less than 5MB");
       return;
     }
 
@@ -78,20 +92,20 @@ export default function AddFaculty() {
 
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append("image", file);
 
       const apiKey = import.meta.env.VITE_image_host_key;
       const response = await axios.post(
         `https://api.imgbb.com/1/upload?key=${apiKey}`,
-        formData
+        formData,
       );
 
       const directUrl = response.data.data.display_url;
       setUploadedImageUrl(directUrl);
-      setValue('imageUrl', directUrl, { shouldValidate: true });
+      setValue("imageUrl", directUrl, { shouldValidate: true });
     } catch (error) {
-      console.error('ImgBB Upload Error:', error);
-      alert('Failed to upload image to ImgBB. Check your API key.');
+      console.error("ImgBB Upload Error:", error);
+      alert("Failed to upload image to ImgBB. Check your API key.");
     } finally {
       setIsUploading(false);
     }
@@ -112,7 +126,6 @@ export default function AddFaculty() {
   return (
     <div className="min-h-screen bg-[#030712] p-4 sm:p-8 font-sans text-slate-100 rounded-2xl">
       <div className="w-full mx-auto space-y-6">
-
         {/* Top Header & Navigation Bar */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-5">
           <div>
@@ -152,14 +165,13 @@ export default function AddFaculty() {
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              {addFacultyMutation.isPending ? 'Saving...' : 'Save Faculty'}
+              {addFacultyMutation.isPending ? "Saving..." : "Save Faculty"}
             </button>
           </div>
         </div>
 
         {/* Form Body Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
           {/* Main Form Fields Panel (Spans 2 columns) */}
           <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-md shadow-xl space-y-5">
             <h2 className="text-sm font-bold text-white border-b border-slate-800/80 pb-3">
@@ -176,12 +188,14 @@ export default function AddFaculty() {
                 <input
                   type="text"
                   placeholder="e.g. DR. MD. ARIFUL ISLAM"
-                  {...register('name', { required: 'Name is required' })}
+                  {...register("name", { required: "Name is required" })}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition placeholder:text-slate-600"
                 />
               </div>
               {errors.name && (
-                <p className="text-[11px] text-rose-400 mt-1">{errors.name.message}</p>
+                <p className="text-[11px] text-rose-400 mt-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
@@ -197,12 +211,16 @@ export default function AddFaculty() {
                   <input
                     type="text"
                     placeholder="e.g. Assistant Professor"
-                    {...register('designation', { required: 'Designation is required' })}
+                    {...register("designation", {
+                      required: "Designation is required",
+                    })}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition placeholder:text-slate-600"
                   />
                 </div>
                 {errors.designation && (
-                  <p className="text-[11px] text-rose-400 mt-1">{errors.designation.message}</p>
+                  <p className="text-[11px] text-rose-400 mt-1">
+                    {errors.designation.message}
+                  </p>
                 )}
               </div>
 
@@ -216,12 +234,16 @@ export default function AddFaculty() {
                   <input
                     type="text"
                     placeholder="e.g. Accounting & Finance"
-                    {...register('subject', { required: 'Subject is required' })}
+                    {...register("subject", {
+                      required: "Subject is required",
+                    })}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition placeholder:text-slate-600"
                   />
                 </div>
                 {errors.subject && (
-                  <p className="text-[11px] text-rose-400 mt-1">{errors.subject.message}</p>
+                  <p className="text-[11px] text-rose-400 mt-1">
+                    {errors.subject.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -236,26 +258,26 @@ export default function AddFaculty() {
                 <input
                   type="email"
                   placeholder="faculty@college.edu.bd"
-                  {...register('email', {
-                    required: 'Email is required',
+                  {...register("email", {
+                    required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address',
+                      message: "Invalid email address",
                     },
                   })}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition placeholder:text-slate-600"
                 />
               </div>
               {errors.email && (
-                <p className="text-[11px] text-rose-400 mt-1">{errors.email.message}</p>
+                <p className="text-[11px] text-rose-400 mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
-
           </div>
 
           {/* Right Column: ImgBB Avatar Upload & Profile Card Preview */}
           <div className="space-y-6">
-
             {/* Image Upload Panel */}
             <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-md shadow-xl space-y-4">
               <h2 className="text-xs font-bold text-white border-b border-slate-800/80 pb-2.5 flex items-center justify-between">
@@ -273,15 +295,21 @@ export default function AddFaculty() {
                 {isUploading ? (
                   <div className="py-3 flex flex-col items-center text-cyan-400">
                     <Loader2 className="w-7 h-7 animate-spin mb-1.5" />
-                    <span className="text-xs font-bold">Uploading to ImgBB...</span>
+                    <span className="text-xs font-bold">
+                      Uploading to ImgBB...
+                    </span>
                   </div>
                 ) : (
                   <>
                     <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
                       <Upload className="w-5 h-5" />
                     </div>
-                    <p className="text-xs font-bold text-slate-200">Upload Portrait Photo</p>
-                    <p className="text-[10px] text-slate-500 mt-1">PNG, JPG or WEBP up to 5MB</p>
+                    <p className="text-xs font-bold text-slate-200">
+                      Upload Portrait Photo
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      PNG, JPG or WEBP up to 5MB
+                    </p>
                   </>
                 )}
               </label>
@@ -343,24 +371,22 @@ export default function AddFaculty() {
 
                 <div>
                   <h3 className="text-sm font-bold text-white truncate uppercase">
-                    {watchAllFields.name || 'FACULTY NAME'}
+                    {watchAllFields.name || "FACULTY NAME"}
                   </h3>
                   <p className="text-[11px] font-semibold text-cyan-400 mt-0.5">
-                    {watchAllFields.designation || 'Designation'}
+                    {watchAllFields.designation || "Designation"}
                   </p>
                   <p className="text-[10px] text-slate-400 mt-0.5">
-                    {watchAllFields.subject || 'Department Name'}
+                    {watchAllFields.subject || "Department Name"}
                   </p>
                 </div>
 
                 <div className="pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono truncate">
-                  {watchAllFields.email || 'email@college.edu.bd'}
+                  {watchAllFields.email || "email@college.edu.bd"}
                 </div>
               </div>
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
