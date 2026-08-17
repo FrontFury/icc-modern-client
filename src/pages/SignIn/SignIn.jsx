@@ -1,16 +1,16 @@
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IdCard, Lock, Eye, EyeOff, ShieldCheck, GraduationCap } from 'lucide-react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+
 import useAuth from '../../hooks/useAuth';
 import SocialLogin from '../../SocialLogin/SocialLogin';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useState } from 'react';
-import useAxiosSecure from '../../hooks/useAxiosSecure';
 import OTPVerificationModal from '../SignUp/OTPVerificationModal/OTPVerificationModal';
 
 export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
-  const axiosSecure = useAxiosSecure();
 
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -20,6 +20,8 @@ export default function SignIn() {
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [tempCredentials, setTempCredentials] = useState(null);
+
+  const { signInUser } = useAuth();
 
   const {
     register,
@@ -34,51 +36,58 @@ export default function SignIn() {
     },
   });
 
-  const { signInUser } = useAuth();
-
   // Step 1: Login Form Submit -> Send OTP and Open Modal
   const onSubmit = async (data) => {
     setAuthError('');
     try {
-      // প্রথমে ক্রেডেনশিয়াল সাময়িকভাবে সেভ রাখুন
       setTempCredentials(data);
 
-      // ব্যাকএন্ডে OTP পাঠাতে বলুন
-      await axiosSecure.post('/send-otp', { email: data.email });
+      const backendUrl = import.meta.env.VITE_API_URL || 'https://icc-modern-server.vercel.app';
 
-      // OTP মডাল পপআপ ওপেন করুন
-      setIsOtpModalOpen(true);
+      const response = await axios.post(
+        `${backendUrl}/send-otp`,
+        { email: data.email },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (response.data.success) {
+        setIsOtpModalOpen(true);
+      }
     } catch (error) {
-      console.error(error);
-      setAuthError('Could not send verification code. Please check your credentials or backend server.');
+      console.error('Send OTP Error:', error);
+      const serverErrorMsg =
+        error.response?.data?.message || 'Failed to send OTP code. Please check server logs.';
+      setAuthError(serverErrorMsg);
     }
   };
 
-  // Step 2: Handle OTP Verification & Redirect to Home
+  // Step 2: Handle OTP Verification & Redirect
   const handleVerifyOtp = async (enteredOtp) => {
     setIsVerifyingOtp(true);
     setOtpError('');
 
     try {
-      // ব্যাকএন্ডে OTP ঠিক আছে কিনা চেক করুন
-      const verifyRes = await axiosSecure.post('/verify-otp', {
-        email: tempCredentials.email,
-        otp: enteredOtp,
-      });
+      const backendUrl = import.meta.env.VITE_API_URL || 'https://icc-modern-server.vercel.app';
+
+      const verifyRes = await axios.post(
+        `${backendUrl}/verify-otp`,
+        {
+          email: tempCredentials.email,
+          otp: enteredOtp,
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       if (verifyRes.data.success) {
-        // ওটিপি সঠিক হলে ফায়ারবেসে ইউজারকে সাইন ইন করান
+        // Sign in user via Firebase / Auth Context
         await signInUser(tempCredentials.email, tempCredentials.password);
 
-        // মডাল ক্লোজ করে হোম পেজে রিডাইরেক্ট করুন
         setIsOtpModalOpen(false);
         navigate(location?.state || '/', { replace: true });
-      } else {
-        setOtpError('Invalid verification code. Please try again.');
       }
     } catch (error) {
       console.error('OTP Verification Error:', error);
-      setOtpError(error.response?.data?.message || 'Invalid verification code.');
+      setOtpError(error.response?.data?.message || 'Invalid or expired verification code.');
     } finally {
       setIsVerifyingOtp(false);
     }
@@ -86,7 +95,6 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 font-sans text-slate-100">
-      
       {/* OTP Verification Modal */}
       <OTPVerificationModal
         isOpen={isOtpModalOpen}
@@ -99,10 +107,10 @@ export default function SignIn() {
 
       {/* Left Column - Hero Visual Section */}
       <div className="relative md:w-7/12 bg-slate-900 text-white flex flex-col justify-between p-8 md:p-16 overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ 
-            backgroundImage: `url('https://i.ibb.co.com/G48W1pSR/Sign-In.jpg')` 
+          style={{
+            backgroundImage: `url('https://i.ibb.co.com/G48W1pSR/Sign-In.jpg')`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/40" />
@@ -123,11 +131,13 @@ export default function SignIn() {
         <div className="relative z-10 my-auto py-12 max-w-xl">
           <div className="w-12 h-1 bg-amber-400 mb-6 rounded-full" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-6">
-            Empowering Minds,<br />
+            Empowering Minds,
+            <br />
             Envisioning Futures.
           </h1>
           <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-            Join our community of scholars and innovators. Access your academic dashboard, resources, and institutional services through our secure unified portal.
+            Join our community of scholars and innovators. Access your academic dashboard,
+            resources, and institutional services through our secure unified portal.
           </p>
         </div>
 
@@ -146,11 +156,8 @@ export default function SignIn() {
       {/* Right Column - Sign In Form */}
       <div className="md:w-5/12 flex flex-col justify-between p-8 md:p-16 lg:p-20 bg-slate-950">
         <div className="w-full max-w-md mx-auto my-auto p-6 md:p-8 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-sm">
-          
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">
-              Sign In
-            </h2>
+            <h2 className="text-3xl font-bold text-white mb-2">Sign In</h2>
             <p className="text-sm text-slate-400">
               Please enter your credentials to access your account.
             </p>
@@ -172,13 +179,19 @@ export default function SignIn() {
                   <IdCard className="w-5 h-5" />
                 </div>
                 <input
-                  type="text"
+                  type="email"
                   placeholder="Enter your email"
                   {...register('email', {
                     required: 'Email is required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address',
+                    },
                   })}
                   className={`w-full pl-11 pr-4 py-3 bg-slate-800/80 border rounded-lg text-sm text-slate-100 placeholder-slate-500 transition focus:bg-slate-800 focus:outline-none ${
-                    errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-700 focus:border-cyan-400'
+                    errors.email
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-slate-700 focus:border-cyan-400'
                   }`}
                 />
               </div>
@@ -192,7 +205,10 @@ export default function SignIn() {
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide">
                   Password
                 </label>
-                <a href="#forgot" className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 hover:underline transition">
+                <a
+                  href="#forgot"
+                  className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 hover:underline transition"
+                >
                   Forgot Password?
                 </a>
               </div>
@@ -207,7 +223,9 @@ export default function SignIn() {
                     required: 'Password is required',
                   })}
                   className={`w-full pl-11 pr-11 py-3 bg-slate-800/80 border rounded-lg text-sm text-slate-100 placeholder-slate-500 transition focus:bg-slate-800 focus:outline-none ${
-                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-700 focus:border-cyan-400'
+                    errors.password
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-slate-700 focus:border-cyan-400'
                   }`}
                 />
                 <button
@@ -230,7 +248,10 @@ export default function SignIn() {
                 {...register('rememberMe')}
                 className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-cyan-500 focus:ring-cyan-400 cursor-pointer"
               />
-              <label htmlFor="remember-me" className="ml-2.5 text-xs font-medium text-slate-300 cursor-pointer select-none">
+              <label
+                htmlFor="remember-me"
+                className="ml-2.5 text-xs font-medium text-slate-300 cursor-pointer select-none"
+              >
                 Remember Me
               </label>
             </div>
@@ -238,7 +259,7 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 px-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm rounded-lg transition shadow-md hover:shadow-amber-400/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3.5 px-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm rounded-lg transition shadow-md hover:shadow-amber-400/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? 'Sending Code...' : 'Login & Verify'}
             </button>
@@ -256,7 +277,7 @@ export default function SignIn() {
           <button
             type="button"
             onClick={() => navigate('/signup', { state: location.state })}
-            className="w-full py-3.5 px-4 mb-4 bg-transparent border border-cyan-500/80 text-cyan-400 hover:bg-cyan-500/10 font-bold text-sm rounded-lg transition"
+            className="w-full py-3.5 px-4 mb-4 bg-transparent border border-cyan-500/80 text-cyan-400 hover:bg-cyan-500/10 font-bold text-sm rounded-lg transition cursor-pointer"
           >
             Create an Account
           </button>
